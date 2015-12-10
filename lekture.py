@@ -63,7 +63,11 @@ class spanUI(QMainWindow, form_class):
         self.event_selection = self.events_list.selectionModel()
         self.event_selection.selectionChanged.connect(self.event_selected)
 
-        
+        # timepoints
+        self.event_timepoints.setModel(self.span_model)
+        self.timepoint_selection = self.event_timepoints.selectionModel()
+        self.timepoint_selection.selectionChanged.connect(self.timepoint_selected)
+
         self.table_view.setModel(self.span_model)
         self.table_view.setRootIndex(model_obj['application']['model'].index())
         """
@@ -90,14 +94,14 @@ class spanUI(QMainWindow, form_class):
     def page_selected(self, data):
         """wait for a QItemSelection to send the current interface to display"""
         pass
-        #for selection in data.indexes():
-        #    selection = self.absolutePath(selection)
-        #    self.selection = selection.encode('utf-8')
-        #    if debug:print('SELECTION' , self.selection)
-        #    if self.selection == '[events]':
-        #        self.events_group.show()
-        #    else:
-        #        self.events_group.hide()"""
+        for selection in data.indexes():
+            selection = self.absolutePath(selection)
+            self.selection = selection.encode('utf-8')
+            if debug:print('PAGE_SELECTION' , self.selection)
+            if self.selection == '[events]':
+                self.events_group.show()
+            else:
+                self.events_group.hide()
 
     @pyqtSlot()
     def on_event_new_clicked(self):
@@ -160,7 +164,7 @@ class spanUI(QMainWindow, form_class):
         self.event_display(item)
         item=item.data()
         self.selecta = item.encode('utf-8')
-        if debug:print 'SELECTION' , self.selecta
+        if debug:print 'EVENT SELECTION' , self.selecta
         
 
     def event_display(self,event):
@@ -198,6 +202,14 @@ class spanUI(QMainWindow, form_class):
             for command,value in event['attributes']['content'][timepoint].items():
                 q_command = QStandardItem(command+str(value))
                 event_model.appendRow(q_command)
+    @pyqtSlot("QItemSelection")
+    def timepoint_selected(self, data):
+        """a timepoint is selected"""
+        the_QModelindex = data.indexes()
+        item = the_QModelindex[0]
+        item = self.absolutePath(item)
+        self.selection = item#.encode('utf-8')
+        if debug:print('SELECTION' , self.selection)
     
     @pyqtSlot("QItemSelection")
     def commands_selectioned(self,data):
