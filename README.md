@@ -8,7 +8,7 @@ You need to install PyQt5 and PyOSC module
 
     brew install PyQt5
     pip install PyOSC
-    pip install PyBonjour
+    pip install PyBonjour  --allow-external PyBonjour --allow-unverified PyBonjour
 
 ####TO DO LIST
 * *Finish work on the UI (timepoints)*
