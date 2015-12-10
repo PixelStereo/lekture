@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>788</width>
-    <height>583</height>
+    <width>1107</width>
+    <height>593</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -20,9 +20,9 @@
     </property>
     <property name="geometry">
      <rect>
-      <x>160</x>
+      <x>0</x>
       <y>0</y>
-      <width>631</width>
+      <width>771</width>
       <height>271</height>
      </rect>
     </property>
@@ -50,8 +50,8 @@
     <widget class="QPushButton" name="event_new">
      <property name="geometry">
       <rect>
-       <x>2</x>
-       <y>23</y>
+       <x>-6</x>
+       <y>24</y>
        <width>161</width>
        <height>41</height>
       </rect>
@@ -63,8 +63,8 @@
     <widget class="QListView" name="events_list">
      <property name="geometry">
       <rect>
-       <x>8</x>
-       <y>59</y>
+       <x>0</x>
+       <y>60</y>
        <width>150</width>
        <height>201</height>
       </rect>
@@ -106,8 +106,8 @@
     <widget class="QComboBox" name="event_template">
      <property name="geometry">
       <rect>
-       <x>8</x>
-       <y>1</y>
+       <x>0</x>
+       <y>2</y>
        <width>151</width>
        <height>21</height>
       </rect>
@@ -116,9 +116,9 @@
     <widget class="QGroupBox" name="event_group">
      <property name="geometry">
       <rect>
-       <x>170</x>
+       <x>242</x>
        <y>5</y>
-       <width>451</width>
+       <width>521</width>
        <height>261</height>
       </rect>
      </property>
@@ -143,7 +143,7 @@
      <widget class="QLabel" name="cue_name_label">
       <property name="geometry">
        <rect>
-        <x>1</x>
+        <x>73</x>
         <y>2</y>
         <width>27</width>
         <height>16</height>
@@ -161,7 +161,7 @@
      <widget class="QLabel" name="cue_description_label">
       <property name="geometry">
        <rect>
-        <x>1</x>
+        <x>73</x>
         <y>26</y>
         <width>54</width>
         <height>16</height>
@@ -179,7 +179,7 @@
      <widget class="QLabel" name="cue_name_label_2">
       <property name="geometry">
        <rect>
-        <x>296</x>
+        <x>368</x>
         <y>26</y>
         <width>41</width>
         <height>16</height>
@@ -197,7 +197,7 @@
      <widget class="QLabel" name="cue_name_label_3">
       <property name="geometry">
        <rect>
-        <x>296</x>
+        <x>368</x>
         <y>1</y>
         <width>41</width>
         <height>16</height>
@@ -215,7 +215,7 @@
      <widget class="QPushButton" name="event_delete">
       <property name="geometry">
        <rect>
-        <x>288</x>
+        <x>360</x>
         <y>209</y>
         <width>158</width>
         <height>51</height>
@@ -228,7 +228,7 @@
      <widget class="QPushButton" name="event_play">
       <property name="geometry">
        <rect>
-        <x>288</x>
+        <x>360</x>
         <y>68</y>
         <width>158</width>
         <height>51</height>
@@ -241,7 +241,7 @@
      <widget class="QListView" name="event_description">
       <property name="geometry">
        <rect>
-        <x>54</x>
+        <x>126</x>
         <y>26</y>
         <width>231</width>
         <height>41</height>
@@ -251,7 +251,7 @@
      <widget class="QListView" name="event_name">
       <property name="geometry">
        <rect>
-        <x>55</x>
+        <x>127</x>
         <y>2</y>
         <width>231</width>
         <height>21</height>
@@ -261,7 +261,7 @@
      <widget class="QListView" name="event_output">
       <property name="geometry">
        <rect>
-        <x>292</x>
+        <x>364</x>
         <y>41</y>
         <width>151</width>
         <height>20</height>
@@ -271,7 +271,7 @@
      <widget class="QLabel" name="cue_name_label_4">
       <property name="geometry">
        <rect>
-        <x>350</x>
+        <x>422</x>
         <y>0</y>
         <width>81</width>
         <height>20</height>
@@ -286,14 +286,83 @@
        <string>default is OSC</string>
       </property>
      </widget>
-     <widget class="QListView" name="event_content">
+     <widget class="QTableView" name="table_view_2">
       <property name="geometry">
        <rect>
-        <x>4</x>
+        <x>90</x>
         <y>70</y>
-        <width>281</width>
-        <height>185</height>
+        <width>271</width>
+        <height>181</height>
        </rect>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="event_timepoint_new">
+      <property name="geometry">
+       <rect>
+        <x>46</x>
+        <y>50</y>
+        <width>21</width>
+        <height>20</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>+</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="event_timepoint_delete">
+      <property name="geometry">
+       <rect>
+        <x>27</x>
+        <y>50</y>
+        <width>21</width>
+        <height>20</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>-</string>
+      </property>
+     </widget>
+     <widget class="QListView" name="event_timepoints">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>70</y>
+        <width>71</width>
+        <height>181</height>
+       </rect>
+      </property>
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Fixed" vsizetype="Expanding">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="minimumSize">
+       <size>
+        <width>0</width>
+        <height>0</height>
+       </size>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>16777215</width>
+        <height>16777215</height>
+       </size>
+      </property>
+      <property name="frameShape">
+       <enum>QFrame::StyledPanel</enum>
+      </property>
+      <property name="editTriggers">
+       <set>QAbstractItemView::DoubleClicked</set>
+      </property>
+      <property name="alternatingRowColors">
+       <bool>true</bool>
+      </property>
+      <property name="selectionBehavior">
+       <enum>QAbstractItemView::SelectRows</enum>
+      </property>
+      <property name="textElideMode">
+       <enum>Qt::ElideRight</enum>
       </property>
      </widget>
      <zorder>event_output</zorder>
@@ -306,16 +375,19 @@
      <zorder>event_play</zorder>
      <zorder>event_description</zorder>
      <zorder>cue_name_label_4</zorder>
-     <zorder>event_content</zorder>
+     <zorder>table_view_2</zorder>
+     <zorder>event_timepoint_new</zorder>
+     <zorder>event_timepoint_delete</zorder>
+     <zorder>event_timepoints</zorder>
     </widget>
    </widget>
    <widget class="QListView" name="pageview">
     <property name="geometry">
      <rect>
-      <x>10</x>
-      <y>9</y>
+      <x>780</x>
+      <y>450</y>
       <width>151</width>
-      <height>81</height>
+      <height>51</height>
      </rect>
     </property>
    </widget>
@@ -339,13 +411,23 @@
      </rect>
     </property>
    </widget>
+   <widget class="QListView" name="event_content">
+    <property name="geometry">
+     <rect>
+      <x>780</x>
+      <y>20</y>
+      <width>311</width>
+      <height>421</height>
+     </rect>
+    </property>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>788</width>
+     <width>1107</width>
      <height>22</height>
     </rect>
    </property>
