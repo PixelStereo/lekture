@@ -286,7 +286,7 @@
        <string>default is OSC</string>
       </property>
      </widget>
-     <widget class="QTableView" name="table_view_2">
+     <widget class="QListView" name="event_timepoint_content">
       <property name="geometry">
        <rect>
         <x>100</x>
@@ -375,7 +375,7 @@
      <zorder>event_play</zorder>
      <zorder>event_description</zorder>
      <zorder>cue_name_label_4</zorder>
-     <zorder>table_view_2</zorder>
+     <zorder>event_timepoint_content</zorder>
      <zorder>event_timepoint_new</zorder>
      <zorder>event_timepoint_delete</zorder>
      <zorder>event_timepoints</zorder>

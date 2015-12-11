@@ -17,6 +17,8 @@ from span import span
 application = span.application_db
 
 debug = True
+span.debug = False
+span.events.debug = False
 
 def debugUI(whatitis , WHAT2PRINT = ''):
     if debug : print "TRIGGERED FROM UI : " + whatitis , WHAT2PRINT
@@ -64,11 +66,6 @@ class spanUI(QMainWindow, form_class):
         self.events_list.setRootIndex(model_obj['events']['model'].index())
         self.event_selection = self.events_list.selectionModel()
         self.event_selection.selectionChanged.connect(self.event_selected)
-
-        # timepoints
-        self.event_timepoints.setModel(self.span_model)
-        self.timepoint_selection = self.event_timepoints.selectionModel()
-        self.timepoint_selection.selectionChanged.connect(self.timepoint_selected)
 
         """
         self.span_model.dataChanged.connect(self.edit)
@@ -119,6 +116,12 @@ class spanUI(QMainWindow, form_class):
         key = self.cur_obj().timepoint_new()
         self.add_timepoint_to_event(key)
 
+    @pyqtSlot()
+    def on_event_timepoint_delete_clicked(self):
+        """delete a timepoint in the selected event"""
+        key = self.cur_obj().timepoint_delete(self)
+        self.del_timepoint_in_event(key)
+
     def add_event_to_model(self,event):
         # create the event model
         event_model = QStandardItem(event)
@@ -156,6 +159,13 @@ class spanUI(QMainWindow, form_class):
         timepoint_model = QStandardItem(timepoint)
         model_obj['events'][event]['content']['model'].appendRow(timepoint_model)
 
+    def del_timepoint_in_event(self,timepoint):
+        print 'TIMEPOINT TO DEL IN EVENT' , timepoint
+        event = self.selecta
+        print 'EVENT WHERE TO DEL THE TIMEPOINT' , event
+        #timepoint_model = QStandardItem(timepoint)
+        model_obj['events'][event]['content']['model'].removeRow(timepoint)
+
     @pyqtSlot("QItemSelection")
     def event_selected(self, data):
         """an event is selected"""
@@ -165,7 +175,6 @@ class spanUI(QMainWindow, form_class):
         item=item.data()
         self.selecta = item.encode('utf-8')
         if debug:print 'EVENT SELECTION' , self.selecta
-        
 
     def event_display(self,event):
         """create a model for a view of an event with timepoints merged as 'wait' commands"""
@@ -173,12 +182,24 @@ class spanUI(QMainWindow, form_class):
         self.event_name.setModel(self.span_model)
         self.event_output.setModel(self.span_model)
         self.event_description.setModel(self.span_model)
+        self.event_timepoints.setModel(self.span_model)
+        self.event_timepoint_content.setModel(self.span_model)
+        #create the selection for this event_timepoints
+        self.timepoint_selection = self.event_timepoints.selectionModel()
+        self.timepoint_selection.selectionChanged.connect(self.timepoint_selectioned)
         output = event.child(1,0)
         name = event.child(2,0)
         description = event.child(3,0)
+        timepoints = event.child(0,0)
+        commands = event.child(0,0).child(0,0)
         self.event_output.setRootIndex(output)
         self.event_name.setRootIndex(name)
         self.event_description.setRootIndex(description)
+        self.event_timepoints.setRootIndex(timepoints)
+        self.event_timepoint_content.setRootIndex(commands)
+ 
+
+
         #create the model for this view
         event_model = QStandardItemModel()
         event_model.dataChanged.connect(self.edit_event)
@@ -202,19 +223,20 @@ class spanUI(QMainWindow, form_class):
             for command,value in event['attributes']['content'][timepoint].items():
                 q_command = QStandardItem(command+str(value))
                 event_model.appendRow(q_command)
+
     @pyqtSlot("QItemSelection")
-    def timepoint_selected(self, data):
+    def timepoint_selectioned(self, data):
         """a timepoint is selected"""
         the_QModelindex = data.indexes()
         item = the_QModelindex[0]
         item = self.absolutePath(item)
         self.selection = item#.encode('utf-8')
-        if debug:print('SELECTION' , self.selection)
+        if debug:print('TIMEPOINT SELECTION' , self.selection)
     
     @pyqtSlot("QItemSelection")
     def commands_selectioned(self,data):
         data=data.indexes()[0].data()
-        print 'SELECTION' , data
+        print 'COMMANDS SELECTION' , data
         self.command_selected = data
 
     @pyqtSlot("QItemSelection")
