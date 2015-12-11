@@ -31,6 +31,8 @@ class spanUI(QMainWindow, form_class):
     def __init__(self):
         super(spanUI, self).__init__()
         self.setupUi(self)
+        # load a style sheet
+        self.setStyleSheet(open("style.qss", "r").read())
         #read a project
         path = span.projectpath+'test.json'
         span.read(path=path)
@@ -68,8 +70,6 @@ class spanUI(QMainWindow, form_class):
         self.timepoint_selection = self.event_timepoints.selectionModel()
         self.timepoint_selection.selectionChanged.connect(self.timepoint_selected)
 
-        self.table_view.setModel(self.span_model)
-        self.table_view.setRootIndex(model_obj['application']['model'].index())
         """
         self.span_model.dataChanged.connect(self.edit)
 
@@ -358,7 +358,6 @@ class spanUI(QMainWindow, form_class):
         """ an event is playing"""
         if debug : print 'PLAY'
         self.cur_obj().play()
-
 
 
 if __name__ == "__main__":
