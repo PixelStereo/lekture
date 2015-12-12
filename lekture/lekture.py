@@ -21,11 +21,11 @@ projectpath = projectpath + '/projects/'
 project = {}
 devices_db = {'osc_device': {'port':1234,'ip':'127.0.0.1'}}
 application_db = {'data':{},'attributes':{'name':'lekture','author':'Pixel Stereo','version':'0.0.1'}}
-project.setdefault('events',events.db)
+#project.setdefault('events',events.db)
 project.setdefault('application',application_db)
 project.setdefault('devices',devices.db)
 
-devicemanager.run(11111)
+#devicemanager.run(11111)
 
 def getpages():
     if debug : print project
