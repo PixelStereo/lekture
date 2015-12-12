@@ -58,7 +58,7 @@
             self.event_name.setText(toto['name'])
             self.event_output.setText(toto['output'])
             #for key,value in events[selection]['attributes']['content']:
-            #content_string = span.dict2string(events[selection]['attributes']['content'])
+            #content_string = lekture.dict2string(events[selection]['attributes']['content'])
             #self.event_content.insert(content_string)
             self.event_timepoints_refresh()
             self.event_group.show()
@@ -80,7 +80,7 @@
         for key in events['data'].keys():
             item = QStandardItem(key)
             self.events_model.appendRow(item)
-        #events_list = span.events.listing()
+        #events_list = lekture.events.listing()
         #print events_list
         #for event in events_list:
         #    self.events_list.addItem(event)
@@ -96,7 +96,7 @@
         """ open project"""
         file_path = self.file_open_select()
         if debug : print 'file_path OPEN REQUEST' , file_path
-        span.read(file_path)
+        lekture.read(file_path)
         self.events_list_refresh()
 
     @pyqtSlot()

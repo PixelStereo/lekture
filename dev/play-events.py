@@ -1,19 +1,19 @@
-from span import span
+from lekture import lekture
 from time import sleep
 
-span.debug = False
-span.events.debug = True
+lekture.debug = False
+lekture.events.debug = True
 
-span.read(path='span/projects/test.json')
+lekture.read(path='lekture/projects/test.json')
 
 
-span.events.play('et de quatre')
+lekture.events.play('et de quatre')
 sleep(1)
-span.events.play('second')
+lekture.events.play('second')
 sleep(1)
-span.events.play('troisieme')
+lekture.events.play('troisieme')
 sleep(1)
-span.events.play('first')
+lekture.events.play('first')
 quit()
 
 quit()

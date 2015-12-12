@@ -49,7 +49,7 @@ class OSCServer(object):
     def zeroconf(self):
         hostname = socket.gethostname()
         hostname = hostname.split('.local')[0]
-        name = hostname + 'span'
+        name = hostname + 'lekture'
         regtype = '_osc._udp'
         sdRef = pybonjour.DNSServiceRegister(name = name,
                                          regtype = regtype,

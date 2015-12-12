@@ -19,5 +19,5 @@ You need to install PyQt5, PyOSC and PyBonjour module
 * *Implement auto-save*    
 * *Implement zero-conf discovery & output table*     
 * *Implement Minuit output*     
-* *Write & implement span library (make span - make prefs - load - etc…)*     
+* *Write & implement lekture library (make lekture - make prefs - load - etc…)*     
 * *Implement OSC-writer*     

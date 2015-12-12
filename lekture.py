@@ -10,15 +10,15 @@ from PyQt5.QtWidgets import QWidget,QApplication,QHBoxLayout,QDialog,QListView,Q
 from PyQt5.QtCore import QStringListModel
 from PyQt5.QtGui import  QStandardItemModel , QStandardItem
 
-from span import span
+from lekture import lekture
 
-#devices = span.devices.db
-#events = span.events.db
-application = span.application_db
+#devices = lekture.devices.db
+#events = lekture.events.db
+application = lekture.application_db
 
 debug = True
-span.debug = False
-span.events.debug = False
+lekture.debug = False
+lekture.events.debug = False
 
 def debugUI(whatitis , WHAT2PRINT = ''):
     if debug : print "TRIGGERED FROM UI : " + whatitis , WHAT2PRINT
@@ -28,47 +28,47 @@ form_class, base_class = loadUiType('lekture.ui')
 
 model_obj = {}
 
-class spanUI(QMainWindow, form_class):
-    """create span view and controller (MVC)"""
+class lektureUI(QMainWindow, form_class):
+    """create lekture view and controller (MVC)"""
     def __init__(self):
-        super(spanUI, self).__init__()
+        super(lektureUI, self).__init__()
         self.setupUi(self)
         # load a style sheet
         self.setStyleSheet(open("style.qss", "r").read())
         #read a project
-        path = span.projectpath+'test.json'
-        span.read(path=path)
-        # make a model with span file
-        self.span_model = QStandardItemModel()
-        # get part of the span project
-        pages = span.getpages()
+        path = lekture.projectpath+'test.json'
+        lekture.read(path=path)
+        # make a model with lekture file
+        self.lekture_model = QStandardItemModel()
+        # get part of the lekture project
+        pages = lekture.getpages()
         for page in pages:
             model = QStandardItem(page)
-            self.span_model.appendRow(model)
+            self.lekture_model.appendRow(model)
             model_obj.setdefault(page,{'model':model})
             if page == 'events':
                 # add events
-                for event in span.events.db['data']:
+                for event in lekture.events.db['data']:
                     self.add_event_to_model(event)
 
-        # Load span model in page view (diplay the main parts of the project)
-        self.pageview.setModel(self.span_model)
-        self.span_tree_view.setModel(self.span_model)
+        # Load lekture model in page view (diplay the main parts of the project)
+        self.pageview.setModel(self.lekture_model)
+        self.lekture_tree_view.setModel(self.lekture_model)
         # make a model of the view selection
         self.page_selection = self.pageview.selectionModel()
-        self.span_tree_view.setSelectionModel(self.page_selection)
+        self.lekture_tree_view.setSelectionModel(self.page_selection)
         # page selection changed
         self.page_selection.selectionChanged.connect(self.page_selected)
         #self.page_selection.select(model_obj['events']['model'].index())
 
         # connect events_list (list of events) to the qlistview in UI
-        self.events_list.setModel(self.span_model)
+        self.events_list.setModel(self.lekture_model)
         self.events_list.setRootIndex(model_obj['events']['model'].index())
         self.event_selection = self.events_list.selectionModel()
         self.event_selection.selectionChanged.connect(self.event_selected)
 
         """
-        self.span_model.dataChanged.connect(self.edit)
+        self.lekture_model.dataChanged.connect(self.edit)
 
  
         # 
@@ -103,11 +103,11 @@ class spanUI(QMainWindow, form_class):
     @pyqtSlot()
     def on_event_new_clicked(self):
         """ make a new event"""
-        key = span.events.new()
+        key = lekture.events.new()
         self.add_event_to_model(key)
 
     def cur_obj(self):
-        cur_obj = span.events.objects[self.selecta]
+        cur_obj = lekture.events.objects[self.selecta]
         return cur_obj
 
     @pyqtSlot()
@@ -132,9 +132,9 @@ class spanUI(QMainWindow, form_class):
         # add the current event to the events page model
         events_model.appendRow(event_model)
         # get attributes of the event
-        attributes = span.events.db['data'][event]['attributes'].keys()
+        attributes = lekture.events.db['data'][event]['attributes'].keys()
         for attribute in attributes:
-            data = span.events.db['data'][event]['attributes'][attribute]
+            data = lekture.events.db['data'][event]['attributes'][attribute]
             attribute_model = QStandardItem(attribute)
             event_model.appendRow(attribute_model)
             model_obj['events'][event].setdefault(attribute,{'model':attribute_model})
@@ -179,11 +179,11 @@ class spanUI(QMainWindow, form_class):
     def event_display(self,event):
         """create a model for a view of an event with timepoints merged as 'wait' commands"""
         # connect event attributes       
-        self.event_name.setModel(self.span_model)
-        self.event_output.setModel(self.span_model)
-        self.event_description.setModel(self.span_model)
-        self.event_timepoints.setModel(self.span_model)
-        self.event_timepoint_content.setModel(self.span_model)
+        self.event_name.setModel(self.lekture_model)
+        self.event_output.setModel(self.lekture_model)
+        self.event_description.setModel(self.lekture_model)
+        self.event_timepoints.setModel(self.lekture_model)
+        self.event_timepoint_content.setModel(self.lekture_model)
         #create the selection for this event_timepoints
         self.timepoint_selection = self.event_timepoints.selectionModel()
         self.timepoint_selection.selectionChanged.connect(self.timepoint_selectioned)
@@ -211,7 +211,7 @@ class spanUI(QMainWindow, form_class):
         event = event.data()
         event = event.encode('utf-8')
         #get the content of the event
-        event = span.events.db['data'][event]
+        event = lekture.events.db['data'][event]
         #get the timepoints of this event
         timepoints = event['attributes']['content'].keys()
         timepoints = sorted(timepoints)
@@ -289,7 +289,7 @@ class spanUI(QMainWindow, form_class):
         if debug:print('SELECTION' , self.selection)
 
     def absolutePath(self,item):
-        """accept a QModelIndex and a value and write into span dictionary (in span.py file)"""
+        """accept a QModelIndex and a value and write into lekture dictionary (in lekture.py file)"""
         isparent = item.parent()
         path = [item.data()]
         if isparent.isValid():
@@ -322,22 +322,22 @@ class spanUI(QMainWindow, form_class):
         #address = self.selection.encode('utf-8')
         #address =  address[0]
         #print address
-        #print span.project + address
+        #print lekture.project + address
         print "DATA CHANGED :"  , self.selection , (data.data())
         print "PLEASE HELP TO DO THIS"
 
     @pyqtSlot()
     def on_actionNew_triggered(self):
         """Create a new project (reload everything)"""
-        self.span_model.clear()
+        self.lekture_model.clear()
         debugUI("NEW PROJECT")
         self.__init__()
-        debugUI("RELOAD SPAN")
+        debugUI("RELOAD lekture")
 
     @pyqtSlot()
     def on_actionOpenDir_triggered(self):
         """ open project directory"""
-        file_path = span.getprojectpath()
+        file_path = lekture.getprojectpath()
         directory, filename = os.path.split(file_path)
         from subprocess import call
         call(["open", directory])
@@ -347,28 +347,28 @@ class spanUI(QMainWindow, form_class):
     def on_actionSave_triggered(self):
         """ save project"""
         debugUI('SAVE PROJECT')
-        span.write()
+        lekture.write()
 
     @pyqtSlot()
     def on_actionSaveAs_triggered(self):
         """save project as"""
         file_path = self.file_saveas_select()
         debugUI("SAVE PROJECT AS")
-        span.write(file_path)
+        lekture.write(file_path)
 
     def file_open_select(self):
         """choose file dialog window"""
-        file_path = QFileDialog().getOpenFileName(self, "Select a Span project to open",)
+        file_path = QFileDialog().getOpenFileName(self, "Select a lekture project to open",)
         if file_path:
             if debug : print 'file_path has been selected' , file_path
             file_path = file_path[0]
-            span.file_path = file_path
+            lekture.file_path = file_path
             self.events_list_refresh()
             return file_path
 
     def file_saveas_select(self):
         """choose file dialog window"""
-        file_path = QFileDialog.getSaveFileName(self, "Save span project")
+        file_path = QFileDialog.getSaveFileName(self, "Save lekture project")
         if debug : print "SAVE AS" , file_path
         if file_path:
             file_path = file_path[0]
@@ -384,7 +384,7 @@ class spanUI(QMainWindow, form_class):
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
-    appWindow = spanUI()
+    appWindow = lektureUI()
     appWindow.move(5,12)
     appWindow.show()
     sys.exit(app.exec_())

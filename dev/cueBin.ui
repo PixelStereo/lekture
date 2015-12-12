@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>span</class>
- <widget class="QDialog" name="span">
+ <class>lekture</class>
+ <widget class="QDialog" name="lekture">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -23,7 +23,7 @@
    </size>
   </property>
   <property name="windowTitle">
-   <string>span</string>
+   <string>lekture</string>
   </property>
   <widget class="QGroupBox" name="cue_groupUI">
    <property name="geometry">

@@ -6,10 +6,10 @@ from time import sleep
 from time import time
 import socket
 
-import span
+import lekture
 import devicemanager
-import span_events as events
-import span_devices as devices
+import lekture_events as events
+import lekture_devices as devices
 
 
 debug = True
@@ -20,7 +20,7 @@ projectpath = projectpath + '/projects/'
 
 project = {}
 devices_db = {'osc_device': {'port':1234,'ip':'127.0.0.1'}}
-application_db = {'data':{},'attributes':{'name':'span','author':'Pixel Stereo','version':'0.0.1'}}
+application_db = {'data':{},'attributes':{'name':'lekture','author':'Pixel Stereo','version':'0.0.1'}}
 project.setdefault('events',events.db)
 project.setdefault('application',application_db)
 project.setdefault('devices',devices.db)
@@ -141,7 +141,7 @@ def string2dict(content):
     for event in content:
         event = event.split(" ",1)
         toto.setdefault(event[0],event[1:])
-    toto = span.unicode2string_dict(toto)
+    toto = lekture.unicode2string_dict(toto)
     return toto
 
 

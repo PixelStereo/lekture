@@ -1,5 +1,5 @@
 import random
-import span_functions as span
+import lekture_functions as lekture
 from OSC import OSCMessage
 from devicemanager import OSCClient as OSCClient
 client = OSCClient()
@@ -20,7 +20,7 @@ def new(name='',protocol='',uid='',description = '',output='',event_content=''):
     if output == '':
         output = '127.0.0.1:10000'
     if uid == '':
-        uid = span.timestamp()
+        uid = lekture.timestamp()
     if description == '':
         description = "write a comment"
     if name == '':

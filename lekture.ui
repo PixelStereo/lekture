@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>span</string>
+   <string>lekture</string>
   </property>
   <widget class="QWidget" name="centralwidget">
    <widget class="QGroupBox" name="events_group">
@@ -401,7 +401,7 @@
      </rect>
     </property>
    </widget>
-   <widget class="QTreeView" name="span_tree_view">
+   <widget class="QTreeView" name="lekture_tree_view">
     <property name="geometry">
      <rect>
       <x>10</x>
