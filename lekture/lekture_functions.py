@@ -1,9 +1,9 @@
 import time
 
-debug = True
+debug = False
 
 def timestamp():
     """return a time stamp"""
-    print 'timestamp' , str(int(time.time() * 1000))
+    if debug:print 'timestamp' , str(int(time.time() * 1000))
     return str(int(time.time() * 1000))
 
