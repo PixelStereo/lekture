@@ -74,31 +74,51 @@ def read(path='') :
     else :
         try:
             with open(path) as in_file :
+                """ FIRST WE NEED TO CLEAR THE EVENTS AND MODULAR APPLICATION INSTANCES"""
                 if debug : print 'file reading : ' , path
                 loaded = json.load(in_file,object_hook=unicode2string_dict)
                 in_file.close()
                 for key,val in loaded.items():
                     if key == 'events' :
-                        events.db.clear()
+                        #events.db.clear()
                         for k,v in loaded['events'].items():
-                            events.db.setdefault(k,v)  
+                            #events.db.setdefault(k,v)  
+                            print '-----------DEBUG EVENTS BEGIN----------'
+                            print k 
+                            print '-----------DEBUG EVENTS END----------'
+                            print '-----------DEBUG EVENTS BEGIN----------'
+                            print v
+                            print '-----------DEBUG EVENTS END----------'
                         """create an instance of the Event class 
                         for each event in the project loaded"""
-                        for event in events.db['data'].keys():
+                        """for event in events.db['data'].keys():
                             uid = event
                             name = events.db['data'][event]['attributes']['name']
                             output = events.db['data'][event]['attributes']['output']
                             description = events.db['data'][event]['attributes']['description']
                             event_content = events.db['data'][event]['attributes']['content']
-                            events.new(uid=uid,name=name,description=description,output=output,event_content=event_content)
+                            events.new(uid=uid,name=name,description=description,output=output,event_content=event_content)"""
                     elif key == 'application' :
                         """need to create an application class"""
-                        application_db.clear()
-                        for k,v in loaded['events'].items():
-                            events.db.setdefault(k,v)  
-                if debug : print 'project loaded'
-                if debug : print 'events.db : ' , events.db
-                if debug : print 'application_db : ' , application_db
+                        #application_db.clear()
+                        for k,v in loaded['application'].items():
+                            #events.db.setdefault(k,v)  
+                            print '-----------DEBUG APPLICATION BEGIN----------'
+                            print k 
+                            print '-----------DEBUG APPLICATION  END----------'
+                            print '-----------DEBUG APPLICATION  BEGIN----------'
+                            print v
+                            print '-----------DEBUG APPLICATION  END----------'
+
+
+
+
+
+
+
+                #if debug : print 'project loaded'
+                #if debug : print 'events.db : ' , events.db
+                #if debug : print 'application_db : ' , application_db
         except IOError:
             if debug : print 'error : project not loaded'
 
@@ -136,7 +156,7 @@ def dict2string(content):
 def string2dict(content):
     content = content.split('\n')
     toto = {}
-    print 'CALLLLLL'
+    print 'CALLLL string2dict function in lekture main module'
     if debug :  'content' , content
     for event in content:
         event = event.split(" ",1)
