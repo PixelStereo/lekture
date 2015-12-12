@@ -13,12 +13,13 @@ debug=True
 """ TODO : REWRITE PLAY - DELETE FUNCTIONS FOR TIMEPOINT AND EVENT CLASS"""
 
 def play(name=''):
-    uids=[]
-    for event in listing():
-        if name == event:
-            uids.append(objects[event])
-        elif db['data'][event]['attributes']['name'] == name:
-            uids.append(objects[event])
+    uids = []
+    print Event.instances.keys()
+    for event in Event.instances.keys():
+        if name == event.name:
+            uids.append(event)
+        elif event.name == event.uid:
+            uids.append(event)
     if len(uids) == 0:
         print "no event to play"
     for item in uids:
@@ -27,10 +28,9 @@ def play(name=''):
 
 class Timepoint(object):
     """docstring for Timepoint"""
-    def __new__(self,index,content={}):
+    def __new__(self,*args,**kwargs):
         _new = object.__new__(self)
         if debug :
-            print
             print "........... TIMEPOINT created ..........."
         return _new
 
@@ -106,9 +106,9 @@ class Event(object):
             print
 
 
-    def timepoint(self,index):
+    def timepoint(self,index,content={}):
         """create a timepoint"""
-        timepoint = Timepoint(index)
+        timepoint = Timepoint(index,content={})
         self.timepoints.append(timepoint)
         return timepoint
 
