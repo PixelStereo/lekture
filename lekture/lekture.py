@@ -6,10 +6,11 @@ from time import sleep
 from time import time
 import socket
 
-import lekture
+#import lekture
 import devicemanager
 import lekture_events as events
 import lekture_devices as devices
+import lekture_functions as functions
 
 
 debug = True
