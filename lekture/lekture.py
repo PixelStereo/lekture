@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-import os
+from os.path import abspath , dirname
 import json
 import random
 from time import sleep
@@ -10,13 +10,14 @@ import socket
 import devicemanager
 import lekture_events as events
 import lekture_devices as devices
-import lekture_functions as functions
+from lekture_functions import timestamp as timestamp
+
 
 
 debug = True
 
 extension = '.json'
-projectpath = os.path.abspath(os.path.dirname(__file__))
+projectpath = abspath(dirname(__file__))
 projectpath = projectpath + '/projects/'
 
 project = {}

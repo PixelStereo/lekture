@@ -22,5 +22,5 @@ sleep(1)
 another_event.play()
 
 #save the project
-filepath = os.path.abspath(lekture.functions.timestamp()+'.json')
+filepath = lekture.abspath(lekture.timestamp()+'.json')
 lekture.write(filepath)
