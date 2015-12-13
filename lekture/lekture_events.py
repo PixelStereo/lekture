@@ -1,7 +1,7 @@
 import weakref
 import random
 import lekture_functions as lekture
-from OSC import OSCMessage
+from OSC import OSCMessage , OSCClientError
 from devicemanager import OSCClient as OSCClient
 client = OSCClient()
 import time
@@ -23,10 +23,9 @@ class Timepoint(object):
             content = {'/node/string':'a string','/node/integer':[random.randint(65e2,65e3)],'/node/float':[float(random.randint(0,100))/100],'/node/list':[float(random.randint(0,100))/100,random.randint(65e2, 65e3),"egg"]}
         self.index = index
         self.content = content
-        print 'TIMEPOINT INDEX' , self.index
-        print 'TIMEPOINT CONTENT' , self.content
-        print "........... TIMEPOINT %s inited ..........." %str(index)
-        print
+        if debug : 
+            print "........... TIMEPOINT %s inited ..........." %str(index)
+            print
 
     # ----------- CONTENT -------------
     @property
@@ -88,7 +87,6 @@ class Event(object):
             print 'uid : ' , self.uid
             print "........... EVENT %s inited ..........." %self.name
             print
-
 
     def timepoint(self,index,content={}):
         """create a timepoint"""
@@ -195,6 +193,37 @@ class Event(object):
     def output(self):
         pass
 
+    def play(self):
+        """play an event"""
+        if debug : print '------ PLAY EVENT :' , self.name , '-----------------'
+        timepoints = []
+        for timepoint in self.timepoints:
+            timepoints.append([timepoint.index,timepoint])
+        timepoints.sort()
+        for timepoint in timepoints:
+            if debug : print '--------PLAY TIMEPOINT' , timepoint[0] , '----------'
+            sleep(timepoint[0]/1000)
+            output_ip = self.output.split(':')[0]
+            output_port = self.output.split(':')[1]
+            if debug : 
+                print 'connecting to : ' + output_ip + ':' + output_port
+                if debug : 'try to send timepoint ' , timepoint.index
+            try:
+                client.connect((output_ip , int(output_port)))
+                for address,args in timepoint[1].content.items():
+                    if debug : print address , args
+                    msg = OSCMessage()
+                    msg.setAddress(address)
+                    msg.append(args)
+                    client.send(msg)
+                    time.sleep(0.01)
+                    msg.clearData()
+                if debug :
+                    print '--------END timepoint' , timepoint[0] , '--------------'
+                    print
+            except OSCClientError :
+                print 'Connection refused'
+        return self.name , 'done'
 
 
 
@@ -209,29 +238,5 @@ class Event(object):
         del db['data'][self.uid]['attributes'][attr]
         db['data'][self.uid]['attributes'].setdefault(attr,value)
 
-    def play(self):
-        """play an event"""
-        if debug :
-            print
-            print '--------begin play event :' , self.name , '--------------'
-        output_ip = self.output.split(':')[0]
-        output_port = self.output.split(':')[1]
-        client.connect((output_ip , int(output_port)))
-        if debug : print 'connecting to : ' + output_ip + ':' + output_port
-        for timepoint in self.timepoints:
-            try:
-                if debug : 'try to send timepoint ' , timepoint.index
-                for address,args in timepoint.content.items():
-                    msg = OSCMessage()
-                    msg.setAddress(address)
-                    msg.append(args)
-                    client.send(msg)
-                    time.sleep(0.01)
-                    msg.clearData()
-                if debug : print "timepoint" , timepoint.index , "has been sent"
-            except:
-                print 'Connection refused'
-        print '--------end play event :' , self.name , '--------------'
-        print
-        return 'done'
+
 
