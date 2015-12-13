@@ -16,10 +16,32 @@ from lekture_functions import timestamp as timestamp
 
 debug = True
 
+# This is the extension for lekture project files
 extension = '.json'
+
+# During development, we use a fixed path in the repo to test
 projectpath = abspath(dirname(__file__))
 projectpath = projectpath + '/projects/'
 
+class Project(object):
+    """docstring for Project"""
+    instances = weakref.WeakKeyDictionary()
+    def __new__(self,*args,**kwargs):
+        _new = object.__new__(self)
+        Project.instances[_new] = None
+        if debug :
+            print
+            print "........... PROJECT created ..........."
+            print
+        return _new
+
+    def __init__(self, arg):
+        super(Project, self).__init__()
+        self.arg = arg
+
+
+
+        
 project = {}
 devices_db = {'osc_device': {'port':1234,'ip':'127.0.0.1'}}
 application_db = {'data':{},'attributes':{'name':'lekture','author':'Pixel Stereo','version':'0.0.1'}}
