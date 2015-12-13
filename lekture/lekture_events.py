@@ -10,22 +10,6 @@ from time import sleep
 debug=True
 
 
-""" TODO : REWRITE PLAY - DELETE FUNCTIONS FOR TIMEPOINT AND EVENT CLASS"""
-
-def play(name=''):
-    uids = []
-    print Event.instances.keys()
-    for event in Event.instances.keys():
-        if name == event.name:
-            uids.append(event)
-        elif event.name == event.uid:
-            uids.append(event)
-    if len(uids) == 0:
-        print "no event to play"
-    for item in uids:
-        item.play()
-
-
 class Timepoint(object):
     """docstring for Timepoint"""
     def __new__(self,*args,**kwargs):
@@ -229,25 +213,25 @@ class Event(object):
         """play an event"""
         if debug :
             print
-            print '--------play event uid : ' + self.uid , '--------------'
-        #output_ip = output.split(':')[0]
-        #output_port = output.split(':')[1]
-        #client.connect((output_ip , int(output_port)))
-        client.connect(('127.0.0.1' , 1234))
-        for timepoint in self.content.keys():
-            sleep(float(timepoint)/1000)
+            print '--------begin play event :' , self.name , '--------------'
+        output_ip = self.output.split(':')[0]
+        output_port = self.output.split(':')[1]
+        client.connect((output_ip , int(output_port)))
+        if debug : print 'connecting to : ' + output_ip + ':' + output_port
+        for timepoint in self.timepoints:
             try:
-                for address,args in self.content[timepoint].items():
+                if debug : 'try to send timepoint ' , timepoint.index
+                for address,args in timepoint.content.items():
                     msg = OSCMessage()
                     msg.setAddress(address)
                     msg.append(args)
                     client.send(msg)
                     time.sleep(0.01)
                     msg.clearData()
-                if debug : print "timepoint sent" , timepoint
+                if debug : print "timepoint" , timepoint.index , "has been sent"
             except:
                 print 'Connection refused'
-        print '--------end event uid : ' + self.uid , '--------------'
+        print '--------end play event :' , self.name , '--------------'
         print
         return 'done'
 

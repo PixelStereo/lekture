@@ -13,23 +13,16 @@ another_event = lekture.events.Event(name="another event")
 
 print 'list events'
 print '------------'
-print lekture.events.Event.instances.keys()
-
-#list existing events
-#print lekture.events.listing()
 for event in lekture.events.Event.instances.keys():
 	print event.name
 
-#play the cue
-lekture.events.play(name='event')
-
+#play cues
+event.play()
 sleep(1)
-
-#play the cue
-lekture.events.play(name="another event")
+another_event.play()
 
 #save the project
 #lekture.write()
+#sleep(5)
 
-sleep(5)
 quit()
