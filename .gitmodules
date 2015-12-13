@@ -1,0 +1,3 @@
+[submodule "PyModular"]
+	path = PyModular
+	url = https://reno-@github.com/PixelStereo/PyModular.git
