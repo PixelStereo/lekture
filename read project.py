@@ -6,4 +6,7 @@ my_project = lekture.Project()
 
 my_project.read()
 
-print my_project.path
+#for event in lekture.events.Event.getinstances():
+#	event.play()
+
+my_project.write()

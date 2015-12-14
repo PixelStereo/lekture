@@ -14,8 +14,25 @@ import lekture_devices as devices
 from lekture_functions import timestamp as timestamp
 
 
+import os, sys
+lib_path = os.path.abspath('./PyModular')
+sys.path.append(lib_path)
+from modular import modular
+from modular.modular import Application
+
+
+#devicemanager.run(11111)
+
+
+
+# this is not the best way to do.
+#But if i don't do that, I can't create events objects 
+# because when I call Event.getinstances(), the instances list is empty
+event_list = []
 
 debug = True
+
+app = Application('lekture',author='Pixel Stereo',project='projet de test',version='0.1')
 
 class Project(object):
     """docstring for Project"""
@@ -56,11 +73,7 @@ class Project(object):
                     in_file.close()
                     for key,val in loaded.items():
                         if key == 'events' :
-                            print '-----------DEBUG EVENTS BEGIN----------'
-                            """create an instance of the Event class 
-                            for each event in the project loaded"""
                             for uid , event_dict in loaded['events']['data'].items():
-                                if debug : print uid
                                 for attribute , value in event_dict['attributes'].items():
                                     if attribute == 'content':
                                         content = value
@@ -70,16 +83,9 @@ class Project(object):
                                         description = value
                                     elif attribute == 'output':
                                         output = value
-                                print type(content) , len(content)
-                                events.Event(uid=uid,name=name,description=description,output=output,content=content)
-                            print '-----------DEBUG EVENTS END----------'
-                            """for event in events.db['data'].keys():
-                                uid = event
-                                name = events.db['data'][event]['attributes']['name']
-                                output = events.db['data'][event]['attributes']['output']
-                                description = events.db['data'][event]['attributes']['description']
-                                event_content = events.db['data'][event]['attributes']['content']
-                                events.new(uid=uid,name=name,description=description,output=output,event_content=event_content)"""
+                                taille = len(event_list)
+                                event_list.append(uid)
+                                event_list[taille] = events.Event(uid=uid,name=name,description=description,output=output,content=content)
                         elif key == 'application' :
                             """need to create an application class"""
                             #application_db.clear()
@@ -91,22 +97,26 @@ class Project(object):
                                 print '-----------DEBUG APPLICATION  BEGIN----------'
                                 print v
                                 print '-----------DEBUG APPLICATION  END----------'
-                    #if debug : print 'project loaded'
-                    #if debug : print 'events.db : ' , events.db
-                    #if debug : print 'application_db : ' , application_db
+                    if debug : print 'project loaded'
             except IOError:
                 if debug : print 'error : project not loaded'
 
+    def write(self) :
+        out_file = open(str(self.path), 'w')
+        project = {}
+        project.setdefault('events',events.Event.export())
+        project.setdefault('application',modular.Application.export())
+        """TODO : create Device Class in Modular"""
+        #project.setdefault('devices',modular.Device.export())
+        project.setdefault('devices',{})
+        #out_file.write(json.dumps(project,ensure_ascii=True,separators=(',', ': ')))
+        out_file.write(json.dumps(project,sort_keys = True, indent = 4,ensure_ascii=False))
+        if debug : print ("file has been written : " , self.path)
 
-        
-project = {}
-devices_db = {'osc_device': {'port':1234,'ip':'127.0.0.1'}}
-application_db = {'data':{},'attributes':{'name':'lekture','author':'Pixel Stereo','version':'0.0.1'}}
-#project.setdefault('events',events.db)
-project.setdefault('application',application_db)
-project.setdefault('devices',devices.db)
 
-#devicemanager.run(11111)
+
+
+
 
 def getpages():
     if debug : print project
@@ -149,14 +159,6 @@ def unicode2string_dict(data):
         rv[key] = value
     return rv
 
-
-def write(file_path='') :
-    if file_path == '':
-        file_path = projectpath + "test.json"
-    out_file = open(str(file_path), 'w')
-    out_file.write(json.dumps(project,ensure_ascii=True,separators=(',', ': ')))
-    out_file.close()
-    if debug : print ("file has been written : " , file_path)
 
 def setdb(key,value):
     """set something in the database"""

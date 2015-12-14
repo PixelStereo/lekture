@@ -1,49 +1,49 @@
-{  
-   "application":{  
-
-   },
-   "events":{  
-      "data":{  
-         "1423164967383":{  
-            "attributes":{  
-               "content":
-                  [  
-                     [  
-                        "/node/string",
-                        "a string"
-                     ]
-                     ,
-                     1000
-                     ,
-                     [  
-                        "/node/list",
-                        [  
-                           0.49,
-                           62988,
-                           "egg"
-                        ]
-                     ]
-                     ,
-                     2200
-                     ,
-                     [  
-                        "/node/integer",
-                        50595
-                     ],
-                     [  
-                        "/node/float",
-                        0.33
-                     ]
-                  ]
-                  ,
-               "output":"127.0.0.1:10000",
-               "name":"first",
-               "description":"first comment"
+{
+    "application": {
+        "data": {
+            "lekture": {
+                "attributes": {
+                    "author": "Pixel Stereo", 
+                    "project": "projet de test", 
+                    "version": "0.1"
+                }
             }
-         }
-      }
-   },
-   "devices":{  
-
-   }
+        }
+    }, 
+    "devices": {}, 
+    "events": {
+        "data": {
+            "1423164967383": {
+                "attributes": {
+                    "content": [
+                        [
+                            "/node/string", 
+                            "a string"
+                        ], 
+                        1000, 
+                        [
+                            "/node/list", 
+                            [
+                                0.49, 
+                                62988, 
+                                "egg"
+                            ]
+                        ], 
+                        2200, 
+                        [
+                            "/node/integer", 
+                            50595
+                        ], 
+                        [
+                            "/node/float", 
+                            0.33
+                        ]
+                    ], 
+                    "description": "first comment", 
+                    "name": "first", 
+                    "output": "127.0.0.1:10000"
+                }
+            }
+        }
+    }
 }

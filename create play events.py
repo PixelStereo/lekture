@@ -6,7 +6,7 @@ from lekture import lekture
 
 debug = True
 lekture.debug = True
-lekture.events.debug = False
+lekture.events.debug = True
 
 my_event = lekture.events.Event(name='toto-la-roulette')
 """print my_event.name
@@ -16,13 +16,9 @@ print my_event.output
 print my_event.contentç
 print my_event.content.keys()
 print"""
-my_event.timepoint(500)
 
-another_event = lekture.events.Event(content={'zob':22},name='lol')
-another_event.content = {'/plouf' : 32}
-
-""" content doesn't work when creating a timepoint… AHHHHHHHH"""
-another_event.timepoint(500,content={'/my_string':['blah',2]})
+another_event = lekture.events.Event(content=[['zob',22]],name='lol')
+another_event.content = [['/plouf' , 32]]
 
 print lekture.events.Event.instances.keys()
 

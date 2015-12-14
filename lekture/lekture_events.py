@@ -7,7 +7,7 @@ client = OSCClient()
 import time
 from time import sleep
 
-debug=True
+debug=0
 
 
 class Event(object):
@@ -16,7 +16,7 @@ class Event(object):
     def __new__(self,*args,**kwargs):
         _new = object.__new__(self)
         Event.instances[_new] = None
-        if debug :
+        if debug == 2:
             print
             print "........... EVENT created ..........."
             print
@@ -33,13 +33,13 @@ class Event(object):
         if name == '':
             name = 'untitled'
         if content == []:
-            content = [['/node/string','a string'],['/node/integer',random.randint(65e2,65e3)],['/node/float',float(random.randint(0,100))/100],['/node/list',[float(random.randint(0,100))/100,random.randint(65e2, 65e3),"egg"]]]
+            content = [['/node/string','a string'],random.randint(500,3000),['/node/integer',random.randint(65e2,65e3)],['/node/float',float(random.randint(0,100))/100],['/node/list',[float(random.randint(0,100))/100,random.randint(65e2, 65e3),"egg"]]]
         self.name=name
         self.output=output
         self.description=description
         self.uid=uid
         self.content = content
-        if debug : 
+        if debug == 2: 
             print
             print "........... EVENT %s initing ..........." %self.name
             for line in self.content:
@@ -51,6 +51,16 @@ class Event(object):
             print "........... EVENT %s inited ..........." %self.name
             print
 
+    @staticmethod
+    def getinstances():
+        return Event.instances.keys()
+
+    @staticmethod
+    def export():
+        events = {'data':{}}
+        for event in Event.getinstances():
+            events['data'].setdefault(event.uid,{'attributes':{'content':event.content,'output':event.output,'name':event.name,'description':event.description}})
+        return events
 
     # ----------- CONTENT -------------
     @property
@@ -126,33 +136,25 @@ class Event(object):
     def play(self):
         """play an event"""
         if debug : print '------ PLAY EVENT :' , self.name , '-----------------'
-        timepoints = []
-        for timepoint in self.timepoints:
-            timepoints.append([timepoint.index,timepoint])
-        timepoints.sort()
-        for timepoint in timepoints:
-            if debug : print '--------PLAY TIMEPOINT' , timepoint[0] , '----------'
-            sleep(timepoint[0]/1000)
-            output_ip = self.output.split(':')[0]
-            output_port = self.output.split(':')[1]
-            if debug : 
-                print 'connecting to : ' + output_ip + ':' + output_port
-                if debug : 'try to send timepoint ' , timepoint.index
-            try:
-                client.connect((output_ip , int(output_port)))
-                for address,args in timepoint[1].content.items():
-                    if debug : print address , args
+        for line in self.content:
+            if type(line) is int:
+                if debug : print 'waiting' , line
+                sleep(line/1000)
+            else:
+                output_ip = self.output.split(':')[0]
+                output_port = self.output.split(':')[1]
+                if debug : 
+                    print 'connecting to : ' + output_ip + ':' + output_port
+                try:
+                    client.connect((output_ip , int(output_port)))
                     msg = OSCMessage()
-                    msg.setAddress(address)
-                    msg.append(args)
+                    msg.setAddress(line[0])
+                    msg.append(line[1])
                     client.send(msg)
                     time.sleep(0.01)
                     msg.clearData()
-                if debug :
-                    print '--------END timepoint' , timepoint[0] , '--------------'
-                    print
-            except OSCClientError :
-                print 'Connection refused'
+                except OSCClientError :
+                    print 'Connection refused'
         return self.name , 'done'
 
 
