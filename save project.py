@@ -1,6 +1,7 @@
 from lekture import lekture
 from time import sleep
 
+my_projekt = lekture.Project('test-projekt')
 
 #create an event
 event = lekture.events.Event(name='event')
@@ -21,6 +22,7 @@ event.play()
 sleep(1)
 another_event.play()
 
-#save the project
-filepath = lekture.abspath(lekture.timestamp()+'.json')
-lekture.write(filepath)
+
+# save the projekt 
+my_projekt.path = lekture.os.path.abspath('lekture/projects/'+lekture.timestamp()+'.json')
+my_projekt.write()

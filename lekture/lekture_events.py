@@ -22,7 +22,7 @@ class Event(object):
             print
         return _new
 
-    def __init__(self,name='',uid='',description = '',output='',content=''):
+    def __init__(self,name='',uid='',description = '',output='',content=[]):
         """create an event"""
         if output == '':
             output = '127.0.0.1:10000'
