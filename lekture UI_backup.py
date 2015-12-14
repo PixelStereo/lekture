@@ -12,9 +12,13 @@ from PyQt5.QtGui import  QStandardItemModel , QStandardItem
 
 from lekture import lekture
 
+#devices = lekture.devices.db
+#events = lekture.events.db
+application = lekture.application_db
+
 debug = True
-lekture.debug = True
-lekture.events.debug = True
+lekture.debug = False
+lekture.events.debug = False
 
 def debugUI(whatitis , WHAT2PRINT = ''):
     if debug : print "TRIGGERED FROM UI : " + whatitis , WHAT2PRINT
@@ -31,80 +35,12 @@ class lektureUI(QMainWindow, form_class):
         self.setupUi(self)
         # load a style sheet
         self.setStyleSheet(open("style.qss", "r").read())
-
-        # make a model for lekture Project
+        #read a project
+        path = lekture.projectpath+'test.json'
+        lekture.read(path=path)
+        # make a model with lekture file
         self.lekture_model = QStandardItemModel()
-
-""" PROJECT FILE MANAGEMENT """
-
-    def new_project(self):
-        """method used for ProjectNew and ProjectOpen"""
-        self.lekture_model.clear()
-        debugUI("NEW PROJECT")
-        self.__init__()
-        self.project = lekture.Project('no name')
-
-    def save_as_project(self):
-        debugUI("SAVE PROJECT AS")
-        self.project.path = path+'.json'
-        self.project.write()
-
-    def open_project(self):
-        if path:
-            if debug : print 'file_path has been selected' , path
-            self.project.path = path
-            self.project.read()
-            debugUI("OPEN PROJECT",path)
-        else:
-            debugUI('no file selected')
-
-
-    @pyqtSlot()
-    def on_ProjectNew_triggered(self):
-        """Create a new project (reload everything)"""
-        self.new_project()
-
-    @pyqtSlot()
-    def on_ProjectOpen_triggered(self):
-        """open a project (reload everything)"""
-        self.new_project()
-        path = QFileDialog().getOpenFileName(self, "Select a lekture project to open",)
-        path = path[0]
-        self.open_project()
-
-    @pyqtSlot()
-    def on_ProjectSave_triggered(self):
-        """ save project"""
-        debugUI('SAVE PROJECT')
-        if os.path.exists(self.project.path):
-            self.project.write()
-        else:
-            self.save_as_project()
-
-    @pyqtSlot()
-    def on_ProjectSaveAs_triggered(self):
-        """save project as"""
-        path = QFileDialog.getSaveFileName(self, "Save lekture project")
-        if debug : print "SAVE AS" , path
-        if path:
-            path = path[0]
-        self.save_as_project()
-    
-    @pyqtSlot()
-    def on_ProjectOpenDir_triggered(self):
-        """ open project directory"""
-        directory, filename = os.path.split(lekture.project.path)
-        from subprocess import call
-        call(["open", directory])
-        debugUI("OPEN DIRECTORY",directory,filename)
-
-
-
-
-
-
-
-        """# get part of the lekture project
+        # get part of the lekture project
         pages = lekture.getpages()
         for page in pages:
             model = QStandardItem(page)
@@ -131,7 +67,7 @@ class lektureUI(QMainWindow, form_class):
         self.event_selection = self.events_list.selectionModel()
         self.event_selection.selectionChanged.connect(self.event_selected)
 
-
+        """
         self.lekture_model.dataChanged.connect(self.edit)
 
  
@@ -390,6 +326,54 @@ class lektureUI(QMainWindow, form_class):
         print "DATA CHANGED :"  , self.selection , (data.data())
         print "PLEASE HELP TO DO THIS"
 
+    @pyqtSlot()
+    def on_actionNew_triggered(self):
+        """Create a new project (reload everything)"""
+        self.lekture_model.clear()
+        debugUI("NEW PROJECT")
+        self.__init__()
+        debugUI("RELOAD lekture")
+
+    @pyqtSlot()
+    def on_actionOpenDir_triggered(self):
+        """ open project directory"""
+        file_path = lekture.getprojectpath()
+        directory, filename = os.path.split(file_path)
+        from subprocess import call
+        call(["open", directory])
+        debugUI("OPEN DIRECTORY")
+
+    @pyqtSlot()
+    def on_actionSave_triggered(self):
+        """ save project"""
+        debugUI('SAVE PROJECT')
+        lekture.write()
+
+    @pyqtSlot()
+    def on_actionSaveAs_triggered(self):
+        """save project as"""
+        file_path = self.file_saveas_select()
+        debugUI("SAVE PROJECT AS")
+        lekture.write(file_path)
+
+    def file_open_select(self):
+        """choose file dialog window"""
+        file_path = QFileDialog().getOpenFileName(self, "Select a lekture project to open",)
+        if file_path:
+            if debug : print 'file_path has been selected' , file_path
+            file_path = file_path[0]
+            lekture.file_path = file_path
+            self.events_list_refresh()
+            return file_path
+
+    def file_saveas_select(self):
+        """choose file dialog window"""
+        file_path = QFileDialog.getSaveFileName(self, "Save lekture project")
+        if debug : print "SAVE AS" , file_path
+        if file_path:
+            file_path = file_path[0]
+            #self.file_pathUI.setText(file_path)
+            return file_path
     
     @pyqtSlot()
     def on_event_play_clicked(self):

@@ -423,14 +423,14 @@
    </property>
    <widget class="QMenu" name="menuFile">
     <property name="title">
-     <string>File</string>
+     <string>Project</string>
     </property>
-    <addaction name="actionNew"/>
-    <addaction name="actionOpen"/>
-    <addaction name="actionSave"/>
-    <addaction name="actionSaveAs"/>
+    <addaction name="ProjectNew"/>
+    <addaction name="ProjectOpen"/>
+    <addaction name="ProjectSave"/>
+    <addaction name="ProjectSaveAs"/>
     <addaction name="separator"/>
-    <addaction name="actionOpenDir"/>
+    <addaction name="ProjectOpenDir"/>
    </widget>
    <widget class="QMenu" name="menuEvents">
     <property name="title">
@@ -467,7 +467,7 @@
     <bool>false</bool>
    </attribute>
   </widget>
-  <action name="actionNew">
+  <action name="ProjectNew">
    <property name="text">
     <string>New</string>
    </property>
@@ -475,7 +475,7 @@
     <string>Ctrl+N</string>
    </property>
   </action>
-  <action name="actionOpen">
+  <action name="ProjectOpen">
    <property name="text">
     <string>Open</string>
    </property>
@@ -483,7 +483,7 @@
     <string>Ctrl+O</string>
    </property>
   </action>
-  <action name="actionSave">
+  <action name="ProjectSave">
    <property name="text">
     <string>Save</string>
    </property>
@@ -491,7 +491,7 @@
     <string>Ctrl+S</string>
    </property>
   </action>
-  <action name="actionSaveAs">
+  <action name="ProjectSaveAs">
    <property name="text">
     <string>Save As</string>
    </property>
@@ -499,7 +499,7 @@
     <string>Ctrl+Shift+S</string>
    </property>
   </action>
-  <action name="actionOpenDir">
+  <action name="ProjectOpenDir">
    <property name="text">
     <string>Open in Finder</string>
    </property>
