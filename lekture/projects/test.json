@@ -1,1 +1,43 @@
-{"application": {},"events": {"data": {"1423164967383": {"attributes": {"content": {"1": {},"0": {"/node/string": "a string","/node/list": [0.49,62988,"egg"],"/node/integer": [50595],"/node/float": [0.33]},"3": {},"2": {},"5": {},"4": {},"7": {},"6": {}},"output": "127.0.0.1:10000","name": "first\t","description": "first comment"}},"1423164967196": {"attributes": {"content": {"1": {},"0": {"/node/string": "a string","/node/list": [0.18,13265,"egg"],"/node/integer": [64900],"/node/float": [0.94]},"3": {},"2": {},"4": {}},"output": "127.0.0.1:10000","name": "second","description": "second comment"}},"1423164966871": {"attributes": {"content": {"1": {},"0": {"/node/string": "a string","/node/list": [0.46,35696,"egg"],"/node/integer": [41672],"/node/float": [0.31]},"2": {}},"output": "127.0.0.1:10000","name": "troisieme","description": "tres comment"}},"1423164966720": {"attributes": {"content": {"0": {"/node/string": "a string","/node/list": [0.05,59223,"egg"],"/node/integer": [49315],"/node/float": [0.98]}},"output": "127.0.0.1:10000","name": "et de quatre","description": "fourth comment"}}}},"devices": {}}
+{  
+   "application":{  
+
+   },
+   "events":{  
+      "data":{  
+         "1423164967383":{  
+            "attributes":{  
+               "content":
+                  [  
+                     [  
+                        "/node/string",
+                        "a string"
+                     ],
+                     [  
+                        "/node/list",
+                        [  
+                           0.49,
+                           62988,
+                           "egg"
+                        ]
+                     ],
+                     [  
+                        "/node/integer",
+                        50595
+                     ],
+                     [  
+                        "/node/float",
+                        0.33
+                     ]
+                  ]
+                  ,
+               "output":"127.0.0.1:10000",
+               "name":"first",
+               "description":"first comment"
+            }
+         }
+      }
+   },
+   "devices":{  
+
+   }
+}

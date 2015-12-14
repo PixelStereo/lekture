@@ -10,38 +10,6 @@ from time import sleep
 debug=True
 
 
-class Timepoint(object):
-    """docstring for Timepoint"""
-    def __new__(self,*args,**kwargs):
-        _new = object.__new__(self)
-        if debug :
-            print "........... TIMEPOINT created ..........."
-        return _new
-
-    def __init__(self,index,content={}):
-        if content == {}:
-            content = {'/node/string':'a string','/node/integer':[random.randint(65e2,65e3)],'/node/float':[float(random.randint(0,100))/100],'/node/list':[float(random.randint(0,100))/100,random.randint(65e2, 65e3),"egg"]}
-        self.index = index
-        self.content = content
-        if debug : 
-            print "........... TIMEPOINT %s inited ..........." %str(index)
-            print
-
-    # ----------- CONTENT -------------
-    @property
-    def content(self):
-        "Current content of the timepoint"
-        return self.__content
-
-    @content.setter
-    def content(self, content):
-        self.__content = content
-
-    @content.deleter
-    def content(self):
-        pass
-
-
 class Event(object):
     """Create a new event"""
     instances = weakref.WeakKeyDictionary()
@@ -54,11 +22,8 @@ class Event(object):
             print
         return _new
 
-    def __init__(self,name='',protocol='',uid='',description = '',output='',content=''):
+    def __init__(self,name='',uid='',description = '',output='',content=''):
         """create an event"""
-        timepoints = []
-        if protocol == '':
-            protocol = 'OSC'
         if output == '':
             output = '127.0.0.1:10000'
         if uid == '':
@@ -67,20 +32,18 @@ class Event(object):
             description = "write a comment"
         if name == '':
             name = 'untitled'
+        if content == []:
+            content = [['/node/string','a string'],['/node/integer',random.randint(65e2,65e3)],['/node/float',float(random.randint(0,100))/100],['/node/list',[float(random.randint(0,100))/100,random.randint(65e2, 65e3),"egg"]]]
         self.name=name
         self.output=output
         self.description=description
-        self.protocol = protocol
         self.uid=uid
-        self.timepoints = timepoints
-        self.timepoint(0)
-        if content != '' : 
-            self.content=content
+        self.content = content
         if debug : 
             print
             print "........... EVENT %s initing ..........." %self.name
-            for timepoint in self.timepoints:
-                print 'timepoint' , timepoint.index , ':' , timepoint.content
+            for line in self.content:
+                print 'content-line' , line
             print 'name : ' , self.name
             print 'description : ' , self.description
             print 'output : ' , self.output
@@ -88,40 +51,21 @@ class Event(object):
             print "........... EVENT %s inited ..........." %self.name
             print
 
-    def timepoint(self,index,content={}):
-        """create a timepoint"""
-        timepoint = Timepoint(index,content={})
-        self.timepoints.append(timepoint)
-        return timepoint
-
 
     # ----------- CONTENT -------------
     @property
     def content(self):
-        "Current content of the event (shortcut to timepoint 0) - TODO : CONCATENATE ALL TIMEPOINTS"
-        return self.timepoints[0].content
+        "Current content of the event"
+        return self.__content
 
     @content.setter
     def content(self, content):
-        self.timepoints[0].content = content
+        self.__content = content
 
     @content.deleter
     def content(self):
         pass
 
-    # ----------- TIMEPOINTS -------------
-    @property
-    def timepoints(self):
-        "Current timepoints of the event"
-        return self.__timepoints
-
-    @timepoints.setter
-    def timepoints(self, timepoints):
-        self.__timepoints = timepoints
-
-    @timepoints.deleter
-    def timepoints(self):
-        pass
 
     # ----------- NAME -------------
     @property
@@ -135,20 +79,6 @@ class Event(object):
 
     @name.deleter
     def name(self):
-        pass
-
-    # ----------- PROTOCOL -------------
-    @property
-    def protocol(self):
-        "Current protocol of the event"
-        return self.__protocol
-
-    @protocol.setter
-    def protocol(self, protocol):
-        self.__protocol = protocol
-
-    @protocol.deleter
-    def protocol(self):
         pass
 
     # ----------- UID -------------

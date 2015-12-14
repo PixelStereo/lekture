@@ -11,7 +11,6 @@ lekture.events.debug = False
 my_event = lekture.events.Event(name='toto-la-roulette')
 """print my_event.name
 print my_event.uid
-print my_event.protocol
 print my_event.description
 print my_event.output
 print my_event.contentç

@@ -1,10 +1,11 @@
 #!/usr/bin/env python
-from os.path import abspath , dirname
+import os
 import json
 import random
+#import socket
+import weakref
 from time import sleep
-from time import time
-import socket
+#from time import time
 
 #import lekture
 import devicemanager
@@ -15,13 +16,6 @@ from lekture_functions import timestamp as timestamp
 
 
 debug = True
-
-# This is the extension for lekture project files
-extension = '.json'
-
-# During development, we use a fixed path in the repo to test
-projectpath = abspath(dirname(__file__))
-projectpath = projectpath + '/projects/'
 
 class Project(object):
     """docstring for Project"""
@@ -35,10 +29,73 @@ class Project(object):
             print
         return _new
 
-    def __init__(self, arg):
+    def __init__(self, path=''):
         super(Project, self).__init__()
-        self.arg = arg
+        # This is the extension for lekture project files
+        extension = '.json'
+        # During development, we use a fixed path in the repo to test
+        if path == '':
+            path = os.path.abspath(os.path.dirname(__file__))
+            path = path + '/projects/'
+        path = path + "test.json"
+        self.path = path
 
+    def read(self) : 
+        path = self.path
+        if not os.path.exists(path):
+            print "ERROR - THIS PATH IS NOT VALID" , path
+        else :
+            try:
+                with open(path) as in_file :
+                    """ TODO :  FIRST WE NEED TO CLEAR THE EVENTS,DEVICES AND MODULAR APPLICATION INSTANCES"""
+                    #events.db.clear()
+                    #application.db.clear()
+                    #devices.db.clear()
+                    if debug : print 'file reading : ' , path
+                    loaded = json.load(in_file,object_hook=unicode2string_dict)
+                    in_file.close()
+                    for key,val in loaded.items():
+                        if key == 'events' :
+                            print '-----------DEBUG EVENTS BEGIN----------'
+                            """create an instance of the Event class 
+                            for each event in the project loaded"""
+                            for uid , event_dict in loaded['events']['data'].items():
+                                if debug : print uid
+                                for attribute , value in event_dict['attributes'].items():
+                                    if attribute == 'content':
+                                        content = value
+                                    elif attribute == 'name':
+                                        name = value
+                                    elif attribute == 'description':
+                                        description = value
+                                    elif attribute == 'output':
+                                        output = value
+                                print type(content) , len(content)
+                                events.Event(uid=uid,name=name,description=description,output=output,content=content)
+                            print '-----------DEBUG EVENTS END----------'
+                            """for event in events.db['data'].keys():
+                                uid = event
+                                name = events.db['data'][event]['attributes']['name']
+                                output = events.db['data'][event]['attributes']['output']
+                                description = events.db['data'][event]['attributes']['description']
+                                event_content = events.db['data'][event]['attributes']['content']
+                                events.new(uid=uid,name=name,description=description,output=output,event_content=event_content)"""
+                        elif key == 'application' :
+                            """need to create an application class"""
+                            #application_db.clear()
+                            for k,v in loaded['application'].items():
+                                #events.db.setdefault(k,v)  
+                                print '-----------DEBUG APPLICATION BEGIN----------'
+                                print k 
+                                print '-----------DEBUG APPLICATION  END----------'
+                                print '-----------DEBUG APPLICATION  BEGIN----------'
+                                print v
+                                print '-----------DEBUG APPLICATION  END----------'
+                    #if debug : print 'project loaded'
+                    #if debug : print 'events.db : ' , events.db
+                    #if debug : print 'application_db : ' , application_db
+            except IOError:
+                if debug : print 'error : project not loaded'
 
 
         
@@ -92,59 +149,6 @@ def unicode2string_dict(data):
         rv[key] = value
     return rv
 
-def read(path='') : 
-    if not os.path.exists(path):
-        print "ERROR - THIS PATH IS NOT VALuid" , path
-    else :
-        try:
-            with open(path) as in_file :
-                """ FIRST WE NEED TO CLEAR THE EVENTS AND MODULAR APPLICATION INSTANCES"""
-                if debug : print 'file reading : ' , path
-                loaded = json.load(in_file,object_hook=unicode2string_dict)
-                in_file.close()
-                for key,val in loaded.items():
-                    if key == 'events' :
-                        #events.db.clear()
-                        for k,v in loaded['events'].items():
-                            #events.db.setdefault(k,v)  
-                            print '-----------DEBUG EVENTS BEGIN----------'
-                            print k 
-                            print '-----------DEBUG EVENTS END----------'
-                            print '-----------DEBUG EVENTS BEGIN----------'
-                            print v
-                            print '-----------DEBUG EVENTS END----------'
-                        """create an instance of the Event class 
-                        for each event in the project loaded"""
-                        """for event in events.db['data'].keys():
-                            uid = event
-                            name = events.db['data'][event]['attributes']['name']
-                            output = events.db['data'][event]['attributes']['output']
-                            description = events.db['data'][event]['attributes']['description']
-                            event_content = events.db['data'][event]['attributes']['content']
-                            events.new(uid=uid,name=name,description=description,output=output,event_content=event_content)"""
-                    elif key == 'application' :
-                        """need to create an application class"""
-                        #application_db.clear()
-                        for k,v in loaded['application'].items():
-                            #events.db.setdefault(k,v)  
-                            print '-----------DEBUG APPLICATION BEGIN----------'
-                            print k 
-                            print '-----------DEBUG APPLICATION  END----------'
-                            print '-----------DEBUG APPLICATION  BEGIN----------'
-                            print v
-                            print '-----------DEBUG APPLICATION  END----------'
-
-
-
-
-
-
-
-                #if debug : print 'project loaded'
-                #if debug : print 'events.db : ' , events.db
-                #if debug : print 'application_db : ' , application_db
-        except IOError:
-            if debug : print 'error : project not loaded'
 
 def write(file_path='') :
     if file_path == '':
