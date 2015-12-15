@@ -17,6 +17,8 @@ from lekture_functions import timestamp as timestamp
 import os, sys
 lib_path = os.path.abspath('./../PyModular')
 sys.path.append(lib_path)
+lib_path = os.path.abspath('./PyModular')
+sys.path.append(lib_path)
 from modular import modular
 from modular.modular import Application
 
