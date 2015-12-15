@@ -15,7 +15,7 @@ from lekture_functions import timestamp as timestamp
 
 
 import os, sys
-lib_path = os.path.abspath('./PyModular')
+lib_path = os.path.abspath('./../PyModular')
 sys.path.append(lib_path)
 from modular import modular
 from modular.modular import Application
@@ -65,9 +65,6 @@ class Project(object):
             try:
                 with open(path) as in_file :
                     """ TODO :  FIRST WE NEED TO CLEAR THE EVENTS,DEVICES AND MODULAR APPLICATION INSTANCES"""
-                    #events.db.clear()
-                    #application.db.clear()
-                    #devices.db.clear()
                     if debug : print 'file reading : ' , path
                     loaded = json.load(in_file,object_hook=unicode2string_dict)
                     in_file.close()
@@ -86,17 +83,15 @@ class Project(object):
                                 taille = len(event_list)
                                 event_list.append(uid)
                                 event_list[taille] = events.Event(uid=uid,name=name,description=description,output=output,content=content)
-                        elif key == 'application' :
-                            """need to create an application class"""
-                            #application_db.clear()
-                            for k,v in loaded['application'].items():
-                                #events.db.setdefault(k,v)  
-                                print '-----------DEBUG APPLICATION BEGIN----------'
-                                print k 
-                                print '-----------DEBUG APPLICATION  END----------'
-                                print '-----------DEBUG APPLICATION  BEGIN----------'
-                                print v
-                                print '-----------DEBUG APPLICATION  END----------'
+                        elif key == 'attributes' :
+                            for attribute,value in loaded['attributes'].items():
+                                if attribute == 'author':
+                                    self.author = value
+                                if attribute == 'version':
+                                    self.version = value
+                                if attribute == 'project':
+                                    self.project = value
+                            self.lastopened = timestamp()
                     if debug : print 'project loaded'
             except IOError:
                 if debug : print 'error : project not loaded'
