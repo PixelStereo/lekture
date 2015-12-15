@@ -1,14 +1,8 @@
 {
-    "application": {
-        "data": {
-            "lekture": {
                 "attributes": {
                     "author": "Pixel Stereo", 
                     "project": "projet de test", 
                     "version": "0.1"
-                }
-            }
-        }
     }, 
     "devices": {}, 
     "events": {
