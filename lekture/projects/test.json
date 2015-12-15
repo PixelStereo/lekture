@@ -1,6 +1,7 @@
 {
     "attributes": {
         "author": "Pixel Stereo", 
+        "name": "test.json", 
         "project": "projet de test", 
         "version": "0.1"
     }, 

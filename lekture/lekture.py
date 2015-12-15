@@ -12,19 +12,7 @@ from devicemanager import OSCClient as OSCClient
 client = OSCClient()
 from lekture_functions import timestamp as timestamp
 
-"""lib_path = os.path.abspath('./../PyModular')
-sys.path.append(lib_path)
-lib_path = os.path.abspath('./PyModular')
-sys.path.append(lib_path)
-from modular import modular
-from modular.modular import Application"""
-
 debug=0
-
-
-#devicemanager.run(11111)
-
-
 
 # this is not the best way to do.
 #But if i don't do that, I can't create events objects 
@@ -32,8 +20,6 @@ debug=0
 event_list = []
 
 debug = True
-
-#app = Application('lekture',author='Pixel Stereo',project='projet de test',version='0.1')
 
 class Project(object):
     """docstring for Project"""
@@ -62,7 +48,7 @@ class Project(object):
         if name:
             self.name = name
         else:
-            name = 'test.json'
+            self.name = 'test.json'
 
     def read(self) : 
         path = self.path
@@ -89,7 +75,7 @@ class Project(object):
                                         output = value
                                 taille = len(event_list)
                                 event_list.append(uid)
-                                event_list[taille] = events.Event(uid=uid,name=name,description=description,output=output,content=content)
+                                event_list[taille] = Event(self,uid=uid,name=name,description=description,output=output,content=content)
                         elif key == 'attributes' :
                             for attribute,value in loaded['attributes'].items():
                                 if attribute == 'author':
@@ -105,21 +91,30 @@ class Project(object):
                 return False
             return True
 
+    def export_attributes(self):
+        attributes = {'author':self.author,'version':self.version,'project':self.project,'name':self.name}
+        return attributes
+
     def write(self) :
         out_file = open(str(self.path), 'w')
         project = {}
-        project.setdefault('events',events.Event.export())
-        project.setdefault('application',modular.Application.export())
+        project.setdefault('events',self.export_events())
+        project.setdefault('attributes',self.export_attributes())
+        #project.setdefault('application',modular.Application.export())
         """TODO : create Device Class in Modular"""
         #project.setdefault('devices',modular.Device.export())
         project.setdefault('devices',{})
-        #out_file.write(json.dumps(project,ensure_ascii=True,separators=(',', ': ')))
         out_file.write(json.dumps(project,sort_keys = True, indent = 4,ensure_ascii=False))
         if debug : print ("file has been written : " , self.path)
 
     def events(self):
         return Event.getinstances(self)
 
+    def export_events(self):
+        events = {'data':{}}
+        for event in self.events():
+            events['data'].setdefault(event.uid,{'attributes':{'content':event.content,'output':event.output,'name':event.name,'description':event.description}})
+        return events
 
 
 class Event(Project):
@@ -171,13 +166,6 @@ class Event(Project):
             if project == event.project:
                 instances.append(event)
         return instances
-
-    @staticmethod
-    def export():
-        events = {'data':{}}
-        for event in Event.getinstances():
-            events['data'].setdefault(event.uid,{'attributes':{'content':event.content,'output':event.output,'name':event.name,'description':event.description}})
-        return events
 
     # ----------- CONTENT -------------
     @property
