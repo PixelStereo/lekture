@@ -15,7 +15,6 @@ from lekture import lekture
 
 debug = True
 lekture.debug = True
-lekture.events.debug = True
 
 def debugUI(whatitis , WHAT2PRINT = ''):
     if debug : print "TRIGGERED FROM UI : " + whatitis , WHAT2PRINT
