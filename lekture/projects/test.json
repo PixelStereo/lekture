@@ -1,8 +1,8 @@
 {
-                "attributes": {
-                    "author": "Pixel Stereo", 
-                    "project": "projet de test", 
-                    "version": "0.1"
+    "attributes": {
+        "author": "Pixel Stereo", 
+        "project": "projet de test", 
+        "version": "0.1"
     }, 
     "devices": {}, 
     "events": {
