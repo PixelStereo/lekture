@@ -3,11 +3,9 @@
 import os
 import sys
 from time import sleep
-from PyQt5.QtCore import pyqtSlot , QDir , QAbstractListModel , Qt , QModelIndex,QObject,QItemSelectionModel
+from PyQt5.QtCore import QStringListModel , pyqtSlot , QDir , QAbstractListModel , Qt , QModelIndex,QObject,QItemSelectionModel
 from PyQt5.uic import loadUiType,loadUi
-import PyQt5.QtWidgets
 from PyQt5.QtWidgets import QWidget,QApplication,QHBoxLayout,QDialog,QListView,QListWidget,QTableWidget,QTableView,QFileDialog,QTableWidgetItem,QWidget,QTreeView,QMainWindow,QPushButton 
-from PyQt5.QtCore import QStringListModel
 from PyQt5.QtGui import  QStandardItemModel , QStandardItem
 
 from lekture import lekture
