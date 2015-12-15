@@ -3,10 +3,13 @@
 import os
 import sys
 from time import sleep
-from PyQt5.QtCore import QStringListModel , QSettings , QSize ,QPoint , QSignalMapper , pyqtSlot , QDir , QAbstractListModel , Qt , QModelIndex,QObject,QItemSelectionModel
+from PyQt5.QtCore import QStringListModel , QSettings , QSize ,QPoint , QSignalMapper ,QObject,QFile,QFileInfo,QTextStream
+from PyQt5.QtCore import pyqtSlot , QDir , QAbstractListModel , Qt , QModelIndex,QItemSelectionModel
 from PyQt5.uic import loadUiType,loadUi
-from PyQt5.QtWidgets import QAction ,QWidget,QApplication,QHBoxLayout,QDialog,QListView,QListWidget,QTableWidget,QTableView,QFileDialog,QTableWidgetItem,QWidget,QTreeView,QMainWindow,QPushButton , QGroupBox,QMdiArea , QFormLayout
+from PyQt5.QtWidgets import QAction ,QWidget,QApplication,QHBoxLayout,QDialog,QListView,QListWidget,QTableWidget,QFormLayout
+from PyQt5.QtWidgets import QTableView,QFileDialog,QTableWidgetItem,QTreeView,QMainWindow,QPushButton , QGroupBox,QMdiArea,QTabWidget,QMessageBox
 from PyQt5.QtGui import  QStandardItemModel , QStandardItem , QIcon , QKeySequence
+
 
 from lekture import lekture
 
@@ -34,7 +37,6 @@ class MainWindow(QMainWindow):
 
         self.createActions()
         self.createMenus()
-        self.createToolBars()
         self.createStatusBar()
         self.updateMenus()
 
@@ -191,12 +193,6 @@ class MainWindow(QMainWindow):
         self.helpMenu = self.menuBar().addMenu("&Help")
         self.helpMenu.addAction(self.aboutAct)
         self.helpMenu.addAction(self.aboutQtAct)
-
-    def createToolBars(self):
-        self.fileToolBar = self.addToolBar("File")
-        self.fileToolBar.addAction(self.newAct)
-        self.fileToolBar.addAction(self.openAct)
-        self.fileToolBar.addAction(self.saveAct)
 
     def createStatusBar(self):
         self.statusBar().showMessage("Ready")
