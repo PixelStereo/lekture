@@ -92,7 +92,7 @@ class Project(object):
             return True
 
     def export_attributes(self):
-        attributes = {'author':self.author,'version':self.version,'project':self.project,'name':self.name}
+        attributes = {'author':self.author,'version':self.version,'name':self.name}
         return attributes
 
     def write(self) :
