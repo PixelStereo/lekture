@@ -332,6 +332,7 @@ class MdiChild(QListView):
         self.setAttribute(Qt.WA_DeleteOnClose)
         self.isUntitled = True
         self.document = Document('unknown')
+        self.project = lekture.Project()
 
     def newFile(self):
         self.isUntitled = True
@@ -347,16 +348,13 @@ class MdiChild(QListView):
             QMessageBox.warning(self, "MDI",
                     "Cannot read file %s:\n%s." % (fileName, file.errorString()))
             return False
-
-        instr = QTextStream(file)
         QApplication.setOverrideCursor(Qt.WaitCursor)
-        self.setPlainText(instr.readAll())
+        self.project.path = fileName
+        if self.project.read():
+            print self.project.Event.getinstances()
         QApplication.restoreOverrideCursor()
-
         self.setCurrentFile(fileName)
-
-        self.document().contentsChanged.connect(self.documentWasModified)
-
+        #self.document().contentsChanged.connect(self.documentWasModified)
         return True
 
     def save(self):
@@ -421,7 +419,7 @@ class MdiChild(QListView):
     def setCurrentFile(self, fileName):
         self.curFile = QFileInfo(fileName).canonicalFilePath()
         self.isUntitled = False
-        self.document().setModified(False)
+        #self.document().setModified(False)
         self.setWindowModified(False)
         self.setWindowTitle(self.userFriendlyCurrentFile() + "[*]")
 
@@ -442,8 +440,6 @@ class Project_Window(QGroupBox):
         self.setAttribute(Qt.WA_DeleteOnClose)
         self.isUntitled = True
 
-        # create a new project
-        self.project = lekture.Project('no name')
 
 
     def newFile(self):
