@@ -16,8 +16,6 @@ from lekture import lekture
 debug = True
 lekture.debug = True
 
-def debugUI(whatitis , WHAT2PRINT = ''):
-    if debug : print "TRIGGERED FROM UI : " + whatitis , WHAT2PRINT
 
 class MainWindow(QMainWindow):
     def __init__(self):
@@ -79,6 +77,10 @@ class MainWindow(QMainWindow):
         if self.activeMdiChild() and self.activeMdiChild().saveAs():
             self.statusBar().showMessage("File saved", 2000)
 
+    def openFolder(self):
+        if self.activeMdiChild() and self.activeMdiChild().openFolder():
+            self.statusBar().showMessage("File revealed in Finder", 2000)
+
     def about(self):
         QMessageBox.about(self, "About MDI",
                 "The <b>MDI</b> example demonstrates how to write multiple "
@@ -88,6 +90,7 @@ class MainWindow(QMainWindow):
         hasMdiChild = (self.activeMdiChild() is not None)
         self.saveAct.setEnabled(hasMdiChild)
         self.saveAsAct.setEnabled(hasMdiChild)
+        self.openFolderAct.setEnabled(hasMdiChild)
         self.closeAct.setEnabled(hasMdiChild)
         self.closeAllAct.setEnabled(hasMdiChild)
         self.nextAct.setEnabled(hasMdiChild)
@@ -142,6 +145,9 @@ class MainWindow(QMainWindow):
                 statusTip="Save the document under a new name",
                 triggered=self.saveAs)
 
+        self.openFolderAct = QAction("Open Project Folder" ,self,
+                statusTip="Reveal Project in Finder",triggered=self.openFolder)
+
         self.exitAct = QAction("E&xit", self, shortcut=QKeySequence.Quit,
                 statusTip="Exit the application",
                 triggered=QApplication.instance().closeAllWindows)
@@ -181,6 +187,7 @@ class MainWindow(QMainWindow):
         self.fileMenu.addAction(self.saveAct)
         self.fileMenu.addAction(self.saveAsAct)
         self.fileMenu.addSeparator()
+        self.fileMenu.addAction(self.openFolderAct)
         self.fileMenu.addAction(self.exitAct)
 
         self.windowMenu = self.menuBar().addMenu("&Window")
@@ -230,78 +237,6 @@ class MainWindow(QMainWindow):
 
 
 
-    """ PROJECT FILE MANAGEMENT """
-
-    def new_project(self):
-        """method used for ProjectNew and ProjectOpen"""
-        self.project_model.clear()
-        child = Project_Window()
-        child.newFile()
-        child.show()
-        
-
-    def save_as_project(self,path):
-        debugUI("SAVE PROJECT AS")
-        self.project.path = path+'.json'
-        self.project.write()
-
-    def open_project(self,path):
-        if path:
-            debugUI('OPEN PROJECT')
-            self.project.path = path
-            self.new_project()
-            self.project.read()
-        else:
-            debugUI('OPEN CANCELLED')
-
-
-    @pyqtSlot()
-    def on_ProjectNew_triggered(self):
-        """Create a new project (reload everything)"""
-        debugUI("NEW PROJECT")
-        self.new_project()
-
-    @pyqtSlot()
-    def on_ProjectOpen_triggered(self):
-        """open a project (reload everything)"""
-        debugUI("OPEN PROJECT")
-        path = QFileDialog().getOpenFileName(self, "Select a lekture project to open",)
-        path = path[0]
-        if os.path.exists(path):
-            self.open_project(path)
-        else:
-            debugUI('OPEN CANCELLED')
-
-    @pyqtSlot()
-    def on_ProjectSave_triggered(self):
-        """ save project"""
-        debugUI('SAVE PROJECT')
-        if os.path.exists(self.project.path):
-            self.project.write()
-        else:
-            self.save_as_project()
-
-    @pyqtSlot()
-    def on_ProjectSave_as_triggered(self):
-        """save project as"""
-        debugUI("SAVE AS")
-        path = QFileDialog.getSaveFileName(self, "Save lekture project")
-        if path:
-            path = path[0]
-        if os.path.exists(path):
-            self.save_as_project(path)
-        else:
-            debugUI('SAVE_AS CANCELLED')
-    
-    @pyqtSlot()
-    def on_ProjectOpenDir_triggered(self):
-        """ open project directory"""
-        debugUI("OPEN DIRECTORY")
-        directory, filename = os.path.split(self.project.path)
-        from subprocess import call
-        call(["open", directory])
-
-
 
 class Document(object):
     """docstring for Document"""
@@ -320,9 +255,7 @@ class Document(object):
 
         
 
-
-
-class MdiChild(QGroupBox):
+class MdiChild(QGroupBox,QModelIndex):
     sequenceNumber = 1
 
     def __init__(self):
@@ -332,8 +265,7 @@ class MdiChild(QGroupBox):
         self.isUntitled = True
         # I must change all document reference to project… so I need to enhance project with modify flags and signals
         self.document = Document('unknown')
-        self.project = lekture.Project()
-        print 'PROJECT-UI' , self.project
+        self.project = lekture.new_project()
 
         self.originalPalette = QApplication.palette()
 
@@ -399,7 +331,7 @@ class MdiChild(QGroupBox):
                     "Cannot read file %s:\n%s." % (fileName, file.errorString()))
             return False
         QApplication.setOverrideCursor(Qt.WaitCursor)
-        self.project.path = fileName
+        self.project.read(fileName)
         self.events_list_refresh()
         QApplication.restoreOverrideCursor()
         self.setCurrentFile(fileName)
@@ -416,24 +348,28 @@ class MdiChild(QGroupBox):
         fileName, _ = QFileDialog.getSaveFileName(self, "Save As", self.curFile)
         if not fileName:
             return False
-
         return self.saveFile(fileName)
 
-    def saveFile(self, fileName):
-        file = QFile(fileName)
-
-        if not file.open(QFile.WriteOnly | QFile.Text):
-            QMessageBox.warning(self, "MDI",
-                    "Cannot write file %s:\n%s." % (fileName, file.errorString()))
-            return False
-
-        outstr = QTextStream(file)
+    def saveFile(self, fileName=None):
+        """ save project"""
         QApplication.setOverrideCursor(Qt.WaitCursor)
-        outstr << self.toPlainText()
+        if fileName:
+            self.project.write(fileName)
+        else:
+            self.project.write()
         QApplication.restoreOverrideCursor()
-
         self.setCurrentFile(fileName)
         return True
+
+    def openFolder(self):
+        """ open project directory"""
+        if self.project.path:
+            directory, filename = os.path.split(self.project.path)
+            from subprocess import call
+            call(["open", directory])
+            return True
+        else:
+            False
 
     def userFriendlyCurrentFile(self):
         return self.strippedName(self.curFile)
@@ -484,29 +420,46 @@ class MdiChild(QGroupBox):
         self.events_list.itemSelectionChanged.connect(self.eventSelectionChanged)
         self.event_new = QPushButton(('New Event'))
         self.event_new.released.connect(self.newEvent)
+        self.event_del = QPushButton(('Delete Event'))
+        self.event_del.released.connect(self.delEvent)
 
         layout = QVBoxLayout()
         layout.addWidget(self.event_new)
         layout.addWidget(self.events_list)
+        layout.addWidget(self.event_del)
         layout.addStretch(1)
         self.topLeftGroupBox.setLayout(layout)    
 
     def eventSelectionChanged(self):
-		items = self.events_list.selectedItems()
-		x=[]
-		for i in list(items):
-			x.append(str(i.text()))
-		print x[0]
+        items = self.events_list.selectedItems()
+        x=[]
+        for i in list(items):
+            x.append(str(i.text()))
+        #if type(x) == 'list':
+        #    self.events_list_selected = x[0]
+        #else:
+        #    self.events_list_selected = x
+        if len(x)>0:
+            for event in self.project.events_obj():
+                if event.uid == x[0]:
+                    self.events_list_selected = event
+        else:
+            self.events_list_selected = None
+        print 'selected' , self.events_list_selected
+
 
     def newEvent(self):
     	event = self.project.new_event()
         self.events_list_refresh()
 
+    def delEvent(self):
+        self.project.del_event(self.events_list_selected)
+        self.events_list_refresh()
+
     def events_list_refresh(self):
         self.events_list.clear()
-        print self.project.events()
         for event in self.project.events():
-            self.events_list.addItem(str(event))
+            self.events_list.addItem(str(event.uid))
 
     def createRightGroupBox(self):
         self.RightGroupBox = QGroupBox("Event Content")

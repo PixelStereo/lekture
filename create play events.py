@@ -18,7 +18,7 @@ print my_event.contentç
 print my_event.content.keys()
 print"""
 
-another_event = lekture.Event(my_project ,content=[['zob',22]],name='lol')
+another_event = my_project.new_event(content=[['zob',22]],name='lol')
 another_event.content = [['/plouf' , 32]]
 
 print my_project.events()

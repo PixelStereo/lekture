@@ -1,30 +1,25 @@
 #!/usr/bin/env python
-"""import os
-import sys
-import json
-import random
-import weakref
-from time import sleep
-import random
-import devicemanager
-from OSC import OSCMessage , OSCClientError
-from devicemanager import OSCClient as OSCClient
-client = OSCClient()
-from lekture_functions import timestamp as timestamp"""
 
 from functions import timestamp
 from functions import unicode2string_dict
 from projects import Project 
 from projects import Event
 
-debug=0
-
-# this is not the best way to do.
-#But if i don't do that, I can't create events objects 
-# because when I call Event.getinstances(), the instances list is empty
-event_list = []
-
 debug = True
+
+project_list = []
+
+def new_project():
+    taille = len(project_list)
+    print taille
+    the_project = None
+    project_list.append(the_project)
+    project_list[taille] = Project(author=None,version='0.0.1',name=None)
+    return project_list[taille]
+
+
+
+
 
 def getpages():
     if debug : print project

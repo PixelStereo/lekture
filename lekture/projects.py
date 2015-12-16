@@ -51,6 +51,7 @@ class Project(object):
         if not os.path.exists(path):
             print "ERROR - THIS PATH IS NOT VALID" , path
         else :
+            print 'loading' , path
             try:
                 with open(path) as in_file :
                     """ TODO :  FIRST WE NEED TO CLEAR THE EVENTS,DEVICES AND MODULAR APPLICATION INSTANCES"""
@@ -69,17 +70,13 @@ class Project(object):
                                         description = value
                                     elif attribute == 'output':
                                         output = value
-                                taille = len(event_list)
-                                event_list.append(uid)
-                                event_list[taille] = self.new_event(self,uid=uid,name=name,description=description,output=output,content=content)
+                                self.new_event(self,uid=uid,name=name,description=description,output=output,content=content)
                         elif key == 'attributes' :
                             for attribute,value in loaded['attributes'].items():
                                 if attribute == 'author':
                                     self.author = value
                                 if attribute == 'version':
                                     self.version = value
-                                if attribute == 'project':
-                                    self.project = value
                                 if attribute == 'name':
                                     self.name = value
                             self.lastopened = lekture.timestamp()
@@ -90,23 +87,36 @@ class Project(object):
                 return False
             return True
 
-    def write(self) :
-        out_file = open(str(self.path), 'w')
+    def write(self,path=None) :
+        if path:
+            savepath = path
+        else:
+            savepath = self.path
+        out_file = open(str(savepath), 'w')
         project = {}
         project.setdefault('events',self.export_events())
         project.setdefault('attributes',self.export_attributes())
         project.setdefault('devices',{})
         out_file.write(json.dumps(project,sort_keys = True, indent = 4,ensure_ascii=False))
-        if debug : print ("file has been written : " , self.path)
+        if debug : print ("file has been written : " , savepath)
 
     def events(self):
         return Event.getinstances(self)
 
     def new_event(self,*args,**kwargs):
-        event = Event(self)
+        taille = len(event_list)
+        the_event = None
+        event_list.append(the_event)
+        event_list[taille] = Event(self)
         for key, value in kwargs.iteritems():
-            setattr(event, key, value)
-        return event
+            setattr(event_list[taille], key, value)
+        return event_list[taille]
+
+    def events_obj(self):
+        return event_list
+
+    def del_event(self,event):
+        event_list.remove(event)
 
     def export_attributes(self):
         attributes = {'author':self.author,'version':self.version,'name':self.name}
