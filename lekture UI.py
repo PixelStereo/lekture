@@ -333,6 +333,7 @@ class MdiChild(QGroupBox):
         # I must change all document reference to project… so I need to enhance project with modify flags and signals
         self.document = Document('unknown')
         self.project = lekture.Project()
+        print 'PROJECT-UI' , self.project
 
         self.originalPalette = QApplication.palette()
 
@@ -381,9 +382,11 @@ class MdiChild(QGroupBox):
         #QApplication.setStyle(QStyleFactory.create('Windows'))
         QApplication.setPalette(QApplication.style().standardPalette())
 
+
+
     def newFile(self):
         self.isUntitled = True
-        self.curFile = "document%d.txt" % MdiChild.sequenceNumber
+        self.curFile = "project %d" % MdiChild.sequenceNumber
         MdiChild.sequenceNumber += 1
         self.setWindowTitle(self.curFile + '[*]')
 
@@ -397,9 +400,7 @@ class MdiChild(QGroupBox):
             return False
         QApplication.setOverrideCursor(Qt.WaitCursor)
         self.project.path = fileName
-        if self.project.read():
-            for event in self.project.events():
-                self.events_list.addItem(event.uid)
+        self.events_list_refresh()
         QApplication.restoreOverrideCursor()
         self.setCurrentFile(fileName)
         #self.document().contentsChanged.connect(self.documentWasModified)
@@ -477,28 +478,35 @@ class MdiChild(QGroupBox):
 
 
 
-
-
-
-
-
-
-    def createEventsList(self):
-        self.topLeftGroupBox = QGroupBox("Events")
-        self.events_list = QListWidget()
-        #self.events_list.setFixedSize(180,300)
-
-
     def createTopLeftGroupBox(self):
         self.topLeftGroupBox = QGroupBox("Events List")
-        self.event_new = QPushButton(('New Event'))
         self.events_list = QListWidget()
+        self.events_list.itemSelectionChanged.connect(self.eventSelectionChanged)
+        self.event_new = QPushButton(('New Event'))
+        self.event_new.released.connect(self.newEvent)
 
         layout = QVBoxLayout()
         layout.addWidget(self.event_new)
         layout.addWidget(self.events_list)
         layout.addStretch(1)
         self.topLeftGroupBox.setLayout(layout)    
+
+    def eventSelectionChanged(self):
+		items = self.events_list.selectedItems()
+		x=[]
+		for i in list(items):
+			x.append(str(i.text()))
+		print x[0]
+
+    def newEvent(self):
+    	event = self.project.new_event()
+        self.events_list_refresh()
+
+    def events_list_refresh(self):
+        self.events_list.clear()
+        print self.project.events()
+        for event in self.project.events():
+            self.events_list.addItem(str(event))
 
     def createRightGroupBox(self):
         self.RightGroupBox = QGroupBox("Event Content")
