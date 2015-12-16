@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 
 from functions import timestamp
 from functions import unicode2string_dict
@@ -11,19 +12,20 @@ project_list = []
 
 def new_project():
     taille = len(project_list)
-    print taille
     the_project = None
     project_list.append(the_project)
-    project_list[taille] = Project(author=None,version='0.0.1',name=None)
+    project_list[taille] = Project(author='unknown',version='0.0.1')
     return project_list[taille]
 
 
 
 
 
-def getpages():
-    if debug : print project
-    return project.keys()
+
+
+
+
+"""these funcitons are not used now… these come from my first tests without classes using a dict"""
 
 def listdirectory2(path):  
     """list a directory"""
@@ -32,22 +34,6 @@ def listdirectory2(path):
         for i in files:  
             projects_list.append(os.path.join(root, i))  
     return projects_list
-
-def getprojectpath():
-    return projectpath
-
-
-def setdb(key,value):
-    """set something in the database"""
-    self.db.setdefault(key,value)
-    
-def getdb_value(key):
-    """Request in the database"""
-    self.db.get(key)
-
-def getdb_keys(key):
-    """Request in the database"""
-    self.db.get(key)
 
 def dict2string(content):
     """get event info (NEED TO BE """

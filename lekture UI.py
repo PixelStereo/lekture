@@ -266,6 +266,7 @@ class MdiChild(QGroupBox,QModelIndex):
         # I must change all document reference to project… so I need to enhance project with modify flags and signals
         self.document = Document('unknown')
         self.project = lekture.new_project()
+        self.events_list_selected = None
 
         self.originalPalette = QApplication.palette()
 
@@ -274,11 +275,9 @@ class MdiChild(QGroupBox,QModelIndex):
 
         self.createTopLeftGroupBox()
         self.createRightGroupBox()
-        self.createBottomLeftTabWidget()
 
         disableWidgetsCheckBox.toggled.connect(self.topLeftGroupBox.setDisabled)
         disableWidgetsCheckBox.toggled.connect(self.RightGroupBox.setDisabled)
-        disableWidgetsCheckBox.toggled.connect(self.bottomLeftTabWidget.setDisabled)
 
         topLayout = QHBoxLayout()
         project_author_label = QLabel('author')
@@ -287,7 +286,12 @@ class MdiChild(QGroupBox,QModelIndex):
         project_version = QLineEdit(self.project.version)
         project_path_label = QLabel('path')
         project_path = QLineEdit(self.project.path)
-        project_path.setFixedWidth(600)
+        project_path.setFixedWidth(400)
+
+        self.project_author = project_author
+        self.project_version = project_version
+        self.project_path = project_path
+
         topLayout.addWidget(project_author_label)
         topLayout.addWidget(project_author)
         topLayout.addWidget(project_version_label)
@@ -301,9 +305,7 @@ class MdiChild(QGroupBox,QModelIndex):
         mainLayout.addLayout(topLayout, 0, 0, 1, 2)
         mainLayout.addWidget(self.topLeftGroupBox, 1, 0)
         mainLayout.addWidget(self.RightGroupBox, 1, 1)
-        mainLayout.addWidget(self.bottomLeftTabWidget, 2, 0)
         mainLayout.setRowStretch(1, 1)
-        mainLayout.setRowStretch(2, 1)
         mainLayout.setColumnStretch(0, 1)
         mainLayout.setColumnStretch(1, 1)
         self.setLayout(mainLayout)
@@ -333,10 +335,16 @@ class MdiChild(QGroupBox,QModelIndex):
         QApplication.setOverrideCursor(Qt.WaitCursor)
         self.project.read(fileName)
         self.events_list_refresh()
+        self.project_display()
         QApplication.restoreOverrideCursor()
         self.setCurrentFile(fileName)
         #self.document().contentsChanged.connect(self.documentWasModified)
         return True
+
+    def project_display(self):
+        self.project_author.setText(self.project.author)
+        self.project_version.setText(self.project.version)
+        self.project_path.setText(self.project.path)
 
     def save(self):
         if self.isUntitled:
@@ -420,11 +428,14 @@ class MdiChild(QGroupBox,QModelIndex):
         self.events_list.itemSelectionChanged.connect(self.eventSelectionChanged)
         self.event_new = QPushButton(('New Event'))
         self.event_new.released.connect(self.newEvent)
+        self.event_play = QPushButton(('Play Event'))
+        self.event_play.released.connect(self.playEvent)
         self.event_del = QPushButton(('Delete Event'))
         self.event_del.released.connect(self.delEvent)
 
         layout = QVBoxLayout()
         layout.addWidget(self.event_new)
+        layout.addWidget(self.event_play)
         layout.addWidget(self.events_list)
         layout.addWidget(self.event_del)
         layout.addStretch(1)
@@ -443,9 +454,9 @@ class MdiChild(QGroupBox,QModelIndex):
             for event in self.project.events_obj():
                 if event.uid == x[0]:
                     self.events_list_selected = event
+            self.event_display(self.events_list_selected)
         else:
             self.events_list_selected = None
-        print 'selected' , self.events_list_selected
 
 
     def newEvent(self):
@@ -456,10 +467,22 @@ class MdiChild(QGroupBox,QModelIndex):
         self.project.del_event(self.events_list_selected)
         self.events_list_refresh()
 
+    def playEvent(self):
+        self.project.play_event(self.events_list_selected)
+
     def events_list_refresh(self):
         self.events_list.clear()
         for event in self.project.events():
             self.events_list.addItem(str(event.uid))
+
+    def event_display(self,event):
+        self.event_name.setText(event.name)
+        self.event_output.setText(event.output)
+        self.event_description.setText(event.description)
+        self.event_content.clear()
+        for line in event.content:
+            line = str(line)
+            self.event_content.addItem(line)
 
     def createRightGroupBox(self):
         self.RightGroupBox = QGroupBox("Event Content")
@@ -475,6 +498,12 @@ class MdiChild(QGroupBox,QModelIndex):
         self.event_content_label = QLabel('content')
         self.event_content = QListWidget()
 
+        self.event_name.textEdited.connect(self.event_name_changed)
+        self.event_output.textEdited.connect(self.event_output_changed)
+        self.event_description.textEdited.connect(self.event_description_changed)
+        #self.event_content.textEdited.connect(self.event_content_changed)
+
+
         layout = QGridLayout()
 
         layout.addWidget(self.event_name_label, 0, 0)
@@ -488,37 +517,18 @@ class MdiChild(QGroupBox,QModelIndex):
         layout.setRowStretch(5, 1)
         self.RightGroupBox.setLayout(layout)
 
-    def createBottomLeftTabWidget(self):
-        self.bottomLeftTabWidget = QTabWidget()
-        self.bottomLeftTabWidget.setSizePolicy(QSizePolicy.Preferred,
-                QSizePolicy.Ignored)
+    def event_name_changed(self):
+        self.events_list_selected.name = self.event_name.text()
 
-        tab1 = QWidget()
-        tableWidget = QTableWidget(10, 10)
+    def event_description_changed(self):
+        self.events_list_selected.description = self.event_description.text()
 
-        tab1hbox = QHBoxLayout()
-        tab1hbox.setContentsMargins(5, 5, 5, 5)
-        tab1hbox.addWidget(tableWidget)
-        tab1.setLayout(tab1hbox)
+    def event_output_changed(self):
+        self.events_list_selected.output = self.event_output.text()
+        print 'make a number of device, just to select a device in a device list'
 
-        tab2 = QWidget()
-        textEdit = QTextEdit()
-
-        textEdit.setPlainText("Twinkle, twinkle, little star,\n"
-                              "How I wonder what you are.\n" 
-                              "Up above the world so high,\n"
-                              "Like a diamond in the sky.\n"
-                              "Twinkle, twinkle, little star,\n" 
-                              "How I wonder what you are!\n")
-
-        tab2hbox = QHBoxLayout()
-        tab2hbox.setContentsMargins(5, 5, 5, 5)
-        tab2hbox.addWidget(textEdit)
-        tab2.setLayout(tab2hbox)
-
-        self.bottomLeftTabWidget.addTab(tab1, "&Table")
-        self.bottomLeftTabWidget.addTab(tab2, "Text &Edit")
-
+    def event_content_changed(self):
+        self.events_list_selected.content = self.event_content.text()
 
 
 

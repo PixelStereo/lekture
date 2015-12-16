@@ -112,6 +112,9 @@ class Project(object):
             setattr(event_list[taille], key, value)
         return event_list[taille]
 
+    def play_event(self,event):
+        event.play()
+
     def events_obj(self):
         return event_list
 
