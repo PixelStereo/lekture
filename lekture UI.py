@@ -6,7 +6,7 @@ from time import sleep
 from PyQt5.QtCore import QStringListModel , QSettings , QSize ,QPoint , QSignalMapper ,QObject,QFile,QFileInfo,QTextStream
 from PyQt5.QtCore import pyqtSlot , QDir , QAbstractListModel , Qt , QModelIndex,QItemSelectionModel,QDateTime,QTimer
 from PyQt5.uic import loadUiType,loadUi
-from PyQt5.QtWidgets import QAction ,QWidget,QApplication,QHBoxLayout,QDialog,QListView,QListWidget,QTableWidget,QFormLayout,QRadioButton,QCheckBox,QGridLayout,QLabel,QSizePolicy,QTextEdit,QSpinBox,QSlider,QDial
+from PyQt5.QtWidgets import QAction ,QWidget,QApplication,QHBoxLayout,QDialog,QListView,QListWidget,QTableWidget,QFormLayout,QRadioButton,QCheckBox,QGridLayout,QLabel,QSizePolicy,QTextEdit,QSpinBox,QSlider,QDial,QListWidgetItem
 from PyQt5.QtWidgets import QTableView,QFileDialog,QTableWidgetItem,QTreeView,QMainWindow,QPushButton , QGroupBox,QMdiArea,QTabWidget,QMessageBox,QVBoxLayout,QComboBox,QStyleFactory,QLineEdit,QDateTimeEdit,QScrollBar
 from PyQt5.QtGui import  QStandardItemModel , QStandardItem , QIcon , QKeySequence
 
@@ -333,6 +333,7 @@ class MdiChild(QGroupBox,QModelIndex):
                     "Cannot read file %s:\n%s." % (fileName, file.errorString()))
             return False
         QApplication.setOverrideCursor(Qt.WaitCursor)
+        # read a project and create events
         self.project.read(fileName)
         self.events_list_refresh()
         self.project_display()
@@ -458,6 +459,8 @@ class MdiChild(QGroupBox,QModelIndex):
     def newEvent(self):
     	event = self.project.new_event()
         self.events_list_refresh()
+        #that doesn't work, I don't know how to select the item I xant. see events_list_refresh
+        #self.events_list.setCurrentItem(event)
 
     def delEvent(self):
         self.project.del_event(self.events_list_selected)
@@ -469,7 +472,9 @@ class MdiChild(QGroupBox,QModelIndex):
     def events_list_refresh(self):
         self.events_list.clear()
         for event in self.project.events():
-            self.events_list.addItem(str(event.uid))
+            event_item = QListWidgetItem(event.uid)
+            self.events_list.addItem(event_item)
+            self.events_list.show()
 
     def event_display(self,event):
         self.event_name.setText(event.name)
