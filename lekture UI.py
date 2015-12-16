@@ -446,10 +446,6 @@ class MdiChild(QGroupBox,QModelIndex):
         x=[]
         for i in list(items):
             x.append(str(i.text()))
-        #if type(x) == 'list':
-        #    self.events_list_selected = x[0]
-        #else:
-        #    self.events_list_selected = x
         if len(x)>0:
             for event in self.project.events_obj():
                 if event.uid == x[0]:
