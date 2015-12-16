@@ -3,8 +3,11 @@
 #! /usr/bin/python
 # -*- coding: utf-8 -*-
 from time import sleep
-
-from lekture import lekture
+import os,sys
+lib_path = os.path.abspath('./../../lekture/lekture')
+print 'yy' ,  lib_path
+sys.path.append(lib_path)
+import lekture
 
 debug = True
 lekture.debug = False

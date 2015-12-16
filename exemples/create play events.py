@@ -1,13 +1,16 @@
 #! /usr/bin/python
 # -*- coding: utf-8 -*-
 from time import sleep
-
-from lekture import lekture
+import os,sys
+lib_path = os.path.abspath('./../../lekture/lekture')
+print 'yy' ,  lib_path
+sys.path.append(lib_path)
+import lekture
 
 debug = True
 lekture.debug = True
 
-my_project = lekture.Project('pouette')
+my_project = lekture.new_project(name='pouette')
 
 my_event = my_project.new_event(name='toto-la-roulette')
 """print my_event.name

@@ -1,0 +1,11 @@
+{
+    "attributes": {
+        "author": null, 
+        "name": "temp", 
+        "version": null
+    }, 
+    "devices": {}, 
+    "events": {
+        "data": {}
+    }
+}

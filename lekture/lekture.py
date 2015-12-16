@@ -10,11 +10,11 @@ debug = True
 
 project_list = []
 
-def new_project():
+def new_project(*args,**kwargs):
     taille = len(project_list)
     the_project = None
     project_list.append(the_project)
-    project_list[taille] = Project(author='unknown',version='0.0.1')
+    project_list[taille] = Project(args,kwargs)
     return project_list[taille]
 
 
