@@ -6,7 +6,7 @@ from time import sleep
 from PyQt5.QtCore import QStringListModel , QSettings , QSize ,QPoint , QSignalMapper ,QObject,QFile,QFileInfo,QTextStream
 from PyQt5.QtCore import pyqtSlot , QDir , QAbstractListModel , Qt , QModelIndex,QItemSelectionModel,QDateTime,QTimer
 from PyQt5.uic import loadUiType,loadUi
-from PyQt5.QtWidgets import QAction ,QWidget,QApplication,QHBoxLayout,QDialog,QListView,QListWidget,QTableWidget,QFormLayout,QRadioButton,QCheckBox,QGridLayout,QLabel,QSizePolicy,QTextEdit,QSpinBox,QSlider,QDial,QProgressBar
+from PyQt5.QtWidgets import QAction ,QWidget,QApplication,QHBoxLayout,QDialog,QListView,QListWidget,QTableWidget,QFormLayout,QRadioButton,QCheckBox,QGridLayout,QLabel,QSizePolicy,QTextEdit,QSpinBox,QSlider,QDial
 from PyQt5.QtWidgets import QTableView,QFileDialog,QTableWidgetItem,QTreeView,QMainWindow,QPushButton , QGroupBox,QMdiArea,QTabWidget,QMessageBox,QVBoxLayout,QComboBox,QStyleFactory,QLineEdit,QDateTimeEdit,QScrollBar
 from PyQt5.QtGui import  QStandardItemModel , QStandardItem , QIcon , QKeySequence
 
@@ -330,6 +330,7 @@ class MdiChild(QGroupBox):
 
         self.setAttribute(Qt.WA_DeleteOnClose)
         self.isUntitled = True
+        # I must change all document reference to project… so I need to enhance project with modify flags and signals
         self.document = Document('unknown')
         self.project = lekture.Project()
 
@@ -339,29 +340,35 @@ class MdiChild(QGroupBox):
         disableWidgetsCheckBox = QCheckBox("&Disable widgets")
 
         self.createTopLeftGroupBox()
-        self.createTopRightGroupBox()
+        self.createRightGroupBox()
         self.createBottomLeftTabWidget()
-        self.createBottomRightGroupBox()
-        self.createProgressBar()
 
         disableWidgetsCheckBox.toggled.connect(self.topLeftGroupBox.setDisabled)
-        disableWidgetsCheckBox.toggled.connect(self.topRightGroupBox.setDisabled)
+        disableWidgetsCheckBox.toggled.connect(self.RightGroupBox.setDisabled)
         disableWidgetsCheckBox.toggled.connect(self.bottomLeftTabWidget.setDisabled)
-        disableWidgetsCheckBox.toggled.connect(self.bottomRightGroupBox.setDisabled)
 
         topLayout = QHBoxLayout()
-        lineEdit = QLineEdit(self.project.author)
-        topLayout.addWidget(lineEdit)
+        project_author_label = QLabel('author')
+        project_author = QLineEdit(self.project.author)
+        project_version_label = QLabel('version')
+        project_version = QLineEdit(self.project.version)
+        project_path_label = QLabel('path')
+        project_path = QLineEdit(self.project.path)
+        project_path.setFixedWidth(600)
+        topLayout.addWidget(project_author_label)
+        topLayout.addWidget(project_author)
+        topLayout.addWidget(project_version_label)
+        topLayout.addWidget(project_version)
+        topLayout.addWidget(project_path_label)
+        topLayout.addWidget(project_path)
         topLayout.addStretch(1)
         topLayout.addWidget(disableWidgetsCheckBox)
 
         mainLayout = QGridLayout()
         mainLayout.addLayout(topLayout, 0, 0, 1, 2)
         mainLayout.addWidget(self.topLeftGroupBox, 1, 0)
-        mainLayout.addWidget(self.topRightGroupBox, 1, 1)
+        mainLayout.addWidget(self.RightGroupBox, 1, 1)
         mainLayout.addWidget(self.bottomLeftTabWidget, 2, 0)
-        mainLayout.addWidget(self.bottomRightGroupBox, 2, 1)
-        mainLayout.addWidget(self.progressBar, 3, 0, 1, 2)
         mainLayout.setRowStretch(1, 1)
         mainLayout.setRowStretch(2, 1)
         mainLayout.setColumnStretch(0, 1)
@@ -373,12 +380,6 @@ class MdiChild(QGroupBox):
         QApplication.setStyle(QStyleFactory.create('Macintosh'))
         #QApplication.setStyle(QStyleFactory.create('Windows'))
         QApplication.setPalette(QApplication.style().standardPalette())
-
-    def createEventsList(self):
-        self.topLeftGroupBox = QGroupBox("Events")
-        self.events_list = QListWidget()
-        #self.events_list.setFixedSize(180,300)
-
 
     def newFile(self):
         self.isUntitled = True
@@ -481,50 +482,50 @@ class MdiChild(QGroupBox):
 
 
 
-    def advanceProgressBar(self):
-        curVal = self.progressBar.value()
-        maxVal = self.progressBar.maximum()
-        self.progressBar.setValue(curVal + (maxVal - curVal) / 100)
+
+    def createEventsList(self):
+        self.topLeftGroupBox = QGroupBox("Events")
+        self.events_list = QListWidget()
+        #self.events_list.setFixedSize(180,300)
+
 
     def createTopLeftGroupBox(self):
-        self.topLeftGroupBox = QGroupBox("Group 1")
-
-        radioButton1 = QRadioButton("Radio button 1")
-        radioButton2 = QRadioButton("Radio button 2")
-        radioButton3 = QRadioButton("Radio button 3")
-        radioButton1.setChecked(True)
-
-        checkBox = QCheckBox("Tri-state check box")
-        checkBox.setTristate(True)
-        checkBox.setCheckState(Qt.PartiallyChecked)
+        self.topLeftGroupBox = QGroupBox("Events List")
+        self.event_new = QPushButton(('New Event'))
+        self.events_list = QListWidget()
 
         layout = QVBoxLayout()
-        layout.addWidget(radioButton1)
-        layout.addWidget(radioButton2)
-        layout.addWidget(radioButton3)
-        layout.addWidget(checkBox)
+        layout.addWidget(self.event_new)
+        layout.addWidget(self.events_list)
         layout.addStretch(1)
         self.topLeftGroupBox.setLayout(layout)    
 
-    def createTopRightGroupBox(self):
-        self.topRightGroupBox = QGroupBox("Group 2")
+    def createRightGroupBox(self):
+        self.RightGroupBox = QGroupBox("Event Content")
+        self.RightGroupBox.setCheckable(True)
+        self.RightGroupBox.setChecked(True)
 
-        defaultPushButton = QPushButton("Default Push Button")
-        defaultPushButton.setDefault(True)
+        self.event_name_label = QLabel('name')
+        self.event_name = QLineEdit()
+        self.event_output_label = QLabel('output')
+        self.event_output = QLineEdit()
+        self.event_description_label = QLabel('description')
+        self.event_description = QLineEdit()
+        self.event_content_label = QLabel('content')
+        self.event_content = QListWidget()
 
-        togglePushButton = QPushButton("Toggle Push Button")
-        togglePushButton.setCheckable(True)
-        togglePushButton.setChecked(True)
+        layout = QGridLayout()
 
-        flatPushButton = QPushButton("Flat Push Button")
-        flatPushButton.setFlat(True)
-
-        layout = QVBoxLayout()
-        layout.addWidget(defaultPushButton)
-        layout.addWidget(togglePushButton)
-        layout.addWidget(flatPushButton)
-        layout.addStretch(1)
-        self.topRightGroupBox.setLayout(layout)
+        layout.addWidget(self.event_name_label, 0, 0)
+        layout.addWidget(self.event_name, 0, 1)
+        layout.addWidget(self.event_output_label, 0, 2)
+        layout.addWidget(self.event_output, 0, 3, 1, 2)
+        layout.addWidget(self.event_description_label, 1, 0)
+        layout.addWidget(self.event_description, 1, 1)
+        layout.addWidget(self.event_content_label, 2, 0)
+        layout.addWidget(self.event_content, 2, 1, 2, 2)
+        layout.setRowStretch(5, 1)
+        self.RightGroupBox.setLayout(layout)
 
     def createBottomLeftTabWidget(self):
         self.bottomLeftTabWidget = QTabWidget()
@@ -556,50 +557,6 @@ class MdiChild(QGroupBox):
 
         self.bottomLeftTabWidget.addTab(tab1, "&Table")
         self.bottomLeftTabWidget.addTab(tab2, "Text &Edit")
-
-    def createBottomRightGroupBox(self):
-        self.bottomRightGroupBox = QGroupBox("Group 3")
-        self.bottomRightGroupBox.setCheckable(True)
-        self.bottomRightGroupBox.setChecked(True)
-
-        lineEdit = QLineEdit('s3cRe7')
-        lineEdit.setEchoMode(QLineEdit.Password)
-
-        spinBox = QSpinBox(self.bottomRightGroupBox)
-        spinBox.setValue(50)
-
-        dateTimeEdit = QDateTimeEdit(self.bottomRightGroupBox)
-        dateTimeEdit.setDateTime(QDateTime.currentDateTime())
-
-        slider = QSlider(Qt.Horizontal, self.bottomRightGroupBox)
-        slider.setValue(40)
-
-        scrollBar = QScrollBar(Qt.Horizontal, self.bottomRightGroupBox)
-        scrollBar.setValue(60)
-
-        dial = QDial(self.bottomRightGroupBox)
-        dial.setValue(30)
-        dial.setNotchesVisible(True)
-
-        layout = QGridLayout()
-        layout.addWidget(lineEdit, 0, 0, 1, 2)
-        layout.addWidget(spinBox, 1, 0, 1, 2)
-        layout.addWidget(dateTimeEdit, 2, 0, 1, 2)
-        layout.addWidget(slider, 3, 0)
-        layout.addWidget(scrollBar, 4, 0)
-        layout.addWidget(dial, 3, 1, 2, 1)
-        layout.setRowStretch(5, 1)
-        self.bottomRightGroupBox.setLayout(layout)
-
-    def createProgressBar(self):
-        self.progressBar = QProgressBar()
-        self.progressBar.setRange(0, 10000)
-        self.progressBar.setValue(0)
-
-        timer = QTimer(self)
-        timer.timeout.connect(self.advanceProgressBar)
-        timer.start(1000)
-
 
 
 
