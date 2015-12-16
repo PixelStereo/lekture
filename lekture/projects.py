@@ -265,6 +265,7 @@ class Event(Project):
                 output_ip = self.output.split(':')[0]
                 output_port = self.output.split(':')[1]
                 if debug : 
+                    print 'todo : use bundle for each packet between wait'
                     print 'connecting to : ' + output_ip + ':' + output_port
                 try:
                     client.connect((output_ip , int(output_port)))
