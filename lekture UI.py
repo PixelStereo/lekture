@@ -468,8 +468,6 @@ class MdiChild(QGroupBox,QModelIndex):
     def newEvent(self):
     	event = self.project.new_event()
         self.events_list_refresh()
-        #that doesn't work, I don't know how to select the item I xant. see events_list_refresh
-        #self.events_list.setCurrentItem(event)
 
     def delEvent(self):
         self.project.del_event(self.events_list_selected)
@@ -483,7 +481,12 @@ class MdiChild(QGroupBox,QModelIndex):
         for event in self.project.events():
             event_item = QListWidgetItem(event.uid)
             self.events_list.addItem(event_item)
-            self.events_list.show()
+        self.events_list.show()
+        last = len(self.events_list)
+        last = last - 1
+        last = self.events_list.item(last)
+        self.events_list.setCurrentItem(last)
+        self.events_list.setFocus()
 
     def event_display(self,event):
         self.event_name.setText(event.name)
@@ -495,7 +498,7 @@ class MdiChild(QGroupBox,QModelIndex):
             self.event_content.addItem(line)
 
     def createRightGroupBox(self):
-        self.RightGroupBox = QGroupBox("Event Content")
+        self.RightGroupBox = QGroupBox("Editable")
         self.RightGroupBox.setCheckable(True)
         self.RightGroupBox.setChecked(True)
 
