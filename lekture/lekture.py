@@ -14,7 +14,10 @@ def new_project(*args,**kwargs):
     taille = len(project_list)
     the_project = None
     project_list.append(the_project)
-    project_list[taille] = Project(args,kwargs)
+    if kwargs != {}:
+        project_list[taille] = Project(args,kwargs)
+    else:
+        project_list[taille] = Project(args)
     return project_list[taille]
 
 
