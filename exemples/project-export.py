@@ -5,7 +5,6 @@
 from time import sleep
 import os,sys
 lib_path = os.path.abspath('./../../lekture/lekture')
-print 'yy' ,  lib_path
 sys.path.append(lib_path)
 import lekture
 

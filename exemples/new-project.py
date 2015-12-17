@@ -5,7 +5,6 @@
 from time import sleep
 import os,sys
 lib_path = os.path.abspath('./../../lekture/lekture')
-print 'yy' ,  lib_path
 sys.path.append(lib_path)
 import lekture
 
@@ -16,8 +15,7 @@ my_project = lekture.new_project()
 
 quit()
 
-
-my_other_project = lekture.Project('other',author='me and I',version='2.2.1')
+my_other_project = lekture.new_project('other',author='me and I',version='2.2.1')
 
 my_event = lekture.Event(my_project,name='toto-la-roulette')
 my_poulevent = lekture.Event(my_project,name='qlsi qsdipu qd')
