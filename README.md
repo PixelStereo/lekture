@@ -10,7 +10,6 @@ You need to install PyQt5, PyOSC and PyBonjour module
 
     brew install PyQt5 --with-python --without-python3
     pip install PyOSC
-    pip install PyBonjour  --allow-external PyBonjour --allow-unverified PyBonjour
 
 ###TO DO LIST
 * *project file must be encoded in utf-8 to allow accents and special characters*
