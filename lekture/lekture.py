@@ -3,6 +3,7 @@
 
 from functions import timestamp
 from functions import unicode2string_dict
+from functions import unicode2string_list
 from projects import Project 
 from projects import Event
 
@@ -10,14 +11,11 @@ debug = True
 
 project_list = []
 
-def new_project(*args,**kwargs):
+def new_project():
     taille = len(project_list)
     the_project = None
     project_list.append(the_project)
-    if kwargs != {}:
-        project_list[taille] = Project(args,kwargs)
-    else:
-        project_list[taille] = Project(args)
+    project_list[taille] = Project()
     return project_list[taille]
 
 

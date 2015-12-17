@@ -270,42 +270,69 @@ class MdiChild(QGroupBox,QModelIndex):
 
         self.originalPalette = QApplication.palette()
 
-
-        disableWidgetsCheckBox = QCheckBox("&Disable widgets")
-
         self.createTopLeftGroupBox()
         self.createRightGroupBox()
 
-        disableWidgetsCheckBox.toggled.connect(self.topLeftGroupBox.setDisabled)
-        disableWidgetsCheckBox.toggled.connect(self.RightGroupBox.setDisabled)
-
-        topLayout = QHBoxLayout()
+        project_layout = QHBoxLayout()
         project_author_label = QLabel('author')
         project_author = QLineEdit(self.project.author)
         project_version_label = QLabel('version')
         project_version = QLineEdit(self.project.version)
         project_path_label = QLabel('path')
-        project_path = QLineEdit(self.project.path)
+        project_path = QLabel(self.project.path)
         project_path.setFixedWidth(400)
 
         self.project_author = project_author
         self.project_version = project_version
         self.project_path = project_path
 
-        topLayout.addWidget(project_author_label)
-        topLayout.addWidget(project_author)
-        topLayout.addWidget(project_version_label)
-        topLayout.addWidget(project_version)
-        topLayout.addWidget(project_path_label)
-        topLayout.addWidget(project_path)
-        topLayout.addStretch(1)
-        topLayout.addWidget(disableWidgetsCheckBox)
+        project_layout.addWidget(project_author_label)
+        project_layout.addWidget(project_author)
+        project_layout.addWidget(project_version_label)
+        project_layout.addWidget(project_version)
+        project_layout.addWidget(project_path_label)
+        project_layout.addWidget(project_path)
+        project_layout.addStretch(1)
+
+        output_layout = QHBoxLayout()
+        output_selector_label = QLabel('outputs')
+        output_selector = QSpinBox()
+        output_ip_label = QLabel('ip address')
+        output_ip = QLineEdit()
+        output_udp_label = QLabel('udp port')
+        output_udp = QSpinBox()
+        output_udp.setRange(0,65536)
+        output_name_label = QLabel('name')
+        output_name = QLineEdit()
+
+        self.output_selector = output_selector
+        self.output_udp = output_udp
+        self.output_ip = output_ip
+        self.output_name = output_name
+
+        self.output_selector.valueChanged.connect(self.output_selector_changed)
+        output_selector.setValue(1)
+        
+        self.output_name.textEdited.connect(self.output_name_changed)
+        self.output_ip.textEdited.connect(self.output_ip_changed)
+        self.output_udp.valueChanged.connect(self.output_udp_changed)
+
+        output_layout.addWidget(output_selector_label)
+        output_layout.addWidget(output_selector)
+        output_layout.addWidget(output_ip_label)
+        output_layout.addWidget(output_ip)
+        output_layout.addWidget(output_udp_label)
+        output_layout.addWidget(output_udp)
+        output_layout.addWidget(output_name_label)
+        output_layout.addWidget(output_name)
+        output_layout.addStretch(1)
 
         mainLayout = QGridLayout()
-        mainLayout.addLayout(topLayout, 0, 0, 1, 2)
-        mainLayout.addWidget(self.topLeftGroupBox, 1, 0)
-        mainLayout.addWidget(self.RightGroupBox, 1, 1)
-        mainLayout.setRowStretch(1, 1)
+        mainLayout.addLayout(project_layout, 0, 0, 1, 2)
+        mainLayout.addLayout(output_layout, 1, 0, 1, 2)
+        mainLayout.addWidget(self.topLeftGroupBox, 2, 0)
+        mainLayout.addWidget(self.RightGroupBox, 2, 1)
+        mainLayout.setRowStretch(2, 1)
         mainLayout.setColumnStretch(0, 1)
         mainLayout.setColumnStretch(1, 1)
         self.setLayout(mainLayout)
@@ -324,6 +351,8 @@ class MdiChild(QGroupBox,QModelIndex):
         MdiChild.sequenceNumber += 1
         self.setWindowTitle(self.curFile + '[*]')
 
+        self.project.name = self.curFile
+        
         #self.document().contentsChanged.connect(self.documentWasModified)
 
     def loadFile(self, fileName):
@@ -354,7 +383,13 @@ class MdiChild(QGroupBox,QModelIndex):
             return self.saveFile(self.curFile)
 
     def saveAs(self):
-        fileName, _ = QFileDialog.getSaveFileName(self, "Save As", self.curFile)
+        file_dialog = QFileDialog(self)
+        # the name filters must be a list
+        file_dialog.setNameFilters(["Json Files (*.json)"])
+        #file_dialog.selectNameFilter("Images (*.png *.jpg)")
+        # show the dialog
+        #file_dialog.exec_()
+        fileName, _ = file_dialog.getSaveFileName()
         if not fileName:
             return False
         return self.saveFile(fileName)
@@ -490,11 +525,17 @@ class MdiChild(QGroupBox,QModelIndex):
 
     def event_display(self,event):
         self.event_name.setText(event.name)
-        self.event_output.setText(event.output)
+        self.event_output.setText(str(event.output))
         self.event_description.setText(event.description)
         self.event_content.clear()
         for line in event.content:
-            line = str(line)
+            if isinstance(line,unicode):
+                line = lekture.unicode2string_list(line)
+            if isinstance(line,int):
+                line = str(line)
+            else:
+                line = str(line)
+                line = ''.join( c for c in line if  c not in "[]'," )
             self.event_content.addItem(line)
 
     def createRightGroupBox(self):
@@ -538,13 +579,37 @@ class MdiChild(QGroupBox,QModelIndex):
 
     def event_output_changed(self):
         self.events_list_selected.output = self.event_output.text()
-        print 'make a number of device, just to select a device in a device list'
 
     def event_content_changed(self):
         self.events_list_selected.content = self.event_content.text()
 
+    def output_selector_changed(self,index):
+        self.output_clear()
+        for output in self.project.outputs():
+            if output.index == index:
+                self.output_display(output)
+                self.output_selected = output
+            else:
+                self.output_selected = None
 
+    def output_display(self,output):
+        self.output_ip.setText(output.ip)
+        self.output_udp.setValue(output.udp)
+        self.output_name.setText(output.name)
 
+    def output_clear(self):
+        self.output_udp.clear()
+        self.output_name.clear()
+        self.output_ip.clear()
+
+    def output_name_changed(self):
+        self.output_selected.name = self.output_name.text()
+
+    def output_udp_changed(self):
+        self.output_selected.udp = self.output_udp.text()
+
+    def output_ip_changed(self):
+        self.output_selected.ip = self.output_ip.text()
 
 
 if __name__ == "__main__":
