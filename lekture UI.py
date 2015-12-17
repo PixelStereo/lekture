@@ -431,8 +431,10 @@ class MdiChild(QGroupBox,QModelIndex):
         self.event_new = QPushButton(('New Event'))
         self.event_new.released.connect(self.newEvent)
         self.event_play = QPushButton(('Play Event'))
+        self.event_play.setDisabled(True)
         self.event_play.released.connect(self.playEvent)
         self.event_del = QPushButton(('Delete Event'))
+        self.event_del.setDisabled(True)
         self.event_del.released.connect(self.delEvent)
 
         layout = QVBoxLayout()
@@ -455,6 +457,12 @@ class MdiChild(QGroupBox,QModelIndex):
             self.event_display(self.events_list_selected)
         else:
             self.events_list_selected = None
+        if not self.events_list_selected:
+            self.event_del.setDisabled(True)
+            self.event_play.setDisabled(True)
+        else:
+            self.event_del.setDisabled(False)
+            self.event_play.setDisabled(False)
 
 
     def newEvent(self):
