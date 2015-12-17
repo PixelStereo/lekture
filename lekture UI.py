@@ -39,7 +39,7 @@ class MainWindow(QMainWindow):
 
         self.readSettings()
 
-        self.setWindowTitle("MDI")
+        self.setWindowTitle("LEKTURE")
 
     def closeEvent(self, event):
         self.mdiArea.closeAllSubWindows()
@@ -263,7 +263,7 @@ class MdiChild(QGroupBox,QModelIndex):
 
         self.setAttribute(Qt.WA_DeleteOnClose)
         self.isUntitled = True
-        # I must change all document reference to project… so I need to enhance project with modify flags and signals
+        # I must change all 'document' class reference to 'project' class… so I need to enhance project with modify flags and signals
         self.document = Document('unknown')
         self.project = lekture.new_project()
         self.events_list_selected = None
