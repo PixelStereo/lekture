@@ -485,6 +485,7 @@ class MdiChild(QGroupBox,QModelIndex):
         x=[]
         for i in list(items):
             x.append(str(i.text()))
+        self.event_display_clear()
         if len(x)>0:
             for event in self.project.events_obj():
                 if event.uid == x[0]:
@@ -523,11 +524,16 @@ class MdiChild(QGroupBox,QModelIndex):
         self.events_list.setCurrentItem(last)
         self.events_list.setFocus()
 
+    def event_display_clear(self):
+        self.event_content.clear()
+        self.event_output.clear()
+        self.event_name.clear()
+        self.event_description.clear()
+
     def event_display(self,event):
         self.event_name.setText(event.name)
         self.event_output.setText(str(event.output))
         self.event_description.setText(event.description)
-        self.event_content.clear()
         for line in event.content:
             if isinstance(line,unicode):
                 line = lekture.unicode2string_list(line)
