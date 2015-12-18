@@ -11,7 +11,20 @@ You need to install PyQt5, PyOSC and PyBonjour module
     brew install PyQt5 --with-python --without-python3
     pip install PyOSC
 
-###TO DO LIST
+##Build Application
+
+    pip install pyinstaller
+    pyinstaller --windowed --icon=icon/lekture.icns lekture.py
+
+
+##Licence
+GPL Licence
+
+##Credits
+Produced and Developped by Pixel Stereo
+* *icon by WOLF LΔMBERT*
+
+#####TO DO LIST
 * *project file must be encoded in utf-8 to allow accents and special characters*
 * *Implement editing of a cue (JSON strings?) - Dirty Flag + manual save*    
 * *Implement auto-save*    
