@@ -1,7 +1,7 @@
 {
     "attributes": {
         "author": "me and I", 
-        "lastopened": "1450377085132", 
+        "lastopened": "1450444673994", 
         "version": null
     }, 
     "events": {
@@ -30,8 +30,8 @@
                         ]
                     ]
                 ], 
-                "description": "write a comment", 
-                "name": "untitled", 
+                "description": "my first event's description", 
+                "name": "first event", 
                 "output": 1
             }
         }
