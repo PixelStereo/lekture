@@ -266,13 +266,15 @@ class MdiChild(QGroupBox,QModelIndex):
         # I must change all 'document' class reference to 'project' class… so I need to enhance project with modify flags and signals
         self.document = Document('unknown')
         self.project = lekture.new_project()
-        self.events_list_selected = None
+        self.event_selected = None
+        self.output_selected = None
 
         self.originalPalette = QApplication.palette()
 
         self.createTopLeftGroupBox()
         self.createRightGroupBox()
 
+        self.project_Groupbox = QGroupBox('Project')
         project_layout = QHBoxLayout()
         project_author_label = QLabel('author')
         project_author = QLineEdit(self.project.author)
@@ -293,7 +295,9 @@ class MdiChild(QGroupBox,QModelIndex):
         project_layout.addWidget(project_path_label)
         project_layout.addWidget(project_path)
         project_layout.addStretch(1)
+        self.project_Groupbox.setLayout(project_layout)   
 
+        self.outputs_GroupBox = QGroupBox("Outputs")
         output_layout = QHBoxLayout()
         output_selector_label = QLabel('outputs')
         output_selector = QSpinBox()
@@ -312,6 +316,7 @@ class MdiChild(QGroupBox,QModelIndex):
 
         self.output_selector.valueChanged.connect(self.output_selector_changed)
         output_selector.setValue(1)
+        #output_selector.setRange(1,len(self.project.outputs()))
         
         self.output_name.textEdited.connect(self.output_name_changed)
         self.output_ip.textEdited.connect(self.output_ip_changed)
@@ -326,10 +331,11 @@ class MdiChild(QGroupBox,QModelIndex):
         output_layout.addWidget(output_name_label)
         output_layout.addWidget(output_name)
         output_layout.addStretch(1)
+        self.outputs_GroupBox.setLayout(output_layout)   
 
         mainLayout = QGridLayout()
-        mainLayout.addLayout(project_layout, 0, 0, 1, 2)
-        mainLayout.addLayout(output_layout, 1, 0, 1, 2)
+        mainLayout.addWidget(self.project_Groupbox, 0, 0, 1, 2)
+        mainLayout.addWidget(self.outputs_GroupBox, 1, 0, 1, 2)
         mainLayout.addWidget(self.topLeftGroupBox, 2, 0)
         mainLayout.addWidget(self.RightGroupBox, 2, 1)
         mainLayout.setRowStretch(2, 1)
@@ -383,15 +389,11 @@ class MdiChild(QGroupBox,QModelIndex):
             return self.saveFile(self.curFile)
 
     def saveAs(self):
-        file_dialog = QFileDialog(self)
-        # the name filters must be a list
-        file_dialog.setNameFilters(["Json Files (*.json)"])
-        #file_dialog.selectNameFilter("Images (*.png *.jpg)")
-        # show the dialog
-        #file_dialog.exec_()
-        fileName, _ = file_dialog.getSaveFileName()
+        fileName, _ = QFileDialog.getSaveFileName(self, "Save As", self.curFile)
         if not fileName:
             return False
+        else:
+            fileName = fileName + '.json'
         return self.saveFile(fileName)
 
     def saveFile(self, fileName=None):
@@ -463,6 +465,7 @@ class MdiChild(QGroupBox,QModelIndex):
         self.topLeftGroupBox = QGroupBox("Events List")
         self.events_list = QListWidget()
         self.events_list.itemSelectionChanged.connect(self.eventSelectionChanged)
+        self.events_list.itemDoubleClicked.connect(self.events_list.editItem)
         self.event_new = QPushButton(('New Event'))
         self.event_new.released.connect(self.newEvent)
         self.event_play = QPushButton(('Play Event'))
@@ -489,11 +492,11 @@ class MdiChild(QGroupBox,QModelIndex):
         if len(x)>0:
             for event in self.project.events_obj():
                 if event.uid == x[0]:
-                    self.events_list_selected = event
-            self.event_display(self.events_list_selected)
+                    self.event_selected = event
+            self.event_display(self.event_selected)
         else:
-            self.events_list_selected = None
-        if not self.events_list_selected:
+            self.event_selected = None
+        if not self.event_selected:
             self.event_del.setDisabled(True)
             self.event_play.setDisabled(True)
         else:
@@ -506,11 +509,11 @@ class MdiChild(QGroupBox,QModelIndex):
         self.events_list_refresh()
 
     def delEvent(self):
-        self.project.del_event(self.events_list_selected)
+        self.project.del_event(self.event_selected)
         self.events_list_refresh()
 
     def playEvent(self):
-        self.project.play_event(self.events_list_selected)
+        self.project.play_event(self.event_selected)
 
     def events_list_refresh(self):
         self.events_list.clear()
@@ -535,6 +538,7 @@ class MdiChild(QGroupBox,QModelIndex):
         self.event_output.setText(str(event.output))
         self.event_description.setText(event.description)
         for line in event.content:
+            'not really nice…'
             if isinstance(line,unicode):
                 line = lekture.unicode2string_list(line)
             if isinstance(line,int):
@@ -542,6 +546,8 @@ class MdiChild(QGroupBox,QModelIndex):
             else:
                 line = str(line)
                 line = ''.join( c for c in line if  c not in "[]'," )
+            line = QListWidgetItem(line)
+            line.setFlags(Qt.ItemIsEnabled|Qt.ItemIsEditable|Qt.ItemIsSelectable|Qt.ItemIsDragEnabled)
             self.event_content.addItem(line)
 
     def createRightGroupBox(self):
@@ -561,7 +567,8 @@ class MdiChild(QGroupBox,QModelIndex):
         self.event_name.textEdited.connect(self.event_name_changed)
         self.event_output.textEdited.connect(self.event_output_changed)
         self.event_description.textEdited.connect(self.event_description_changed)
-        #self.event_content.textEdited.connect(self.event_content_changed)
+        #self.event_content.itemSelectionChanged.connect(self.event_line_selected)
+        self.event_content.itemChanged.connect(self.event_content_changed)
 
 
         layout = QGridLayout()
@@ -578,25 +585,25 @@ class MdiChild(QGroupBox,QModelIndex):
         self.RightGroupBox.setLayout(layout)
 
     def event_name_changed(self):
-        self.events_list_selected.name = self.event_name.text()
+        self.event_selected.name = self.event_name.text()
 
     def event_description_changed(self):
-        self.events_list_selected.description = self.event_description.text()
+        self.event_selected.description = self.event_description.text()
 
     def event_output_changed(self):
-        self.events_list_selected.output = self.event_output.text()
+        self.event_selected.output = self.event_output.text()
 
     def event_content_changed(self):
-        self.events_list_selected.content = self.event_content.text()
+        self.event_selected.content[self.event_content.currentRow()] = self.event_content.currentItem().text()
 
     def output_selector_changed(self,index):
         self.output_clear()
-        for output in self.project.outputs():
-            if output.index == index:
-                self.output_display(output)
-                self.output_selected = output
-            else:
-                self.output_selected = None
+        if self.project.getoutput(index):
+            output = self.project.getoutput(index)
+            self.output_display(output)
+            self.output_selected = output
+        else:
+            self.output_selected = None
 
     def output_display(self,output):
         self.output_ip.setText(output.ip)
@@ -609,13 +616,16 @@ class MdiChild(QGroupBox,QModelIndex):
         self.output_ip.clear()
 
     def output_name_changed(self):
-        self.output_selected.name = self.output_name.text()
+        if self.output_selected:
+            self.output_selected.name = self.output_name.text()
 
     def output_udp_changed(self):
-        self.output_selected.udp = self.output_udp.text()
+        if self.output_selected:
+            self.output_selected.udp = self.output_udp.text()
 
     def output_ip_changed(self):
-        self.output_selected.ip = self.output_ip.text()
+        if self.output_selected:
+            self.output_selected.ip = self.output_ip.text()
 
 
 if __name__ == "__main__":
