@@ -7,7 +7,7 @@ import pjlink
 from time import sleep
 from PyQt5.QtGui import QIcon,QKeySequence
 from PyQt5.QtCore import QModelIndex,Qt,QSignalMapper,QSettings,QPoint,QSize,QSettings,QPoint,QFileInfo,QFile
-from PyQt5.QtWidgets import QMainWindow,QGroupBox,QApplication,QMdiArea,QWidget,QAction,QListWidget,QPushButton
+from PyQt5.QtWidgets import QMainWindow,QGroupBox,QApplication,QMdiArea,QWidget,QAction,QListWidget,QPushButton,QMessageBox
 from PyQt5.QtWidgets import QVBoxLayout,QLabel,QLineEdit,QGridLayout,QHBoxLayout,QSpinBox,QStyleFactory,QListWidgetItem,QFileDialog
 
 settings = QSettings('foo', 'foo')
@@ -88,8 +88,8 @@ class MainWindow(QMainWindow):
 
     def about(self):
         QMessageBox.about(self, "About MDI",
-                "The <b>MDI</b> example demonstrates how to write multiple "
-                "document interface applications using Qt.")
+                "<b>Lekture</b> is an OSC sequencer "
+                "This release is an alpha version. Don't use it in production !!")
 
     def updateMenus(self):
         hasMdiChild = (self.activeMdiChild() is not None)
