@@ -32,3 +32,72 @@ def unicode2string_list(data):
             item = unicode2string_dict(item)
         rv.append(item)
     return rv
+
+def unicode2_list(data):
+    if isinstance(data,list):
+        if len(data) == 1:
+            rv = data[0]
+            rv = checkType(rv)
+        else:
+            rv = []
+            for item in data:
+                item = checkType(item)
+                rv.append(item)
+    return rv
+
+def checkType(data):
+    if isinstance(data, unicode):
+        data = data.encode('utf-8')
+    if isinstance(data,str):
+        if data.isdigit():
+            data = int(data)
+        elif isFloat(data):
+            data = float(data)
+    elif isFloat(data):
+        data = float(data)
+    elif isInt(data):
+        data = int(data)
+    else:
+        print 'no type' , data , type(data)
+    return data
+
+def isString(value):
+  try:
+    str(value)
+    return True
+  except:
+    return False
+def isList(value):
+  try:
+    list(value)
+    return True
+  except:
+    return False
+
+def isUnicode(value):
+  try:
+    unicode(value)
+    return True
+  except:
+    return False
+
+def isFloat(value):
+  try:
+    float(value)
+    return True
+  except:
+    return False
+
+def isInt(value):
+  try:
+    int(value)
+    return True
+  except:
+    return False
+
+"""a_string = u'popo2'
+a_float = u'122.2'
+an_int = u'122'
+print 'a_string' , checkType(a_string)
+print 'a_float' , checkType(a_float)
+print 'an_int' , checkType(an_int)"""

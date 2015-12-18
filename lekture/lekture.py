@@ -4,6 +4,7 @@
 from functions import timestamp
 from functions import unicode2string_dict
 from functions import unicode2string_list
+from functions import unicode2_list
 from projects import Project 
 from projects import Event
 

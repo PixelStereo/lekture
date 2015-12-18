@@ -1,14 +1,19 @@
 #! /usr/bin/python
 # -*- coding: utf-8 -*-
+
 import os
 import sys
+import pjlink
 from time import sleep
-from PyQt5.QtCore import QStringListModel , QSettings , QSize ,QPoint , QSignalMapper ,QObject,QFile,QFileInfo,QTextStream
-from PyQt5.QtCore import pyqtSlot , QDir , QAbstractListModel , Qt , QModelIndex,QItemSelectionModel,QDateTime,QTimer
-from PyQt5.uic import loadUiType,loadUi
-from PyQt5.QtWidgets import QAction ,QWidget,QApplication,QHBoxLayout,QDialog,QListView,QListWidget,QTableWidget,QFormLayout,QRadioButton,QCheckBox,QGridLayout,QLabel,QSizePolicy,QTextEdit,QSpinBox,QSlider,QDial,QListWidgetItem
-from PyQt5.QtWidgets import QTableView,QFileDialog,QTableWidgetItem,QTreeView,QMainWindow,QPushButton , QGroupBox,QMdiArea,QTabWidget,QMessageBox,QVBoxLayout,QComboBox,QStyleFactory,QLineEdit,QDateTimeEdit,QScrollBar
-from PyQt5.QtGui import  QStandardItemModel , QStandardItem , QIcon , QKeySequence
+from PyQt5.QtGui import QIcon,QKeySequence
+from PyQt5.QtCore import QModelIndex,Qt,QSignalMapper,QSettings,QPoint,QSize,QSettings,QPoint,QFileInfo,QFile
+from PyQt5.QtWidgets import QMainWindow,QGroupBox,QApplication,QMdiArea,QWidget,QAction,QListWidget,QPushButton
+from PyQt5.QtWidgets import QVBoxLayout,QLabel,QLineEdit,QGridLayout,QHBoxLayout,QSpinBox,QStyleFactory,QListWidgetItem,QFileDialog
+
+settings = QSettings('foo', 'foo')
+
+settings.setValue('int_value', 42)
+settings.setValue('point_value', [10, 12])
 
 
 from lekture import lekture
@@ -267,6 +272,7 @@ class MdiChild(QGroupBox,QModelIndex):
         self.document = Document('unknown')
         self.project = lekture.new_project()
         self.event_selected = None
+        self.event_line_selected = None
         self.output_selected = None
 
         self.originalPalette = QApplication.palette()
@@ -549,6 +555,9 @@ class MdiChild(QGroupBox,QModelIndex):
             line = QListWidgetItem(line)
             line.setFlags(Qt.ItemIsEnabled|Qt.ItemIsEditable|Qt.ItemIsSelectable|Qt.ItemIsDragEnabled)
             self.event_content.addItem(line)
+        empty = QListWidgetItem()
+        empty.setFlags(Qt.ItemIsEnabled|Qt.ItemIsEditable|Qt.ItemIsSelectable|Qt.ItemIsDragEnabled)
+        self.event_content.addItem(empty)
 
     def createRightGroupBox(self):
         self.RightGroupBox = QGroupBox("Editable")
@@ -563,13 +572,17 @@ class MdiChild(QGroupBox,QModelIndex):
         self.event_description = QLineEdit()
         self.event_content_label = QLabel('content')
         self.event_content = QListWidget()
+        self.event_line_del = QPushButton('delete line')
+        self.event_line_del.setMaximumWidth(90)
+
+
 
         self.event_name.textEdited.connect(self.event_name_changed)
         self.event_output.textEdited.connect(self.event_output_changed)
         self.event_description.textEdited.connect(self.event_description_changed)
-        #self.event_content.itemSelectionChanged.connect(self.event_line_selected)
         self.event_content.itemChanged.connect(self.event_content_changed)
-
+        self.event_line_del.released.connect(self.event_line_delete)
+        self.event_content.itemSelectionChanged.connect(self.eventContentSelectionChanged)
 
         layout = QGridLayout()
 
@@ -581,8 +594,18 @@ class MdiChild(QGroupBox,QModelIndex):
         layout.addWidget(self.event_description, 1, 1)
         layout.addWidget(self.event_content_label, 2, 0)
         layout.addWidget(self.event_content, 2, 1, 2, 2)
+        layout.addWidget(self.event_line_del, 3, 0)
         layout.setRowStretch(5, 1)
         self.RightGroupBox.setLayout(layout)
+
+    def event_line_delete(self):
+        if self.event_line_selected:
+            if self.event_content.row(self.event_line_selected) != len(self.event_selected.content):
+                line2del = self.event_content.row(self.event_line_selected)
+                self.project.del_event_line(self.event_selected,line2del)
+                self.event_display_clear()
+                self.event_display(self.event_selected)
+
 
     def event_name_changed(self):
         self.event_selected.name = self.event_name.text()
@@ -594,7 +617,30 @@ class MdiChild(QGroupBox,QModelIndex):
         self.event_selected.output = self.event_output.text()
 
     def event_content_changed(self):
-        self.event_selected.content[self.event_content.currentRow()] = self.event_content.currentItem().text()
+        # check if there is some text
+        if self.event_content.currentItem().text():
+            newline = self.event_content.currentItem().text()
+            if isinstance(newline, unicode):
+                newline = newline.encode('utf-8')
+            newline = newline.split(' ')
+            newline = lekture.unicode2_list(newline)
+            if isinstance(newline,float):
+                newline = int(newline)
+                self.event_content.currentItem().setText(str(newline))
+            # if it's a new line (the last line), append line to content attr of Event class and create a new line
+            if self.event_content.currentRow() + 1 == self.event_content.count():
+                self.event_selected.content.append(newline)
+                empty = QListWidgetItem()
+                empty.setFlags(Qt.ItemIsEnabled|Qt.ItemIsEditable|Qt.ItemIsSelectable|Qt.ItemIsDragEnabled)
+                self.event_content.addItem(empty)
+            else:
+                self.event_selected.content[self.event_content.currentRow()] = newline
+
+    def eventContentSelectionChanged(self):
+        if self.event_content.currentItem():
+            self.event_line_selected = self.event_content.currentItem()
+        else:
+            self.event_line_selected = None
 
     def output_selector_changed(self,index):
         self.output_clear()

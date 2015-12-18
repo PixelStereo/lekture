@@ -3,8 +3,9 @@ from PyQt5.QtCore import QSettings, QPoint
 settings = QSettings('foo', 'foo')
 
 settings.setValue('int_value', 42)
-settings.setValue('point_value', QPoint(10, 12))
+settings.setValue('point_value', [10, 12])
 
+quit()
 # This will write the setting to the platform specific storage.
 del settings
 

@@ -144,6 +144,11 @@ class Project(object):
     def del_event(self,event):
         event_list.remove(event)
 
+    def del_event_line(self,event,index):
+        print 'before' , index , event.content
+        event.content.pop(index)
+        print 'after' , event.content
+
     def export_attributes(self):
         attributes = {'author':self.author,'version':self.version,'lastopened':self.lastopened}
         return attributes
@@ -195,18 +200,6 @@ class Event(Project):
         self.description=description
         self.uid=uid
         self.content = content
-        """if debug :
-            print
-            print "........... EVENT %s initing ..........." %self.name
-            print
-            for line in self.content:
-                print 'content-line' , line
-            print 'name : ' , self.name
-            print 'description : ' , self.description
-            print 'output : ' , self.output
-            print 'uid : ' , self.uid
-            print "........... EVENT %s inited ..........." %self.name
-            print"""
 
     @staticmethod
     def getinstances(project):
@@ -291,7 +284,8 @@ class Event(Project):
         """play an event"""
         if debug : print '------ PLAY EVENT :' , self.name , '-----------------'
         for line in self.content:
-            if type(line) is int:
+            if type(line) is int or type(line) is float:
+                line = int(line)
                 if debug : print 'waiting' , line
                 sleep(line/1000)
             else:
@@ -306,7 +300,7 @@ class Event(Project):
                     client.connect((output_ip , int(output_port)))
                     msg = OSCMessage()
                     msg.setAddress(line[0])
-                    msg.append(line[1])
+                    msg.append(line[1:])
                     client.send(msg)
                     sleep(0.01)
                     msg.clearData()
