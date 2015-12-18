@@ -145,9 +145,7 @@ class Project(object):
         event_list.remove(event)
 
     def del_event_line(self,event,index):
-        print 'before' , index , event.content
         event.content.pop(index)
-        print 'after' , event.content
 
     def export_attributes(self):
         attributes = {'author':self.author,'version':self.version,'lastopened':self.lastopened}
