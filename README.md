@@ -30,3 +30,5 @@ Produced and Developped by Pixel Stereo
 * *Implement auto-save*    
 * *Write & implement span library (make span - make prefs - load - etc…)*     
 * *Implement OSC-writer for some rewriting rules*     
+* *Python 2 & 3 compatibility*
+* *pydoc everthing for html api*
