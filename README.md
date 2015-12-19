@@ -26,6 +26,8 @@ Produced and Developped by Pixel Stereo
 * *icon by WOLF LΔMBERT*
 
 #####TO DO LIST
+* *check value after send to be sure value have been received*
+* *add event line as class and rename event to scenario and create behavior class*
 * *project file must be encoded in utf-8 to allow accents and special characters*
 * *Implement editing of a cue (JSON strings?) - Dirty Flag + manual save*    
 * *Implement auto-save*    
