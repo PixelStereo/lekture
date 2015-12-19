@@ -10,7 +10,7 @@ python:
   # - "pypy"
 # command to install dependencies
 install:
-  - pip install PyQt5
+  #- pip install PyQt5
   - pip install PyOSC
   - pip install pyinstaller
 # command to run tests
