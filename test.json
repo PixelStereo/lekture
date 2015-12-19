@@ -4,7 +4,7 @@
         "lastopened": "1450444673994", 
         "version": null
     }, 
-    "events": {
+    "scenario": {
         "1450377098686": {
             "attributes": {
                 "content": [
@@ -30,8 +30,8 @@
                         ]
                     ]
                 ], 
-                "description": "my first event's description", 
-                "name": "first event", 
+                "description": "my first scenario's description", 
+                "name": "first scenario", 
                 "output": 1
             }
         }

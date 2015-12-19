@@ -17,11 +17,11 @@ quit()
 
 my_other_project = lekture.new_project('other',author='me and I',version='2.2.1')
 
-my_event = lekture.Event(my_project,name='toto-la-roulette')
-my_poulevent = lekture.Event(my_project,name='qlsi qsdipu qd')
+my_scenario = lekture.Scenario(my_project,name='toto-la-roulette')
+my_poulscenario = lekture.Scenario(my_project,name='qlsi qsdipu qd')
 
-another_event = lekture.Event(my_project,name='lol',content=[['zob',22]])
-another_event.content = [['/plouf' , 32]]
+another_scenario = lekture.Scenario(my_project,name='lol',content=[['zob',22]])
+another_scenario.content = [['/plouf' , 32]]
 
 
 for project in lekture.Project.instances.keys():
@@ -30,15 +30,15 @@ for project in lekture.Project.instances.keys():
 	print 'name' , project.name
 	print 'version' ,  project.version
 	print 'author' , project.author
-	for event in project.events():
-		print 'event :' , event.name
+	for scenario in project.scenario():
+		print 'scenario :' , scenario.name
 	print
 
-if lekture.Event.instances.keys():
+if lekture.Scenario.instances.keys():
 	print 'PLAY ALL EVENTS'
 	print '--------------'
-	for event in my_project.events():
-		print 'play event :' , event.name
-		event.play()
+	for scenario in my_project.scenario():
+		print 'play scenario :' , scenario.name
+		scenario.play()
 
 #my_project.write()

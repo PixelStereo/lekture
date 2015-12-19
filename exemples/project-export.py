@@ -12,17 +12,17 @@ debug = True
 lekture.debug = False
 
 my_project = lekture.Project('my_first_project',author='me and I',version='0.0.1')
-my_event = lekture.Event(my_project,name='first',content=[['/pouett/no/yfughk',54678654]])
+my_scenario = lekture.Scenario(my_project,name='first',content=[['/pouett/no/yfughk',54678654]])
 sleep(0.1)
-my_poulevent = lekture.Event(my_project,name='second')
+my_poulscenario = lekture.Scenario(my_project,name='second')
 sleep(0.1)
-another_event = lekture.Event(my_project,name='third',content=[['zob',22]])
+another_scenario = lekture.Scenario(my_project,name='third',content=[['zob',22]])
 sleep(0.1)
-another_event.content = [['/plouf' , 32]]
+another_scenario.content = [['/plouf' , 32]]
 
 
-#for event in my_project.events():
-#	print 'event :' , event.name
+#for scenario in my_project.scenario():
+#	print 'scenario :' , scenario.name
 
 
 my_project.write()

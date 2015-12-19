@@ -11,13 +11,13 @@ lekture.debug = True
 
 my_project = lekture.Project()
 
-my_event = my_project.new_event()
-other_event = my_project.new_event()
-another_event = my_project.new_event()
+my_scenario = my_project.new_scenario()
+other_scenario = my_project.new_scenario()
+another_scenario = my_project.new_scenario()
 
 
-print my_project.events()
+print my_project.scenario()
 
-del my_event
+del my_scenario
 
-print my_project.events()
+print my_project.scenario()

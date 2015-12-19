@@ -33,7 +33,7 @@ def unicode2string_list(data):
     return rv
 
 def read() : 
-    path = os.path.abspath('/Users/reno/Desktop/one event.scorejson')
+    path = os.path.abspath('/Users/reno/Desktop/one scenario.scorejson')
     if not os.path.exists(path):
         print "ERROR - THIS PATH IS NOT VALID" , path
     else :

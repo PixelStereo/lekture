@@ -6,24 +6,24 @@ from time import sleep
 
 my_projekt = lekture.Project('test-projekt')
 
-#create an event
-event = my_projekt.new_event(name='event')
+#create an scenario
+scenario = my_projekt.new_scenario(name='scenario')
 
-#need to be sure that it doesn't have the same uid (included it in events.new????)
+#need to be sure that it doesn't have the same uid (included it in scenario.new????)
 sleep(0.01)
 
-#create another event
-another_event = my_projekt.new_event(name="another event")
+#create another scenario
+another_scenario = my_projekt.new_scenario(name="another scenario")
 
-print 'list events'
+print 'list scenario'
 print '------------'
-for event in my_projekt.events():
-	print event.name
+for scenario in my_projekt.scenario():
+	print scenario.name
 
 #play cues
-event.play()
+scenario.play()
 sleep(1)
-another_event.play()
+another_scenario.play()
 
 
 # save the projekt 

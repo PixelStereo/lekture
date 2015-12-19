@@ -6,7 +6,7 @@ from functions import unicode2string_dict
 from functions import unicode2string_list
 from functions import unicode2_list
 from projects import Project 
-from projects import Event
+from projects import Scenario
 
 debug = True
 
@@ -38,7 +38,7 @@ def listdirectory2(path):
     return projects_list
 
 def dict2string(content):
-    """get event info (NEED TO BE """
+    """get scenario info (NEED TO BE """
     c = None
     for a , b in content.items() : 
         b = str(b)  .replace(',','').replace('\'','') + '\n'
@@ -53,9 +53,9 @@ def string2dict(content):
     toto = {}
     print 'CALLLL string2dict function in lekture main module'
     if debug :  'content' , content
-    for event in content:
-        event = event.split(" ",1)
-        toto.setdefault(event[0],event[1:])
+    for scenario in content:
+        scenario = scenario.split(" ",1)
+        toto.setdefault(scenario[0],scenario[1:])
     toto = lekture.unicode2string_dict(toto)
     return toto
 

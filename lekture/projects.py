@@ -16,9 +16,9 @@ debug=True
 
 
 # this is not the best way to do.
-#But if i don't do that, I can't create events objects 
-# because when I call Event.getinstances(), the instances list is empty
-event_list = []
+#But if i don't do that, I can't create scenario objects 
+# because when I call Scenario.getinstances(), the instances list is empty
+scenario_list = []
 output_list = []
 
 debug = True
@@ -56,9 +56,9 @@ class Project(object):
                     loaded = json.load(in_file,object_hook=lekture.unicode2string_dict)
                     in_file.close()
                     for key,val in loaded.items():
-                        if key == 'events' :
-                            for uid , event_dict in loaded['events'].items():
-                                for attribute , value in event_dict['attributes'].items():
+                        if key == 'scenario' :
+                            for uid , scenario_dict in loaded['scenario'].items():
+                                for attribute , value in scenario_dict['attributes'].items():
                                     if attribute == 'content':
                                         content = value
                                     elif attribute == 'name':
@@ -67,7 +67,7 @@ class Project(object):
                                         description = value
                                     elif attribute == 'output':
                                         output = value
-                                self.new_event(self,uid=uid,name=name,description=description,output=output,content=content)
+                                self.new_scenario(self,uid=uid,name=name,description=description,output=output,content=content)
                         elif key == 'attributes' :
                             for attribute,value in loaded['attributes'].items():
                                 if attribute == 'author':
@@ -102,7 +102,7 @@ class Project(object):
                 savepath = savepath + '.json'
             out_file = open(str(savepath), 'w')
             project = {}
-            project.setdefault('events',self.export_events())
+            project.setdefault('scenario',self.export_scenario())
             project.setdefault('attributes',self.export_attributes())
             project.setdefault('outputs',self.export_outputs())
             out_file.write(json.dumps(project,sort_keys = True, indent = 4,ensure_ascii=False).encode('utf8'))
@@ -111,20 +111,20 @@ class Project(object):
         else:
             return False
 
-    def events(self):
-        return Event.getinstances(self)
+    def scenario(self):
+        return Scenario.getinstances(self)
 
     def outputs(self):
         return Output.getinstances(self)
 
-    def new_event(self,*args,**kwargs):
-        taille = len(event_list)
-        the_event = None
-        event_list.append(the_event)
-        event_list[taille] = Event(self)
+    def new_scenario(self,*args,**kwargs):
+        taille = len(scenario_list)
+        the_scenario = None
+        scenario_list.append(the_scenario)
+        scenario_list[taille] = Scenario(self)
         for key, value in kwargs.iteritems():
-            setattr(event_list[taille], key, value)
-        return event_list[taille]
+            setattr(scenario_list[taille], key, value)
+        return scenario_list[taille]
 
     def new_output(self,*args,**kwargs):
         taille = len(output_list)
@@ -135,17 +135,17 @@ class Project(object):
             setattr(output_list[taille], key, value)
         return output_list[taille]
 
-    def play_event(self,event):
-        event.play()
+    def play_scenario(self,scenario):
+        scenario.play()
 
-    def events_obj(self):
-        return event_list
+    def scenario_obj(self):
+        return scenario_list
 
-    def del_event(self,event):
-        event_list.remove(event)
+    def del_scenario(self,scenario):
+        scenario_list.remove(scenario)
 
-    def del_event_line(self,event,index):
-        event.content.pop(index)
+    def del_scenario_line(self,scenario,index):
+        scenario.content.pop(index)
 
     def export_attributes(self):
         attributes = {'author':self.author,'version':self.version,'lastopened':self.lastopened}
@@ -158,11 +158,11 @@ class Project(object):
         else:
             return False
 
-    def export_events(self):
-        events = {}
-        for event in self.events():
-            events.setdefault(event.uid,{'attributes':{'content':event.content,'output':event.output,'name':event.name,'description':event.description}})
-        return events
+    def export_scenario(self):
+        scenario = {}
+        for scenario in self.scenario():
+            scenario.setdefault(scenario.uid,{'attributes':{'content':scenario.content,'output':scenario.output,'name':scenario.name,'description':scenario.description}})
+        return scenario
 
     def export_outputs(self):
         outputs = {}
@@ -171,12 +171,12 @@ class Project(object):
         return outputs
 
 
-class Event(Project):
-    """Create a new event"""
+class Scenario(Project):
+    """Create a new scenario"""
     instances = weakref.WeakKeyDictionary()
     def __new__(self,project,*args,**kwargs):
         _new = object.__new__(self,project)
-        Event.instances[_new] = None
+        Scenario.instances[_new] = None
         if debug :
             print
             print "........... EVENT created ..........."
@@ -184,7 +184,7 @@ class Event(Project):
         return _new
 
     def __init__(self,project,name='',uid='',description = '',output='',content=[]):
-        """create an event"""
+        """create an scenario"""
         if output == '':
             output = 1
         if uid == '':
@@ -205,15 +205,15 @@ class Event(Project):
     @staticmethod
     def getinstances(project):
         instances = []
-        for event in Event.instances.keys():
-            if project == event.project:
-                instances.append(event)
+        for scenario in Scenario.instances.keys():
+            if project == scenario.project:
+                instances.append(scenario)
         return instances
 
     # ----------- CONTENT -------------
     @property
     def content(self):
-        "Current content of the event"
+        "Current content of the scenario"
         return self.__content
 
     @content.setter
@@ -228,7 +228,7 @@ class Event(Project):
     # ----------- NAME -------------
     @property
     def name(self):
-        "Current name of the event"
+        "Current name of the scenario"
         return self.__name
 
     @name.setter
@@ -242,7 +242,7 @@ class Event(Project):
     # ----------- UID -------------
     @property
     def uid(self):
-        "Current uid of the event"
+        "Current uid of the scenario"
         return self.__uid
 
     @uid.setter
@@ -256,7 +256,7 @@ class Event(Project):
     # ----------- DECRIPTION -------------
     @property
     def description(self):
-        "Current description of the event"
+        "Current description of the scenario"
         return self.__description
 
     @description.setter
@@ -270,7 +270,7 @@ class Event(Project):
     # ----------- OUTPUT -------------
     @property
     def output(self):
-        "Current output of the event"
+        "Current output of the scenario"
         return self.__output
 
     @output.setter
@@ -282,7 +282,7 @@ class Event(Project):
         pass
 
     def play(self):
-        """play an event"""
+        """play an scenario"""
         if debug : print '------ PLAY EVENT :' , self.name , '-----------------'
         for line in self.content:
             if type(line) is int or type(line) is float:
@@ -313,18 +313,18 @@ class Event(Project):
 
 
     def delete(self):
-        """delete an event"""
+        """delete an scenario"""
         del db['data'][self.uid]
 
     def edit(self,attr,value):
-        """edit an event attribute (name,output,description,content)"""
+        """edit an scenario attribute (name,output,description,content)"""
         if debug : print (self.uid + " EDIT : " + attr + ' -> ' , value)
         del db['data'][self.uid]['attributes'][attr]
         db['data'][self.uid]['attributes'].setdefault(attr,value)
 
 
 class Output(Project):
-    """Create a new event"""
+    """Create a new scenario"""
     instances = weakref.WeakKeyDictionary()
     def __new__(self,project,*args,**kwargs):
         _new = object.__new__(self,project)

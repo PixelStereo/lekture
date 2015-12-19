@@ -12,11 +12,11 @@ my_project.read(path='lekture/projects/test.json')
 print 'name' , my_project.name
 print '-----------------------------------------'
 print '-----------------------------------------'
-for event in my_project.events():
-	print 'name :' , event.name
-	print 'content :' , event.content
+for scenario in my_project.scenario():
+	print 'name :' , scenario.name
+	print 'content :' , scenario.content
 
-for event in my_project.events():
-	event.play()
+for scenario in my_project.scenario():
+	scenario.play()
 
 my_project.write()

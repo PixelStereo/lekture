@@ -40,7 +40,7 @@ class OSC:
         self.client = OSCClient()
 
     def delete(self):
-        """delete an event"""
+        """delete an scenario"""
         del db[self.name]
 
     def edit(self,attr,value):
