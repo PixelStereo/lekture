@@ -179,7 +179,7 @@ class Scenario(Project):
         Scenario.instances[_new] = None
         if debug :
             print
-            print "........... EVENT created ..........."
+            print "........... SCENARIO created ..........."
             print
         return _new
 
