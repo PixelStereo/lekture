@@ -10,7 +10,7 @@ from PyQt5.QtCore import QModelIndex,Qt,QSignalMapper,QSettings,QPoint,QSize,QSe
 from PyQt5.QtWidgets import QMainWindow,QGroupBox,QApplication,QMdiArea,QWidget,QAction,QListWidget,QPushButton,QMessageBox
 from PyQt5.QtWidgets import QVBoxLayout,QLabel,QLineEdit,QGridLayout,QHBoxLayout,QSpinBox,QStyleFactory,QListWidgetItem,QFileDialog
 
-settings = QSettings('foo', 'foo')
+settings = QSettings('Pixel Stereo', 'lekture')
 
 settings.setValue('int_value', 42)
 settings.setValue('point_value', [10, 12])
@@ -505,9 +505,18 @@ class MdiChild(QGroupBox,QModelIndex):
         if not self.event_selected:
             self.event_del.setDisabled(True)
             self.event_play.setDisabled(True)
+            self.event_name.setDisabled(True)
+            self.event_output.setDisabled(True)
+            self.event_description.setDisabled(True)
+            self.event_content.setDisabled(True)
         else:
             self.event_del.setDisabled(False)
             self.event_play.setDisabled(False)
+            self.event_name.setDisabled(False)
+            self.event_output.setDisabled(False)
+            self.event_description.setDisabled(False)
+            self.event_content.setDisabled(False)
+
 
 
     def newEvent(self):
@@ -566,16 +575,19 @@ class MdiChild(QGroupBox,QModelIndex):
 
         self.event_name_label = QLabel('name')
         self.event_name = QLineEdit()
+        self.event_name.setDisabled(True)
         self.event_output_label = QLabel('output')
         self.event_output = QLineEdit()
+        self.event_output.setDisabled(True)
         self.event_description_label = QLabel('description')
         self.event_description = QLineEdit()
+        self.event_description.setDisabled(True)
         self.event_content_label = QLabel('content')
         self.event_content = QListWidget()
+        self.event_content.setDisabled(True)
         self.event_line_del = QPushButton('delete line')
         self.event_line_del.setMaximumWidth(90)
-
-
+        self.event_line_del.setDisabled(True)
 
         self.event_name.textEdited.connect(self.event_name_changed)
         self.event_output.textEdited.connect(self.event_output_changed)
@@ -605,7 +617,7 @@ class MdiChild(QGroupBox,QModelIndex):
                 self.project.del_event_line(self.event_selected,line2del)
                 self.event_display_clear()
                 self.event_display(self.event_selected)
-
+                self.event_line_selected = None
 
     def event_name_changed(self):
         self.event_selected.name = self.event_name.text()
@@ -639,8 +651,10 @@ class MdiChild(QGroupBox,QModelIndex):
     def eventContentSelectionChanged(self):
         if self.event_content.currentItem():
             self.event_line_selected = self.event_content.currentItem()
+            self.event_line_del.setDisabled(False)
         else:
             self.event_line_selected = None
+            self.event_line_del.setDisabled(True)
 
     def output_selector_changed(self,index):
         self.output_clear()
