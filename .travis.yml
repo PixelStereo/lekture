@@ -7,10 +7,11 @@ python:
   - "3.4"
   # does not have headers provided, please ask https://launchpad.net/~pypy/+archive/ppa
   # maintainers to fix their pypy-dev package.
-  - "pypy"
+  # - "pypy"
 # command to install dependencies
 install:
-  - pip install .
-  - pip install -r requirements.txt
+  - pip install PyQt5
+  - pip install PyOSC
+  - pip install pyinstaller
 # command to run tests
 script: nosetests
