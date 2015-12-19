@@ -3,16 +3,14 @@ os:
 - osx
 - linux
 python:
-  - "2.6"
   - "2.7"
   # does not have headers provided, please ask https://launchpad.net/~pypy/+archive/ppa
   # maintainers to fix their pypy-dev package.
   # - "pypy"
 # command to install dependencies
 install:
-  #- pip install PyQt5
-  - pip install PyOSC
-  - pip install pyinstaller
-  - pyinstaller --windowed --icon=icon/lekture.icns lekture.py
+- "./scripts/depinstall.sh"
+script:
+- "./scripts/build.sh"
 # command to run tests
 script: nosetests
