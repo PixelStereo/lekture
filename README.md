@@ -16,6 +16,7 @@ You need to install PyQt5, PyOSC and PyBonjour module
     pip install pyinstaller
     pyinstaller --windowed --icon=icon/lekture.icns lekture.py
 
+https://travis-ci.org/PixelStereo/lekture.svg?branch=master
 
 ##Licence
 GPL Licence
