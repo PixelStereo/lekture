@@ -51,7 +51,7 @@ class Project(object):
             print 'loading' , path
             try:
                 with open(path) as in_file :
-                    """ TODO :  FIRST WE NEED TO CLEAR THE EVENTS,DEVICES AND MODULAR APPLICATION INSTANCES"""
+                    """ TODO :  FIRST WE NEED TO CLEAR THE SCENARIO,DEVICES AND MODULAR APPLICATION INSTANCES"""
                     if debug : print 'file reading : ' , path
                     loaded = json.load(in_file,object_hook=lekture.unicode2string_dict)
                     in_file.close()
@@ -283,7 +283,7 @@ class Scenario(Project):
 
     def play(self):
         """play an scenario"""
-        if debug : print '------ PLAY EVENT :' , self.name , '-----------------'
+        if debug : print '------ PLAY SCENARIO :' , self.name , '-----------------'
         for line in self.content:
             if type(line) is int or type(line) is float:
                 line = int(line)
