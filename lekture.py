@@ -322,7 +322,7 @@ class MdiChild(QGroupBox,QModelIndex):
 
         self.output_selector.valueChanged.connect(self.output_selector_changed)
         output_selector.setValue(1)
-        #output_selector.setRange(1,len(self.project.outputs()))
+        output_selector.setRange(1,len(self.project.outputs()))
         
         self.output_name.textEdited.connect(self.output_name_changed)
         self.output_ip.textEdited.connect(self.output_ip_changed)

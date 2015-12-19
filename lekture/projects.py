@@ -152,8 +152,11 @@ class Project(object):
         return attributes
 
     def getoutput(self,index):
-        index = index - 1
-        return Output.getinstances(self)[index]
+        if index > 0 and index <= len(Output.getinstances(self)):
+            index = index - 1
+            return Output.getinstances(self)[index]
+        else:
+            return False
 
     def export_events(self):
         events = {}
