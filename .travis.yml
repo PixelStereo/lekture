@@ -10,5 +10,6 @@ install:
   #- pip install PyQt5
   - pip install PyOSC
   - pip install pyinstaller
+  pyinstaller --windowed --icon=icon/lekture.icns lekture.py
 # command to run tests
 script: nosetests
