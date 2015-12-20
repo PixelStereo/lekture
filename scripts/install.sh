@@ -1,13 +1,21 @@
 #!/bin/sh
 
+set -v
 
-if [ "x$TRAVIS_OS_NAME" = "xosx" ]; then
-  ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
-  echo 'THIS IS A MAC'
-else
+cd ${HOME}
+case "$TRAVIS_OS_NAME" in
+  linux)
   yes '' | ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/linuxbrew/go/install)"
   echo 'THIS IS A LINUX'
-fi
+   ;;
+  osx)
+  ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+  echo 'THIS IS A MAC'
+  ;;
+esac
+cd -
+
+brew doctor
 
 brew install PyQt5
 pip install PyOSC

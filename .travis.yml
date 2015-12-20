@@ -9,7 +9,7 @@ python:
   # - "pypy"
 # command to install dependencies
 install:
-- "./scripts/depinstall.sh"
+- "./scripts/install.sh"
 script:
 - "./scripts/build.sh"
 # command to run tests
