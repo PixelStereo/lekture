@@ -9,28 +9,28 @@ import lekture
 debug = True
 lekture.debug = True
 
-my_project = lekture.new_project(name='pouette')
+my_project = lekture.new_project()
+my_project.name = 'pouette'
 
 my_scenario = my_project.new_scenario(name='toto-la-roulette')
-"""print my_scenario.name
-print my_scenario.uid
-print my_scenario.description
-print my_scenario.output
-print my_scenario.contentç
-print my_scenario.content.keys()
-print"""
+print 'name' , my_scenario.name
+print 'uid' , my_scenario.uid
+print 'description' , my_scenario.description
+print 'output' , my_scenario.output
+#print 'content' , my_scenario.content
+for content in my_scenario.content:
+	print 'content' ,content
+print
 
 another_scenario = my_project.new_scenario(content=[['zob',22]],name='lol')
 another_scenario.content = [['/plouf' , 32]]
 
-print my_project.scenario()
-
-del my_scenario
-
-print my_project.scenario()
-
+print 'la' , my_project.scenario()
+my_project.del_scenario(my_scenario)
+print 'la' , my_project.scenario()
 print
-print
+quit()
+
 if my_project.scenario():
 	print 'PLAY ALL EVENTS'
 	print '--------------'

@@ -142,7 +142,9 @@ class Project(object):
         return scenario_list
 
     def del_scenario(self,scenario):
+        print scenario_list
         scenario_list.remove(scenario)
+        print scenario_list
 
     def del_scenario_line(self,scenario,index):
         scenario.content.pop(index)
@@ -209,6 +211,9 @@ class Scenario(Project):
             if project == scenario.project:
                 instances.append(scenario)
         return instances
+
+    def events(self):
+        return Event.getinstances(self)
 
     # ----------- CONTENT -------------
     @property
@@ -322,9 +327,36 @@ class Scenario(Project):
         del db['data'][self.uid]['attributes'][attr]
         db['data'][self.uid]['attributes'].setdefault(attr,value)
 
+class Event(object):
+    """Create an Event
+    an Event is like a step of a Scenario.
+    It could be a delay, a goto value, a random process,
+    a loop process or everything you can imagine """
+    instances = weakref.WeakKeyDictionary()
+    def __new__(self,scenario,*args,**kwargs):
+        _new = object.__new__(self,project)
+        Event.instances[_new] = None
+        if debug :
+            print
+            print "........... Event created ..........."
+            print
+        return _new
+
+    def __init__(self, scenario):
+        super(Event, self).__init__()
+        self.arg = arg
+        
+    @staticmethod
+    def getinstances(scenario):
+        instances = []
+        for event in Event.instances.keys():
+            if event == event.scenario:
+                instances.append(output)
+        return instances
+
 
 class Output(Project):
-    """Create a new scenario"""
+    """Create a new output"""
     instances = weakref.WeakKeyDictionary()
     def __new__(self,project,*args,**kwargs):
         _new = object.__new__(self,project)
@@ -336,7 +368,6 @@ class Output(Project):
         return _new
 
     def __init__(self,project,ip='127.0.0.1',name='no-name',udp =10000,index=None):
-        """create an output"""
         index = len(self.instances)
         self.name=name
         self.udp = udp
