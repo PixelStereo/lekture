@@ -250,9 +250,10 @@ class Event(object):
 
     def play(self):
         if type(self.content) is int or type(self.content) is float:
-            wait = int(self.content)
+            wait = float(self.content)
+            wait = wait/1000
             if debug : print 'waiting' , wait
-            sleep(wait/1000)
+            sleep(wait)
         else:
             address = self.content[0]
             args = self.content[1:]
@@ -267,7 +268,7 @@ class Event(object):
                     msg.setAddress(address)
                     msg.append(arg)
                     client.send(msg)
-                    sleep(0.01)
+                    sleep(0.001)
                     msg.clearData()
                 except OSCClientError :
                     print 'Connection refused'
