@@ -25,6 +25,7 @@ print
 
 another_scenario = my_project.new_scenario()
 print 'content before' , len(another_scenario.events())
+an_event = another_scenario.new_event(content=1000)
 an_event = another_scenario.new_event(content=['/zob',232])
 print 'content after' , len(another_scenario.events())
 

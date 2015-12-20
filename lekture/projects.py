@@ -27,7 +27,7 @@ class Project(object):
     """docstring for Project"""
     def __init__(self):
         super(Project, self).__init__()
-        if debug :
+        if debug == 2:
             print
             print "........... PROJECT created ..........."
             print 
@@ -127,7 +127,6 @@ class Project(object):
         output_list[taille] = Output(self)
         for key, value in kwargs.items():
             setattr(output_list[taille], key, value)
-        print 'OUTPUT LIST ' , output_list
         return output_list[taille]
 
     def play_scenario(self,scenario):
@@ -138,9 +137,6 @@ class Project(object):
 
     def del_scenario(self,scenario):
         scenario_list.remove(scenario)
-
-    def del_scenario_line(self,scenario,index):
-        scenario.content.pop(index)
 
     def export_attributes(self):
         attributes = {'author':self.author,'version':self.version,'lastopened':self.lastopened}
@@ -169,7 +165,7 @@ class Scenario(Project):
     """Create a new scenario"""
     def __init__(self,project,name='',uid='',description = '',output=''):
         """create an scenario"""
-        if debug :
+        if debug == 2:
             print
             print "........... SCENARIO created ..........."
             print
@@ -186,7 +182,7 @@ class Scenario(Project):
         self.output=output
         self.description=description
         self.uid=uid
-        self.new_event(content=['/node/integer',random.randint(65e2,65e3)]),self.new_event(content=[random.randint(500,3000)]),self.new_event(content=['/node/list',[float(random.randint(0,100))/100,random.randint(65e2, 65e3),"egg"]])
+        self.new_event(content=['/node/integer',random.randint(65e2,65e3)]),self.new_event(content=random.randint(500,3000)),self.new_event(content=['/node/list',[float(random.randint(0,100))/100,random.randint(65e2, 65e3),"egg"]])
 
     @staticmethod
     def getinstances(project):
@@ -208,6 +204,10 @@ class Scenario(Project):
             setattr(event_list[taille], key, value)
         return event_list[taille]
 
+    def del_event(self,index):
+        print index , event_list
+        event_list.pop(index)
+
     def play(self):
         """play an scenario"""
         if debug : print '------ PLAY SCENARIO :' , self.name , '-----------------'
@@ -222,7 +222,7 @@ class Event(object):
     It could be a delay, a goto value, a random process,
     a loop process or everything you can imagine """
     def __init__(self, scenario,content=[],name='',description='',output=''):
-        if debug :
+        if debug == 2:
             print
             print "........... Event created ..........."
             print
@@ -249,28 +249,28 @@ class Event(object):
         return instances
 
     def play(self):
-        #print 'content' , self.content , type(self.content)
-        address = self.content[0]
-        if type(address) is int or type(address) is float:
-            address = int(address)
-            if debug : print 'waiting' , address
-            sleep(address/1000)
-        args = self.content[1:]
-        output_ip = self.getoutput(self.output).ip
-        output_port = self.getoutput(self.output).udp
-        for arg in args:
-            try:
-                if debug : 
-                    print 'connecting to : ' + output_ip + ':' + str(output_port)
-                client.connect((output_ip , int(output_port)))
-                msg = OSCMessage()
-                msg.setAddress(address)
-                msg.append(arg)
-                client.send(msg)
-                sleep(0.01)
-                msg.clearData()
-            except OSCClientError :
-                print 'Connection refused'
+        if type(self.content) is int or type(self.content) is float:
+            wait = int(self.content)
+            if debug : print 'waiting' , wait
+            sleep(wait/1000)
+        else:
+            address = self.content[0]
+            args = self.content[1:]
+            output_ip = self.getoutput(self.output).ip
+            output_port = self.getoutput(self.output).udp
+            for arg in args:
+                try:
+                    if debug : 
+                        print 'connecting to : ' + output_ip + ':' + str(output_port)
+                    client.connect((output_ip , int(output_port)))
+                    msg = OSCMessage()
+                    msg.setAddress(address)
+                    msg.append(arg)
+                    client.send(msg)
+                    sleep(0.01)
+                    msg.clearData()
+                except OSCClientError :
+                    print 'Connection refused'
 
     def getoutput(self,index):
         if index > 0 and index <= len(Output.getinstances(self.scenario.project)):
@@ -283,7 +283,7 @@ class Event(object):
 class Output(Project):
     """Create a new output"""
     def __init__(self,project,ip='127.0.0.1',name='no-name',udp =10000,index=None):
-        if debug :
+        if debug == 2:
             print
             print "........... OUTPUT created ..........."
             print

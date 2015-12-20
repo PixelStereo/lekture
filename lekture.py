@@ -272,7 +272,7 @@ class MdiChild(QGroupBox,QModelIndex):
         self.document = Document('unknown')
         self.project = lekture.new_project()
         self.scenario_selected = None
-        self.scenario_line_selected = None
+        self.event_selected = None
         self.output_selected = None
 
         self.originalPalette = QApplication.palette()
@@ -552,7 +552,8 @@ class MdiChild(QGroupBox,QModelIndex):
         self.scenario_name.setText(scenario.name)
         self.scenario_output.setText(str(scenario.output))
         self.scenario_description.setText(scenario.description)
-        for line in scenario.content:
+        for event in scenario.events():
+            line = event.content
             'not really nice…'
             if isinstance(line,unicode):
                 line = lekture.unicode2string_list(line)
@@ -585,15 +586,15 @@ class MdiChild(QGroupBox,QModelIndex):
         self.scenario_content_label = QLabel('content')
         self.scenario_content = QListWidget()
         self.scenario_content.setDisabled(True)
-        self.scenario_line_del = QPushButton('delete line')
-        self.scenario_line_del.setMaximumWidth(90)
-        self.scenario_line_del.setDisabled(True)
+        self.event_del = QPushButton('delete event')
+        self.event_del.setMaximumWidth(90)
+        self.event_del.setDisabled(True)
 
         self.scenario_name.textEdited.connect(self.scenario_name_changed)
         self.scenario_output.textEdited.connect(self.scenario_output_changed)
         self.scenario_description.textEdited.connect(self.scenario_description_changed)
         self.scenario_content.itemChanged.connect(self.scenario_content_changed)
-        self.scenario_line_del.released.connect(self.scenario_line_delete)
+        self.event_del.released.connect(self.event_delete)
         self.scenario_content.itemSelectionChanged.connect(self.scenarioContentSelectionChanged)
 
         layout = QGridLayout()
@@ -606,18 +607,18 @@ class MdiChild(QGroupBox,QModelIndex):
         layout.addWidget(self.scenario_description, 1, 1)
         layout.addWidget(self.scenario_content_label, 2, 0)
         layout.addWidget(self.scenario_content, 2, 1, 2, 2)
-        layout.addWidget(self.scenario_line_del, 3, 0)
+        layout.addWidget(self.event_del, 3, 0)
         layout.setRowStretch(5, 1)
         self.RightGroupBox.setLayout(layout)
 
-    def scenario_line_delete(self):
-        if self.scenario_line_selected:
-            if self.scenario_content.row(self.scenario_line_selected) != len(self.scenario_selected.content):
-                line2del = self.scenario_content.row(self.scenario_line_selected)
-                self.project.del_scenario_line(self.scenario_selected,line2del)
+    def event_delete(self):
+        if self.event_selected:
+            if self.scenario_content.row(self.event_selected) != len(self.scenario_selected.events()):
+                event = self.scenario_content.row(self.event_selected)
+                self.scenario_selected.del_event(event)
                 self.scenario_display_clear()
                 self.scenario_display(self.scenario_selected)
-                self.scenario_line_selected = None
+                self.event_selected = None
 
     def scenario_name_changed(self):
         self.scenario_selected.name = self.scenario_name.text()
@@ -639,27 +640,28 @@ class MdiChild(QGroupBox,QModelIndex):
             if isinstance(newline,float):
                 newline = int(newline)
                 self.scenario_content.currentItem().setText(str(newline))
-            # if it's a new line (the last line), append line to content attr of Scenario class and create a new line
+            # if it's a new line (the last line), append line to content attr of Scenario class and create a new Event instance
             if self.scenario_content.currentRow() + 1 == self.scenario_content.count():
-                self.scenario_selected.content.append(newline)
+                new_event = self.scenario_selected.new_event(content=newline)
                 empty = QListWidgetItem()
                 empty.setFlags(Qt.ItemIsEnabled|Qt.ItemIsEditable|Qt.ItemIsSelectable|Qt.ItemIsDragEnabled)
                 self.scenario_content.addItem(empty)
             else:
-                self.scenario_selected.content[self.scenario_content.currentRow()] = newline
+                self.scenario_selected.events()[self.scenario_content.currentRow()].content = newline
 
     def scenarioContentSelectionChanged(self):
         if self.scenario_content.currentItem():
-            self.scenario_line_selected = self.scenario_content.currentItem()
-            self.scenario_line_del.setDisabled(False)
+            self.event_selected = self.scenario_content.currentItem()
+            self.event_del.setDisabled(False)
         else:
-            self.scenario_line_selected = None
-            self.scenario_line_del.setDisabled(True)
+            self.event_selected = None
+            self.event_del.setDisabled(True)
 
     def output_selector_changed(self,index):
         self.output_clear()
-        if self.project.getoutput(index):
-            output = self.project.getoutput(index)
+        if self.project.outputs():
+            index = index - 1
+            output = self.project.outputs()[index]
             self.output_display(output)
             self.output_selected = output
         else:
