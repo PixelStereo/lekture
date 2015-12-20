@@ -18,22 +18,22 @@ print 'name' , my_scenario.name
 print 'uid' , my_scenario.uid
 print 'description' , my_scenario.description
 print 'output' , my_scenario.output
-print 'content' , my_scenario.content
-for event in my_scenario.content:
+for event in my_scenario.events():
 	print 'event-name' ,event.name
 	print 'event-name' ,event.content
 print
 
-another_scenario = my_project.new_scenario(content=['zob',22],name='lol')
-another_scenario.content = [['/plouf' , 32]]
+another_scenario = my_project.new_scenario()
+print 'content before' , len(another_scenario.events())
+an_event = another_scenario.new_event(content=['/zob',232])
+print 'content after' , len(another_scenario.events())
 
-print 'la' , my_project.scenario()
-my_project.del_scenario(my_scenario)
-del my_scenario
-print 'la' , my_project.scenario()
-print
+an_event.play()
+an_event.content = ['/plouf' , 32]
+print an_event.content
+an_event.play()
+another_scenario.play()
 
-quit()
 
 if my_project.scenario():
 	print 'PLAY ALL EVENTS'
@@ -41,3 +41,12 @@ if my_project.scenario():
 	for scenario in my_project.scenario():
 		print 'play scenario :' , scenario.name
 		scenario.play()
+
+print 'how many scenario :' , len(my_project.scenario()) , my_project.scenario()
+#my_project.del_scenario(my_scenario)
+print 'how many scenario :' , len(my_project.scenario()) , my_project.scenario()
+
+my_project.path = '/Users/reno/Desktop/toto.json'
+my_project.write()
+
+
