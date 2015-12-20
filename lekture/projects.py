@@ -313,19 +313,7 @@ class Scenario(Project):
                 except OSCClientError :
                     print 'Connection refused'
         return self.name , 'done'
-
-
-
-
-    def delete(self):
-        """delete an scenario"""
-        del db['data'][self.uid]
-
-    def edit(self,attr,value):
-        """edit an scenario attribute (name,output,description,content)"""
-        if debug : print (self.uid + " EDIT : " + attr + ' -> ' , value)
-        del db['data'][self.uid]['attributes'][attr]
-        db['data'][self.uid]['attributes'].setdefault(attr,value)
+        
 
 class Event(object):
     """Create an Event
