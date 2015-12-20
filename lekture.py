@@ -7,7 +7,7 @@ import pjlink
 from time import sleep
 from PyQt5.QtGui import QIcon,QKeySequence
 from PyQt5.QtCore import QModelIndex,Qt,QSignalMapper,QSettings,QPoint,QSize,QSettings,QPoint,QFileInfo,QFile
-from PyQt5.QtWidgets import QMainWindow,QGroupBox,QApplication,QMdiArea,QWidget,QAction,QListWidget,QPushButton,QMessageBox
+from PyQt5.QtWidgets import QMainWindow,QGroupBox,QApplication,QMdiArea,QWidget,QAction,QListWidget,QPushButton,QMessageBox,QMenu
 from PyQt5.QtWidgets import QVBoxLayout,QLabel,QLineEdit,QGridLayout,QHBoxLayout,QSpinBox,QStyleFactory,QListWidgetItem,QFileDialog
 
 settings = QSettings('Pixel Stereo', 'lekture')
@@ -583,19 +583,25 @@ class MdiChild(QGroupBox,QModelIndex):
         self.scenario_description_label = QLabel('description')
         self.scenario_description = QLineEdit()
         self.scenario_description.setDisabled(True)
-        self.scenario_content_label = QLabel('content')
+        self.scenario_content_label = QLabel('Events')
         self.scenario_content = QListWidget()
+        self.scenario_content.setContextMenuPolicy(Qt.CustomContextMenu)
+        self.scenario_content.customContextMenuRequested.connect(self.event_right_click)
         self.scenario_content.setDisabled(True)
+        self.event_play = QPushButton('play event')
+        self.event_play.setMaximumWidth(100)
+        self.event_play.setDisabled(True)
         self.event_del = QPushButton('delete event')
-        self.event_del.setMaximumWidth(90)
+        self.event_del.setMaximumWidth(100)
         self.event_del.setDisabled(True)
 
         self.scenario_name.textEdited.connect(self.scenario_name_changed)
         self.scenario_output.textEdited.connect(self.scenario_output_changed)
         self.scenario_description.textEdited.connect(self.scenario_description_changed)
         self.scenario_content.itemChanged.connect(self.scenario_content_changed)
+        self.event_play.released.connect(self.event_play_func)
         self.event_del.released.connect(self.event_delete)
-        self.scenario_content.itemSelectionChanged.connect(self.scenarioContentSelectionChanged)
+        self.scenario_content.itemSelectionChanged.connect(self.eventSelectionChanged)
 
         layout = QGridLayout()
 
@@ -607,7 +613,8 @@ class MdiChild(QGroupBox,QModelIndex):
         layout.addWidget(self.scenario_description, 1, 1)
         layout.addWidget(self.scenario_content_label, 2, 0)
         layout.addWidget(self.scenario_content, 2, 1, 2, 2)
-        layout.addWidget(self.event_del, 3, 0)
+        layout.addWidget(self.event_play, 3, 0)
+        layout.addWidget(self.event_del, 4, 0)
         layout.setRowStretch(5, 1)
         self.RightGroupBox.setLayout(layout)
 
@@ -619,6 +626,21 @@ class MdiChild(QGroupBox,QModelIndex):
                 self.scenario_display_clear()
                 self.scenario_display(self.scenario_selected)
                 self.event_selected = None
+
+    def event_play_func(self):
+        if self.event_selected:
+            self.event_selected.play()
+
+    def event_right_click(self,QPos):
+        self.listMenu= QMenu()
+        menu_item = self.listMenu.addAction("Play Event")
+        menu_item.triggered.connect(self.menuItemClicked)
+        parentPosition = self.scenario_content.mapToGlobal(QPoint(0, 0))        
+        self.listMenu.move(parentPosition + QPos)
+        self.listMenu.show() 
+
+    def menuItemClicked(self):
+        self.event_selected.play()
 
     def scenario_name_changed(self):
         self.scenario_selected.name = self.scenario_name.text()
@@ -649,13 +671,19 @@ class MdiChild(QGroupBox,QModelIndex):
             else:
                 self.scenario_selected.events()[self.scenario_content.currentRow()].content = newline
 
-    def scenarioContentSelectionChanged(self):
-        if self.scenario_content.currentItem():
-            self.event_selected = self.scenario_content.currentItem()
-            self.event_del.setDisabled(False)
+    def eventSelectionChanged(self):
+        if self.scenario_content.currentRow() >= 0 and self.scenario_content.currentRow() < len(self.scenario_selected.events()):
+            item = self.scenario_content.currentRow()
+            item = self.scenario_selected.events()[item]
+            self.event_selected = item
         else:
             self.event_selected = None
+        if self.event_selected:
+            self.event_del.setDisabled(False)
+            self.event_play.setDisabled(False)
+        else:
             self.event_del.setDisabled(True)
+            self.event_play.setDisabled(True)
 
     def output_selector_changed(self,index):
         self.output_clear()
