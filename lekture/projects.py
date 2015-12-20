@@ -19,6 +19,7 @@ debug=True
 #But if i don't do that, I can't create scenario objects 
 # because when I call Scenario.getinstances(), the instances list is empty
 scenario_list = []
+event_list = []
 output_list = []
 
 debug = True
@@ -144,7 +145,10 @@ class Project(object):
     def del_scenario(self,scenario):
         print scenario_list
         scenario_list.remove(scenario)
+        print scenario
+        del scenario
         print scenario_list
+        print scenario_list[-1].name
 
     def del_scenario_line(self,scenario,index):
         scenario.content.pop(index)
@@ -196,7 +200,11 @@ class Scenario(Project):
         if name == '':
             name = 'untitled'
         if content == []:
-            content = [['/node/string','a string'],random.randint(500,3000),['/node/integer',random.randint(65e2,65e3)],['/node/float',float(random.randint(0,100))/100],['/node/list',[float(random.randint(0,100))/100,random.randint(65e2, 65e3),"egg"]]]            
+            content = [self.new_event(content=['/node/integer',random.randint(65e2,65e3)]),self.new_event(content=[random.randint(500,3000)]),self.new_event(content=['/node/list',[float(random.randint(0,100))/100,random.randint(65e2, 65e3),"egg"]])]
+        elif content == None:
+            content = []
+        else:
+            content = [self.new_event(content=content)]
         self.name=name
         self.project = project
         self.output=output
@@ -214,6 +222,15 @@ class Scenario(Project):
 
     def events(self):
         return Event.getinstances(self)
+
+    def new_event(self,*args,**kwargs):
+        taille = len(event_list)
+        the_event = None
+        event_list.append(the_event)
+        event_list[taille] = Event(self)
+        for key, value in kwargs.iteritems():
+            setattr(event_list[taille], key, value)
+        return event_list[taille]
 
     # ----------- CONTENT -------------
     @property
@@ -313,7 +330,7 @@ class Scenario(Project):
                 except OSCClientError :
                     print 'Connection refused'
         return self.name , 'done'
-        
+
 
 class Event(object):
     """Create an Event
@@ -322,7 +339,7 @@ class Event(object):
     a loop process or everything you can imagine """
     instances = weakref.WeakKeyDictionary()
     def __new__(self,scenario,*args,**kwargs):
-        _new = object.__new__(self,project)
+        _new = object.__new__(self,scenario)
         Event.instances[_new] = None
         if debug :
             print
@@ -330,9 +347,20 @@ class Event(object):
             print
         return _new
 
-    def __init__(self, scenario):
-        super(Event, self).__init__()
-        self.arg = arg
+    def __init__(self, scenario,content=[],name='',description='',output=''):
+        if output == '':
+            output = 1
+        if description == '':
+            description = "event's description"
+        if name == '':
+            name = 'untitled event'
+        if content == []:
+            content = ['no content for this event']
+        self.name=name
+        self.scenario = scenario
+        self.output=output
+        self.description=description
+        self.content = content
         
     @staticmethod
     def getinstances(scenario):
@@ -341,6 +369,8 @@ class Event(object):
             if event == event.scenario:
                 instances.append(output)
         return instances
+
+
 
 
 class Output(Project):
