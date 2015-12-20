@@ -150,7 +150,7 @@ class Project(object):
     
     def export_scenario(self):
         scenarios = []
-        for scenario in self.scenario():
+        for scenario in self.scenarios():
             scenarios.append({'attributes':{'output':scenario.output,'name':scenario.name,'description':scenario.description,'events':scenario.export_events()}})
         return scenarios
 
