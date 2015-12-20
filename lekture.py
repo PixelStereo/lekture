@@ -10,12 +10,6 @@ from PyQt5.QtCore import QModelIndex,Qt,QSignalMapper,QSettings,QPoint,QSize,QSe
 from PyQt5.QtWidgets import QMainWindow,QGroupBox,QApplication,QMdiArea,QWidget,QAction,QListWidget,QPushButton,QMessageBox,QMenu
 from PyQt5.QtWidgets import QVBoxLayout,QLabel,QLineEdit,QGridLayout,QHBoxLayout,QSpinBox,QStyleFactory,QListWidgetItem,QFileDialog
 
-settings = QSettings('Pixel Stereo', 'lekture')
-
-settings.setValue('int_value', 42)
-settings.setValue('point_value', [10, 12])
-
-
 from lekture import lekture
 
 debug = True
@@ -25,6 +19,9 @@ lekture.debug = True
 class MainWindow(QMainWindow):
     def __init__(self):
         super(MainWindow, self).__init__()
+        self.settings = QSettings("Pixel Stereo", "lekture")
+        if self.settings.value("window_pos"):
+            self.restoreState(self.settings.value("window_pos"))#.toByteArray())
 
         self.mdiArea = QMdiArea()
         self.mdiArea.setHorizontalScrollBarPolicy(Qt.ScrollBarAsNeeded)
@@ -45,6 +42,10 @@ class MainWindow(QMainWindow):
         self.readSettings()
 
         self.setWindowTitle("LEKTURE")
+
+    def closeEvent(self, event):
+        self.settings.setValue("window_pos", self.saveState())
+        QMainWindow.closeEvent(self, event)
 
     def closeScenario(self, scenario):
         self.mdiArea.closeAllSubWindows()
