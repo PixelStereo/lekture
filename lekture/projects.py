@@ -311,18 +311,6 @@ class Scenario(Project):
 
 
 
-
-    def delete(self):
-        """delete an scenario"""
-        del db['data'][self.uid]
-
-    def edit(self,attr,value):
-        """edit an scenario attribute (name,output,description,content)"""
-        if debug : print (self.uid + " EDIT : " + attr + ' -> ' , value)
-        del db['data'][self.uid]['attributes'][attr]
-        db['data'][self.uid]['attributes'].setdefault(attr,value)
-
-
 class Output(Project):
     """Create a new scenario"""
     instances = weakref.WeakKeyDictionary()
