@@ -529,7 +529,7 @@ class MdiChild(QGroupBox,QModelIndex):
         self.scenario_list_refresh()
 
     def playScenario(self):
-        self.project.play_scenario(self.scenario_selected)
+        self.scenario_selected.play()
 
     def scenario_list_refresh(self):
         self.scenario_list.clear()
@@ -621,8 +621,9 @@ class MdiChild(QGroupBox,QModelIndex):
 
     def event_delete(self):
         if self.event_selected:
-            if self.scenario_content.row(self.event_selected) != len(self.scenario_selected.events()):
-                event = self.scenario_content.row(self.event_selected)
+            # check if it's not the last line
+            if self.scenario_content.row(self.scenario_content.currentItem()) != len(self.scenario_selected.events()):
+                event = self.event_selected
                 self.scenario_selected.del_event(event)
                 self.scenario_display_clear()
                 self.scenario_display(self.scenario_selected)
