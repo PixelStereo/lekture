@@ -205,8 +205,10 @@ class Scenario(Project):
         return event_list[taille]
 
     def del_event(self,index):
-        print index , event_list
-        event_list.pop(index)
+        if type(index) == int:
+            event_list.pop(index)
+        else:
+            event_list.remove(index)
 
     def play_from_here(self,index):
         index = event_list.index(index)
