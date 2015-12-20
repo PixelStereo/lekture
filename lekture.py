@@ -497,7 +497,7 @@ class MdiChild(QGroupBox,QModelIndex):
             x.append(str(i.text()))
         self.scenario_display_clear()
         if len(x)>0:
-            for scenario in self.project.scenario_obj():
+            for scenario in self.project.scenarios():
                 if scenario.uid == x[0]:
                     self.scenario_selected = scenario
             self.scenario_display(self.scenario_selected)
@@ -533,7 +533,7 @@ class MdiChild(QGroupBox,QModelIndex):
 
     def scenario_list_refresh(self):
         self.scenario_list.clear()
-        for scenario in self.project.scenario():
+        for scenario in self.project.scenarios():
             scenario_item = QListWidgetItem(scenario.uid)
             self.scenario_list.addItem(scenario_item)
         self.scenario_list.show()
@@ -628,20 +628,23 @@ class MdiChild(QGroupBox,QModelIndex):
                 self.scenario_display(self.scenario_selected)
                 self.event_selected = None
 
-    def event_play_func(self):
-        if self.event_selected:
-            self.event_selected.play()
-
     def event_right_click(self,QPos):
         self.listMenu= QMenu()
-        menu_item = self.listMenu.addAction("Play Event")
-        menu_item.triggered.connect(self.menuItemClicked)
+        play = self.listMenu.addAction("Play Event")
+        play_from_here = self.listMenu.addAction("Play From Here")
+        play.triggered.connect(self.event_play_func)
+        play_from_here.triggered.connect(self.event_play_from_here_func)
         parentPosition = self.scenario_content.mapToGlobal(QPoint(0, 0))        
         self.listMenu.move(parentPosition + QPos)
         self.listMenu.show() 
 
-    def menuItemClicked(self):
-        self.event_selected.play()
+    def event_play_func(self):
+        if self.event_selected and type(self.event_selected.content) != int:
+            self.event_selected.play()
+
+    def event_play_from_here_func(self):
+        if self.event_selected:
+            self.scenario_selected.play_from_here(self.event_selected)
 
     def scenario_name_changed(self):
         self.scenario_selected.name = self.scenario_name.text()
@@ -655,6 +658,7 @@ class MdiChild(QGroupBox,QModelIndex):
     def scenario_content_changed(self):
         # check if there is some text
         if self.scenario_content.currentItem().text():
+            print ('text')
             newline = self.scenario_content.currentItem().text()
             if isinstance(newline, unicode):
                 newline = newline.encode('utf-8')
@@ -663,14 +667,20 @@ class MdiChild(QGroupBox,QModelIndex):
             if isinstance(newline,float):
                 newline = int(newline)
                 self.scenario_content.currentItem().setText(str(newline))
+            # if we have a list as arguments, we need to keep a list
+            if len(newline) > 1:
+                newline = [newline[0],newline[1:]]
             # if it's a new line (the last line), append line to content attr of Scenario class and create a new Event instance
             if self.scenario_content.currentRow() + 1 == self.scenario_content.count():
                 new_event = self.scenario_selected.new_event(content=newline)
                 empty = QListWidgetItem()
                 empty.setFlags(Qt.ItemIsEnabled|Qt.ItemIsEditable|Qt.ItemIsSelectable|Qt.ItemIsDragEnabled)
                 self.scenario_content.addItem(empty)
+                self.event_play.setDisabled(False)
             else:
                 self.scenario_selected.events()[self.scenario_content.currentRow()].content = newline
+        else:
+            print('no text')
 
     def eventSelectionChanged(self):
         if self.scenario_content.currentRow() >= 0 and self.scenario_content.currentRow() < len(self.scenario_selected.events()):
@@ -681,7 +691,10 @@ class MdiChild(QGroupBox,QModelIndex):
             self.event_selected = None
         if self.event_selected:
             self.event_del.setDisabled(False)
-            self.event_play.setDisabled(False)
+            if type(self.event_selected.content) != int:
+                self.event_play.setDisabled(False)
+            else:
+                self.event_play.setDisabled(True)
         else:
             self.event_del.setDisabled(True)
             self.event_play.setDisabled(True)

@@ -105,7 +105,7 @@ class Project(object):
         else:
             return False
 
-    def scenario(self):
+    def scenarios(self):
         return Scenario.getinstances(self)
 
     def outputs(self):
@@ -129,11 +129,11 @@ class Project(object):
             setattr(output_list[taille], key, value)
         return output_list[taille]
 
-    def play_scenario(self,scenario):
+    """def play_scenario(self,scenario):
         scenario.play()
 
     def scenario_obj(self):
-        return scenario_list
+        return scenario_list"""
 
     def del_scenario(self,scenario):
         scenario_list.remove(scenario)
@@ -208,10 +208,15 @@ class Scenario(Project):
         print index , event_list
         event_list.pop(index)
 
-    def play(self):
-        """play an scenario"""
-        if debug : print '------ PLAY SCENARIO :' , self.name , '-----------------'
-        for event in self.events():
+    def play_from_here(self,index):
+        index = event_list.index(index)
+        self.play(index)
+
+    def play(self,index=0):
+        """play an scenario
+        Started from the first event if an index has not been provided"""
+        if debug : print '------ PLAY SCENARIO :' , self.name , 'FROM INDEX' , index , '-----'
+        for event in self.events()[index:]:
             event.play()
         return self.name , 'play done'
 
