@@ -1,6 +1,6 @@
 language: python
 os:
-- osx
+#- osx
 - linux
 python:
   - "2.7"
@@ -12,5 +12,7 @@ install:
 - "./scripts/install.sh"
 script:
 - "./scripts/build.sh"
+after_success:
+- "./script/deploy.sh"
 # command to run tests
 script: nosetests
