@@ -5,13 +5,13 @@ set -v
 cd ${HOME}
 case "$TRAVIS_OS_NAME" in
   linux)
-  yes '' | ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/linuxbrew/go/install)"
-  echo 'THIS IS A LINUX, so Install dependancies'
-  sudo apt-get install build-essential
+  echo 'this is linux, so apt-get'
+  apt-get install PyQt5
+  
    ;;
   osx)
   ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
-  echo 'THIS IS A MAC'
+  echo 'this is osx, so brew'
   ;;
 esac
 cd -
