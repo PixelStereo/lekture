@@ -1,4 +1,5 @@
 language: python
+sudo: true
 os:
 #- osx
 - linux
