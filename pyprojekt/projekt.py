@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 import os
 import sys
 import json
@@ -287,8 +288,6 @@ class Event(object):
             print
             print "........... Event created ..........."
             print
-        if output == '':
-            output = 1
         if description == '':
             description = "event's description"
         if name == '':
@@ -297,9 +296,9 @@ class Event(object):
             content = ['no content for this event']
         self.name=name
         self.scenario = scenario
-        self.output=output
         self.description=description
         self.content = content
+        self.output = None
         
     @staticmethod
     def getinstances(scenario):
@@ -318,13 +317,14 @@ class Event(object):
         else:
             address = self.content[0]
             args = self.content[1:]
-            output_ip = self.getoutput(self.output).ip
-            output_port = self.getoutput(self.output).udp
+            #print 'OUTTT' , self.output
+            ip = self.output.ip
+            port = self.output.udp
             for arg in args:
                 try:
                     if debug : 
-                        print 'connecting to : ' + output_ip + ':' + str(output_port)
-                    client.connect((output_ip , int(output_port)))
+                        print 'connecting to : ' + ip + ':' + str(port)
+                    client.connect((ip , int(port)))
                     msg = OSCMessage()
                     msg.setAddress(address)
                     msg.append(arg)
@@ -333,13 +333,25 @@ class Event(object):
                     msg.clearData()
                 except OSCClientError :
                     print 'Connection refused'
+                    
 
-    def getoutput(self,index):
-        if index > 0 and index <= len(Output.getinstances(self.scenario.project)):
-            index = index - 1
-            return self.scenario.project.outputs()[index]
+    # ----------- OUTPUT -------------
+    @property
+    def output(self):
+        """Current output of the event. Default output of an event is the output of the scenario.
+        But you can assign a scpecific output for an event if you want"""
+        if self.__output:
+            return output_list[self.__output-1]
         else:
-            return False
+            return output_list[self.scenario.output-1]
+
+    @output.setter
+    def output(self, index):
+        self.__output = index
+
+    @output.deleter
+    def output(self):
+        pass
 
 
 class Output(Project):
