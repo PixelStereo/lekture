@@ -30,6 +30,9 @@ def new_project():
     project_list[taille] = Project()
     return project_list[taille]
 
+def projects():
+    return project_list
+
 
 class Project(object):
     """docstring for Project"""
