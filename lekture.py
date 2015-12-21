@@ -698,8 +698,13 @@ class MdiChild(QGroupBox,QModelIndex):
             self.event_play.setDisabled(True)
 
     def output_new_func(self):
+        # create a new output
         self.project.new_output()
+        # refresh display
         self.outputs_refresh()
+        # select new output that have been just created
+        last = len(self.project.outputs()) + 1
+        self.output_selector.setValue(last)
 
     def outputs_refresh(self):
         self.output_clear()
