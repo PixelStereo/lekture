@@ -2,15 +2,20 @@
 # -*- coding: utf-8 -*-
 from time import sleep
 import os,sys
-lib_path = os.path.abspath('./../../lekture/lekture')
+lib_path = os.path.abspath('./../../lekture/pyprojekt')
 sys.path.append(lib_path)
-import lekture
+import projekt
 
 debug = True
-lekture.debug = True
+projekt.debug = True
 
-my_project = lekture.new_project()
+my_project = projekt.new_project()
 my_project.name = 'pouette'
+
+my_other_project = projekt.new_project()
+my_other_project.name = 'other'
+my_other_project.author = 'me and I'
+my_other_project.version = '2.2.1'
 
 my_scenario = my_project.new_scenario()
 my_project.name = 'toto-la-roulette'
@@ -35,17 +40,31 @@ print an_event.content
 an_event.play()
 another_scenario.play()
 
+for project in projekt.projects():
+	print 'path' ,  project.path
+	print 'version' ,  project.version
+	print 'author' , project.author
+	for scenario in project.scenarios():
+		print 'scenario :' , scenario.name
+	print
 
-if my_project.scenario():
+if projekt.projects():
 	print 'PLAY ALL EVENTS'
 	print '--------------'
-	for scenario in my_project.scenario():
+	for scenario in my_project.scenarios():
+		print 'play scenario :' , scenario.name
+		scenario.play()
+		
+if my_project.scenarios():
+	print 'PLAY ALL EVENTS'
+	print '--------------'
+	for scenario in my_project.scenarios():
 		print 'play scenario :' , scenario.name
 		scenario.play()
 
-print 'how many scenario :' , len(my_project.scenario()) , my_project.scenario()
+print 'how many scenario :' , len(my_project.scenarios()) , my_project.scenarios()
 #my_project.del_scenario(my_scenario)
-print 'how many scenario :' , len(my_project.scenario()) , my_project.scenario()
+print 'how many scenario :' , len(my_project.scenarios()) , my_project.scenarios()
 
 my_project.path = '/Users/reno/Desktop/toto.json'
 my_project.write()

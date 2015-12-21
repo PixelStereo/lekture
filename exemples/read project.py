@@ -1,22 +1,19 @@
 import os,sys
-lib_path = os.path.abspath('./../../lekture/lekture')
+lib_path = os.path.abspath('./../../lekture/pyprojekt')
 sys.path.append(lib_path)
-import lekture
+import projekt
 from time import sleep
 
 # create a project
-my_project = lekture.new_project()
+my_project = projekt.new_project()
 
-my_project.read(path='lekture/projects/test.json')
-
-print 'name' , my_project.name
+my_project.read(path='test.json')
 print '-----------------------------------------'
-print '-----------------------------------------'
-for scenario in my_project.scenario():
+for scenario in my_project.scenarios():
 	print 'name :' , scenario.name
 	print 'content :' , scenario.content
 
-for scenario in my_project.scenario():
+for scenario in my_project.scenarios():
 	scenario.play()
 
 my_project.write()

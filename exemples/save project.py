@@ -1,31 +1,39 @@
-import os,sys
-lib_path = os.path.abspath('./../../lekture/lekture')
-sys.path.append(lib_path)
-import lekture
+
+
+#! /usr/bin/python
+# -*- coding: utf-8 -*-
 from time import sleep
+import os,sys
+lib_path = os.path.abspath('./../../lekture/pyprojekt')
+sys.path.append(lib_path)
+import projekt
 
-my_projekt = lekture.Project('test-projekt')
+debug = True
+projekt.debug = False
 
-#create an scenario
-scenario = my_projekt.new_scenario(name='scenario')
+my_project = projekt.new_project()
+my_project.name = 'my_first_project'
+my_project.author = 'me and I'
+my_project.version = '0.0.1'
 
-#need to be sure that it doesn't have the same uid (included it in scenario.new????)
-sleep(0.01)
+my_scenario = my_project.new_scenario()
+my_scenario.name = 'first'
+my_event = my_scenario.new_event()
+my_event.content = [['/pouett/no/yfughk',54678654]]
+sleep(0.1)
+my_poulscenario = my_project.new_scenario()
+my_poulscenario.name = 'second'
+sleep(0.1)
+another_scenario = my_project.new_scenario()
+another_scenario.name = 'third'
+another_scenario.content = [['zob',22]]
+sleep(0.1)
+another_scenario.content = [['/plouf' , 32]]
 
-#create another scenario
-another_scenario = my_projekt.new_scenario(name="another scenario")
+for scenario in my_project.scenarios():
+	print 'scenario :' , scenario.name
+	for event in scenario.events():
+		print 'event :', event.content
 
-print 'list scenario'
-print '------------'
-for scenario in my_projekt.scenario():
-	print scenario.name
-
-#play cues
-scenario.play()
-sleep(1)
-another_scenario.play()
-
-
-# save the projekt 
-my_projekt.path = os.path.abspath('lekture/projects/'+lekture.timestamp()+'.json')
-my_projekt.write()
+my_project.path = 'test.json'
+my_project.write()
