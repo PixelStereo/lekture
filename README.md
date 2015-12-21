@@ -3,7 +3,7 @@ lekture is an osc sequencer
 
 this is a work in progress… don't expect a working version in the following weeks ;-)
 
-Development is done under python 2.7.
+Development is done under python 2.7.11
 
 ##Install
 You need to install PyQt5, PyOSC and PyBonjour module. The simplest way to install PyQt5 is with using brew.
