@@ -267,7 +267,7 @@ class Scenario(Project):
 
     def getoutput(self):
         output = self.output - 1
-        output = output_list[output]
+        output = self.project.outputs()[output]
         return output
 
 class Event(object):
@@ -327,7 +327,7 @@ class Event(object):
 
     def getoutput(self):
         output = self.output - 1
-        output = output_list[output]
+        output = self.scenario.project.outputs()[output]
         return output
 
     # ----------- OUTPUT -------------
@@ -351,7 +351,7 @@ class Event(object):
 
 class Output(Project):
     """Create a new output"""
-    def __init__(self,project,ip='127.0.0.1',name='no-name',udp =10000,index=None):
+    def __init__(self,project,ip='127.0.0.1',name='no-name',udp =10000):
         if debug == 2:
             print
             print "........... OUTPUT created ..........."
