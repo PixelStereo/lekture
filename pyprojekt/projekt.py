@@ -42,7 +42,7 @@ class Project(object):
         self.author = None
         self.version = None
         self.path = None
-        self.lastopened = lekture.timestamp()
+        self.lastopened = timestamp()
         self.new_output(self)
 
     def read(self,path) : 
@@ -55,7 +55,7 @@ class Project(object):
                 with open(path) as in_file :
                     """ TODO :  FIRST WE NEED TO CLEAR THE SCENARIO,DEVICES AND MODULAR APPLICATION INSTANCES"""
                     if debug : print 'file reading : ' , path
-                    loaded = json.load(in_file,object_hook=lekture.unicode2string_dict)
+                    loaded = json.load(in_file,object_hook=unicode2string_dict)
                     in_file.close()
                     for key,val in loaded.items():
                         if key == 'scenario' :
@@ -76,7 +76,7 @@ class Project(object):
                                     self.author = value
                                 if attribute == 'version':
                                     self.version = value
-                            self.lastopened = lekture.timestamp()
+                            self.lastopened = timestamp()
                         elif key == 'outputs' :
                             for index , out_dict in loaded['outputs'].items():
                                 for attribute , value in out_dict['attributes'].items():
@@ -180,7 +180,7 @@ class Scenario(Project):
         if output == '':
             output = 1
         if uid == '':
-            uid = lekture.timestamp()
+            uid = timestamp()
         if description == '':
             description = "write a comment"
         if name == '':
