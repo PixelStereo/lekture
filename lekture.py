@@ -13,6 +13,7 @@ from pyprojekt import projekt
 
 debug = True
 projekt.debug = True
+projekt.test = False
 
 
 class MainWindow(QMainWindow):
