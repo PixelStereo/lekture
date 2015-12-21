@@ -13,7 +13,9 @@ from OSC import OSCMessage , OSCClientError
 from devicemanager import OSCClient as OSCClient
 client = OSCClient()
 
-debug=True
+debug = True
+# test will create events each time we create a scenario
+test = True
 
 # this is not the best way to do.
 #But if i don't do that, I can't create scenario objects 
@@ -48,6 +50,27 @@ class Project(object):
         self.lastopened = timestamp()
         self.new_output(self)
 
+    def reset(self):
+        """reset a project by deleting project.attributes, scenarios, outputs and events related"""
+        # reset project attributes
+        self.author = None
+        self.version = None
+        self.path = None
+        # reset outputs
+        print 'before out' , self.outputs()
+        for output in self.outputs():
+            output_list.remove(output)
+        print 'after out' , self.outputs()
+        # reset scenarios and events
+        print 'before scenario' , self.scenarios()
+        for scenario in self.scenarios():
+            print 'before events' , scenario.events()
+            for event in scenario.events():
+                event_list.remove(event)
+            print 'after events' , scenario.events()
+            scenario_list.remove(scenario)
+        print 'after scenario' , self.scenarios()
+
     def read(self,path) : 
         path = os.path.abspath(path)
         if not os.path.exists(path):
@@ -56,7 +79,8 @@ class Project(object):
             print 'loading' , path
             try:
                 with open(path) as in_file :
-                    """ TODO :  FIRST WE NEED TO CLEAR THE SCENARIO,DEVICES AND MODULAR APPLICATION INSTANCES"""
+                    # clear the project
+                    self.reset()
                     if debug : print 'file reading : ' , path
                     loaded = json.load(in_file,object_hook=unicode2string_dict)
                     in_file.close()
@@ -77,7 +101,7 @@ class Project(object):
                                 scenario.description = description
                                 scenario.output = output
                                 for event in events:
-                                    for attribute in event['attributes']:
+                                    for attribute , value in event['attributes'].items():
                                         if attribute == 'name':
                                             name = value
                                         elif attribute == 'description':
@@ -99,15 +123,15 @@ class Project(object):
                                     self.version = value
                             self.lastopened = timestamp()
                         elif key == 'outputs' :
-                            for index , out_dict in loaded['outputs'].items():
+                            for out_dict in loaded['outputs']:
                                 for attribute , value in out_dict['attributes'].items():
                                     if attribute == 'name':
                                         name = value
                                     if attribute == 'ip':
-                                        adress_ip = value
+                                        address_ip = value
                                     if attribute == 'udp':
                                         udp = value
-                                self.new_output(self,index=index,name=name,ip=adress_ip,udp=udp)
+                                self.new_output(self,name=name,ip=address_ip,udp=udp)
                     if debug : print 'project loaded'
                     self.path = path
             except IOError:
@@ -211,7 +235,8 @@ class Scenario(Project):
         self.output=output
         self.description=description
         self.uid=uid
-        self.new_event(content=['/node/integer',random.randint(65e2,65e3)]),self.new_event(content=random.randint(500,3000)),self.new_event(content=['/node/list',[float(random.randint(0,100))/100,random.randint(65e2, 65e3),"egg"]])
+        if test:
+            self.new_event(content=['/node/integer',random.randint(65e2,65e3)]),self.new_event(content=random.randint(500,3000)),self.new_event(content=['/node/list',[float(random.randint(0,100))/100,random.randint(65e2, 65e3),"egg"]])
 
     @staticmethod
     def getinstances(project):
