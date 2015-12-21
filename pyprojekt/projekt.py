@@ -62,17 +62,35 @@ class Project(object):
                     in_file.close()
                     for key,val in loaded.items():
                         if key == 'scenario' :
-                            for uid , scenario_dict in loaded['scenario'].items():
+                            for scenario_dict in loaded['scenario']:
                                 for attribute , value in scenario_dict['attributes'].items():
-                                    if attribute == 'content':
-                                        content = value
-                                    elif attribute == 'name':
+                                    if attribute == 'name':
                                         name = value
                                     elif attribute == 'description':
                                         description = value
                                     elif attribute == 'output':
                                         output = value
-                                self.new_scenario(self,uid=uid,name=name,description=description,output=output,content=content)
+                                    elif attribute == 'events':
+                                        events = value
+                                scenario = self.new_scenario()
+                                scenario.name = name
+                                scenario.description = description
+                                scenario.output = output
+                                for event in events:
+                                    for attribute in event['attributes']:
+                                        if attribute == 'name':
+                                            name = value
+                                        elif attribute == 'description':
+                                            description = value
+                                        elif attribute == 'output':
+                                            output = value
+                                        elif attribute == 'content':
+                                            content = value
+                                    event = scenario.new_event()
+                                    event.name = name
+                                    event.description = description
+                                    event.output = output
+                                    event.content = content
                         elif key == 'attributes' :
                             for attribute,value in loaded['attributes'].items():
                                 if attribute == 'author':
