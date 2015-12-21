@@ -271,6 +271,10 @@ class Scenario(Project):
             event.play()
         return self.name , 'play done'
 
+    def getoutput(self):
+        output = self.output - 1
+        output = output_list[output]
+        return output
 
 class Event(object):
     """Create an Event
