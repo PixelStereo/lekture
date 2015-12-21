@@ -183,12 +183,6 @@ class Project(object):
             setattr(output_list[taille], key, value)
         return output_list[taille]
 
-    """def play_scenario(self,scenario):
-        scenario.play()
-
-    def scenario_obj(self):
-        return scenario_list"""
-
     def del_scenario(self,scenario):
         scenario_list.remove(scenario)
 
@@ -317,9 +311,8 @@ class Event(object):
         else:
             address = self.content[0]
             args = self.content[1:]
-            #print 'OUTTT' , self.output
-            ip = self.output.ip
-            port = self.output.udp
+            ip = self.getoutput().ip
+            port = self.getoutput().udp
             for arg in args:
                 try:
                     if debug : 
@@ -333,7 +326,11 @@ class Event(object):
                     msg.clearData()
                 except OSCClientError :
                     print 'Connection refused'
-                    
+
+    def getoutput(self):
+        output = self.output - 1
+        output = output_list[output]
+        return output
 
     # ----------- OUTPUT -------------
     @property
@@ -341,9 +338,9 @@ class Event(object):
         """Current output of the event. Default output of an event is the output of the scenario.
         But you can assign a scpecific output for an event if you want"""
         if self.__output:
-            return output_list[self.__output-1]
+            return self.__output
         else:
-            return output_list[self.scenario.output-1]
+            return self.scenario.output
 
     @output.setter
     def output(self, index):
