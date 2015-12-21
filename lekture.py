@@ -369,12 +369,19 @@ class MdiChild(QGroupBox,QModelIndex):
         QApplication.setOverrideCursor(Qt.WaitCursor)
         # read a project and create scenario
         self.project.read(fileName)
+        self.outputs_refresh()
         self.scenario_list_refresh()
         self.project_display()
         QApplication.restoreOverrideCursor()
         self.setCurrentFile(fileName)
         #self.document().contentsChanged.connect(self.documentWasModified)
         return True
+
+    def outputs_refresh(self):
+        self.output_clear()
+        print len(self.project.outputs())
+        self.output_selector.setRange(1,len(self.project.outputs()))
+        self.output_display(self.output_selected)
 
     def project_display(self):
         self.project_author.setText(self.project.author)
@@ -701,9 +708,10 @@ class MdiChild(QGroupBox,QModelIndex):
             self.output_selected = None
 
     def output_display(self,output):
-        self.output_ip.setText(output.ip)
-        self.output_udp.setValue(output.udp)
-        self.output_name.setText(output.name)
+        if output:
+            self.output_ip.setText(output.ip)
+            self.output_udp.setValue(output.udp)
+            self.output_name.setText(output.name)
 
     def output_clear(self):
         self.output_udp.clear()
@@ -717,6 +725,8 @@ class MdiChild(QGroupBox,QModelIndex):
     def output_udp_changed(self):
         if self.output_selected:
             self.output_selected.udp = self.output_udp.text()
+        for project in projekt.output_list:
+            print project.udp , self.output_selected.udp
 
     def output_ip_changed(self):
         if self.output_selected:
