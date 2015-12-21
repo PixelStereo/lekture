@@ -337,7 +337,7 @@ class Event(object):
     def getoutput(self,index):
         if index > 0 and index <= len(Output.getinstances(self.scenario.project)):
             index = index - 1
-            return Output.getinstances(self.scenario.project)[index]
+            return self.scenario.project.outputs()[index]
         else:
             return False
 
@@ -349,11 +349,9 @@ class Output(Project):
             print
             print "........... OUTPUT created ..........."
             print
-        index = len(output_list)
         self.name=name
         self.udp = udp
         self.ip=ip
-        self.index=index
         self.project = project
 
     @staticmethod
