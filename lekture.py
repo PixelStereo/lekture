@@ -9,10 +9,10 @@ from PyQt5.QtCore import QModelIndex,Qt,QSignalMapper,QSettings,QPoint,QSize,QSe
 from PyQt5.QtWidgets import QMainWindow,QGroupBox,QApplication,QMdiArea,QWidget,QAction,QListWidget,QPushButton,QMessageBox,QMenu
 from PyQt5.QtWidgets import QVBoxLayout,QLabel,QLineEdit,QGridLayout,QHBoxLayout,QSpinBox,QStyleFactory,QListWidgetItem,QFileDialog
 
-from lekture import lekture
+from pyprojekt import projekt
 
 debug = True
-lekture.debug = True
+projekt.debug = True
 
 
 class MainWindow(QMainWindow):
@@ -260,7 +260,7 @@ class MdiChild(QGroupBox,QModelIndex):
         self.isUntitled = True
         # I must change all 'document' class reference to 'project' class… so I need to enhance project with modify flags and signals
         self.document = Document('unknown')
-        self.project = lekture.new_project()
+        self.project = projekt.new_project()
         self.scenario_selected = None
         self.event_selected = None
         self.output_selected = None
@@ -548,7 +548,7 @@ class MdiChild(QGroupBox,QModelIndex):
             line = event.content
             'not really nice…'
             if isinstance(line,unicode):
-                line = lekture.unicode2string_list(line)
+                line = projekt.unicode2string_list(line)
             if isinstance(line,int):
                 line = str(line)
             else:
@@ -653,7 +653,7 @@ class MdiChild(QGroupBox,QModelIndex):
             if isinstance(newline, unicode):
                 newline = newline.encode('utf-8')
             newline = newline.split(' ')
-            newline = lekture.unicode2_list(newline)
+            newline = projekt.unicode2_list(newline)
             if isinstance(newline,float):
                 newline = int(newline)
                 self.scenario_content.currentItem().setText(str(newline))
