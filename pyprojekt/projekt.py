@@ -58,19 +58,13 @@ class Project(object):
         self.version = None
         self.path = None
         # reset outputs
-        print 'before out' , self.outputs()
         for output in self.outputs():
             output_list.remove(output)
-        print 'after out' , self.outputs()
         # reset scenarios and events
-        print 'before scenario' , self.scenarios()
         for scenario in self.scenarios():
-            print 'before events' , scenario.events()
             for event in scenario.events():
                 event_list.remove(event)
-            print 'after events' , scenario.events()
             scenario_list.remove(scenario)
-        print 'after scenario' , self.scenarios()
 
     def read(self,path) : 
         path = os.path.abspath(path)
