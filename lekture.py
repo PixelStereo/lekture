@@ -32,14 +32,12 @@ class MainWindow(QMainWindow):
 
         self.windowMapper = QSignalMapper(self)
         self.windowMapper.mapped[QWidget].connect(self.setActiveSubWindow)
-
+        
         self.createActions()
         self.createMenus()
         self.createStatusBar()
         self.updateMenus()
-
         self.readSettings()
-
         self.setWindowTitle("LEKTURE")
 
 
@@ -236,10 +234,6 @@ class MainWindow(QMainWindow):
             self.mdiArea.setActiveSubWindow(window)
 
 
-
-
-
-
 class Document(object):
     """docstring for Document"""
     def __init__(self, arg):
@@ -255,7 +249,6 @@ class Document(object):
     def setModified(self):
         pass
 
-        
 
 class MdiChild(QGroupBox,QModelIndex):
     sequenceNumber = 1
@@ -274,9 +267,28 @@ class MdiChild(QGroupBox,QModelIndex):
 
         self.originalPalette = QApplication.palette()
 
-        self.createTopLeftGroupBox()
-        self.createRightGroupBox()
+        self.createProjectAttrGroupBox()
+        self.createOuputAttrGroupBox()
+        self.createScenarioListGroupBox()
+        self.createScenarioAttrGroupBox()
 
+        mainLayout = QGridLayout()
+        mainLayout.addWidget(self.project_Groupbox, 0, 0, 1, 2)
+        mainLayout.addWidget(self.outputs_GroupBox, 1, 0, 1, 2)
+        mainLayout.addWidget(self.ScenarioListGroupBox, 2, 0)
+        mainLayout.addWidget(self.ScenarioAttrGroupBox, 2, 1)
+        mainLayout.setRowStretch(2, 1)
+        mainLayout.setColumnStretch(0, 1)
+        mainLayout.setColumnStretch(1, 1)
+        self.setLayout(mainLayout)
+        
+        #QApplication.setStyle(QStyleFactory.create('Fusion'))
+        QApplication.setStyle(QStyleFactory.create('Macintosh'))
+        #QApplication.setStyle(QStyleFactory.create('Windows'))
+        QApplication.setPalette(QApplication.style().standardPalette())
+
+    
+    def createProjectAttrGroupBox(self):
         self.project_Groupbox = QGroupBox('Project')
         project_layout = QHBoxLayout()
         project_author_label = QLabel('author')
@@ -300,6 +312,7 @@ class MdiChild(QGroupBox,QModelIndex):
         project_layout.addStretch(1)
         self.project_Groupbox.setLayout(project_layout)   
 
+    def createOuputAttrGroupBox(self):
         self.outputs_GroupBox = QGroupBox("Outputs")
         output_layout = QHBoxLayout()
         output_selector_label = QLabel('outputs')
@@ -335,24 +348,6 @@ class MdiChild(QGroupBox,QModelIndex):
         output_layout.addWidget(output_name)
         output_layout.addStretch(1)
         self.outputs_GroupBox.setLayout(output_layout)   
-
-        mainLayout = QGridLayout()
-        mainLayout.addWidget(self.project_Groupbox, 0, 0, 1, 2)
-        mainLayout.addWidget(self.outputs_GroupBox, 1, 0, 1, 2)
-        mainLayout.addWidget(self.topLeftGroupBox, 2, 0)
-        mainLayout.addWidget(self.RightGroupBox, 2, 1)
-        mainLayout.setRowStretch(2, 1)
-        mainLayout.setColumnStretch(0, 1)
-        mainLayout.setColumnStretch(1, 1)
-        self.setLayout(mainLayout)
-
-        
-        #QApplication.setStyle(QStyleFactory.create('Fusion'))
-        QApplication.setStyle(QStyleFactory.create('Macintosh'))
-        #QApplication.setStyle(QStyleFactory.create('Windows'))
-        QApplication.setPalette(QApplication.style().standardPalette())
-
-
 
     def newFile(self):
         self.isUntitled = True
@@ -464,8 +459,8 @@ class MdiChild(QGroupBox,QModelIndex):
 
 
 
-    def createTopLeftGroupBox(self):
-        self.topLeftGroupBox = QGroupBox("Scenario List")
+    def createScenarioListGroupBox(self):
+        self.ScenarioListGroupBox = QGroupBox("Scenario List")
         self.scenario_list = QListWidget()
         self.scenario_list.itemSelectionChanged.connect(self.scenarioSelectionChanged)
         self.scenario_list.itemDoubleClicked.connect(self.scenario_list.editItem)
@@ -484,7 +479,7 @@ class MdiChild(QGroupBox,QModelIndex):
         layout.addWidget(self.scenario_list)
         layout.addWidget(self.scenario_del)
         layout.addStretch(1)
-        self.topLeftGroupBox.setLayout(layout)    
+        self.ScenarioListGroupBox.setLayout(layout)    
 
     def scenarioSelectionChanged(self):
         items = self.scenario_list.selectedItems()
@@ -566,8 +561,8 @@ class MdiChild(QGroupBox,QModelIndex):
         empty.setFlags(Qt.ItemIsEnabled|Qt.ItemIsEditable|Qt.ItemIsSelectable|Qt.ItemIsDragEnabled)
         self.scenario_content.addItem(empty)
 
-    def createRightGroupBox(self):
-        self.RightGroupBox = QGroupBox("Scenario Content")
+    def createScenarioAttrGroupBox(self):
+        self.ScenarioAttrGroupBox = QGroupBox("Scenario Content")
 
         self.scenario_name_label = QLabel('name')
         self.scenario_name = QLineEdit()
@@ -611,7 +606,7 @@ class MdiChild(QGroupBox,QModelIndex):
         layout.addWidget(self.event_play, 3, 0)
         layout.addWidget(self.event_del, 4, 0)
         layout.setRowStretch(5, 1)
-        self.RightGroupBox.setLayout(layout)
+        self.ScenarioAttrGroupBox.setLayout(layout)
 
     def event_delete(self):
         if self.event_selected:
