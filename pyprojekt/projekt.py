@@ -27,6 +27,7 @@ scenario_list = []
 event_list = []
 
 def new_project():
+    """Create a new project"""
     taille = len(project_list)
     the_project = None
     project_list.append(the_project)
@@ -34,6 +35,7 @@ def new_project():
     return project_list[taille]
 
 def projects():
+    """return a list of projects available"""
     return project_list
 
 
@@ -67,6 +69,7 @@ class Project(object):
             scenario_list.remove(scenario)
 
     def read(self,path) : 
+        """open a lekture project"""
         path = os.path.abspath(path)
         if not os.path.exists(path):
             print "ERROR - THIS PATH IS NOT VALID" , path
@@ -129,12 +132,14 @@ class Project(object):
                                 self.new_output(self,name=name,ip=address_ip,udp=udp)
                     if debug : print 'project loaded'
                     self.path = path
+            # catch error if file is not valid or if file is not a lekture project
             except (IOError , ValueError):
                 if debug : print 'error : project not loaded'
                 return False
             return True
 
-    def write(self,path=None) :
+    def write(self,path=None):
+        """write a project on the hard drive"""
         if path:
             savepath = path
         else:
@@ -154,12 +159,15 @@ class Project(object):
             return False
 
     def scenarios(self):
+        """return a list of available scenario for this project"""
         return Scenario.getinstances(self)
 
     def outputs(self):
+        """return a list of available output for this project"""
         return Output.getinstances(self)
 
     def new_scenario(self,*args,**kwargs):
+        """create a new scenario"""
         taille = len(scenario_list)
         the_scenario = None
         scenario_list.append(the_scenario)
@@ -169,6 +177,7 @@ class Project(object):
         return scenario_list[taille]
 
     def new_output(self,*args,**kwargs):
+        """create a new output for this project"""
         taille = len(output_list)
         the_output = None
         output_list.append(the_output)
@@ -178,25 +187,30 @@ class Project(object):
         return output_list[taille]
 
     def del_scenario(self,scenario):
+        """delete a scenario of this project"""
         scenario_list.remove(scenario)
 
     def export_attributes(self):
+        """export attributes of the project"""
         attributes = {'author':self.author,'version':self.version,'lastopened':self.lastopened}
         return attributes
 
     def export_events(self):
+        """export events of the project"""
         events = []
         for event in self.events():
             events.append({'attributes':{'output':event.output,'name':event.name,'description':event.description,'content':event.content}})
         return events
     
     def export_scenario(self):
+        """export scenario of the project"""
         scenarios = []
         for scenario in self.scenarios():
             scenarios.append({'attributes':{'output':scenario.output,'name':scenario.name,'description':scenario.description,'events':scenario.export_events()}})
         return scenarios
 
     def export_outputs(self):
+        """export outputs of the project"""
         outputs = []
         for output in self.outputs():
             outputs.append({'attributes':{'ip':output.ip,'udp':output.udp,'name':output.name}})
@@ -229,6 +243,7 @@ class Scenario(Project):
 
     @staticmethod
     def getinstances(project):
+        """return a list of scenario for a given project""" 
         instances = []
         for scenario in scenario_list:
             if project == scenario.project:
@@ -236,9 +251,11 @@ class Scenario(Project):
         return instances
 
     def events(self):
+        """return a list of events for this scenario"""
         return Event.getinstances(self)
 
     def new_event(self,*args,**kwargs):
+        """create a new event for this scenario"""
         taille = len(event_list)
         the_event = None
         event_list.append(the_event)
@@ -248,16 +265,19 @@ class Scenario(Project):
         return event_list[taille]
 
     def del_event(self,index):
+        """delete an event, by index or with object instance"""
         if type(index) == int:
             event_list.pop(index)
         else:
             event_list.remove(index)
 
     def play_from_here(self,index):
+        """play scenario from a given index"""
         index = event_list.index(index)
         self.play(index)
 
     def play(self,index=0):
+        """play a scenario from the beginning"""
         """play an scenario
         Started from the first event if an index has not been provided"""
         if debug : print '------ PLAY SCENARIO :' , self.name , 'FROM INDEX' , index , '-----'
@@ -266,6 +286,7 @@ class Scenario(Project):
         return self.name , 'play done'
 
     def getoutput(self):
+        """get the default output for this scenario"""
         output = self.output - 1
         output = self.project.outputs()[output]
         return output
@@ -294,6 +315,7 @@ class Event(object):
         
     @staticmethod
     def getinstances(scenario):
+        """return a list of events for a given scenario"""
         instances = []
         for event in event_list:
             if scenario == event.scenario:
@@ -301,6 +323,7 @@ class Event(object):
         return instances
 
     def play(self):
+        """play the current event"""
         if type(self.content) is int or type(self.content) is float:
             wait = float(self.content)
             wait = wait/1000
@@ -326,6 +349,7 @@ class Event(object):
                     print 'Connection refused'
 
     def getoutput(self):
+        """rerurn the current output for this event. If no output is set for this event, parent scenario output will be used"""
         output = self.output - 1
         output = self.scenario.project.outputs()[output]
         return output
@@ -363,6 +387,7 @@ class Output(Project):
 
     @staticmethod
     def getinstances(project):
+        """return a list of outputs for a given project"""
         instances = []
         for output in output_list:
             if project == output.project:
