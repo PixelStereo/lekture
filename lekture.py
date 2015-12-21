@@ -325,20 +325,24 @@ class MdiChild(QGroupBox,QModelIndex):
         output_udp.setRange(0,65536)
         output_name_label = QLabel('name')
         output_name = QLineEdit()
+        output_new = QPushButton('New Output')
 
         self.output_selector = output_selector
         self.output_udp = output_udp
         self.output_ip = output_ip
         self.output_name = output_name
+        self.output_new = output_new
 
         self.output_selector.valueChanged.connect(self.output_selector_changed)
         output_selector.setValue(1)
         output_selector.setRange(1,len(self.project.outputs()))
         
+        self.output_new.released.connect(self.output_new_func)
         self.output_name.textEdited.connect(self.output_name_changed)
         self.output_ip.textEdited.connect(self.output_ip_changed)
         self.output_udp.valueChanged.connect(self.output_udp_changed)
 
+        output_layout.addWidget(output_new)
         output_layout.addWidget(output_selector_label)
         output_layout.addWidget(output_selector)
         output_layout.addWidget(output_ip_label)
@@ -376,12 +380,6 @@ class MdiChild(QGroupBox,QModelIndex):
         self.setCurrentFile(fileName)
         #self.document().contentsChanged.connect(self.documentWasModified)
         return True
-
-    def outputs_refresh(self):
-        self.output_clear()
-        print len(self.project.outputs())
-        self.output_selector.setRange(1,len(self.project.outputs()))
-        self.output_display(self.output_selected)
 
     def project_display(self):
         self.project_author.setText(self.project.author)
@@ -550,7 +548,7 @@ class MdiChild(QGroupBox,QModelIndex):
 
     def scenario_display(self,scenario):
         self.scenario_name.setText(scenario.name)
-        self.scenario_output.setText(str(scenario.output))
+        self.scenario_output.setValue(scenario.output)
         self.scenario_description.setText(scenario.description)
         for event in scenario.events():
             line = event.content
@@ -576,7 +574,7 @@ class MdiChild(QGroupBox,QModelIndex):
         self.scenario_name = QLineEdit()
         self.scenario_name.setDisabled(True)
         self.scenario_output_label = QLabel('output')
-        self.scenario_output = QLineEdit()
+        self.scenario_output = QSpinBox()
         self.scenario_output.setDisabled(True)
         self.scenario_description_label = QLabel('description')
         self.scenario_description = QLineEdit()
@@ -593,8 +591,10 @@ class MdiChild(QGroupBox,QModelIndex):
         self.event_del.setMaximumWidth(100)
         self.event_del.setDisabled(True)
 
+        self.scenario_output.setRange(1,len(self.project.outputs()))
+
         self.scenario_name.textEdited.connect(self.scenario_name_changed)
-        self.scenario_output.textEdited.connect(self.scenario_output_changed)
+        self.scenario_output.valueChanged.connect(self.scenario_output_changed)
         self.scenario_description.textEdited.connect(self.scenario_description_changed)
         self.scenario_content.itemChanged.connect(self.scenario_content_changed)
         self.event_play.released.connect(self.event_play_func)
@@ -651,7 +651,7 @@ class MdiChild(QGroupBox,QModelIndex):
         self.scenario_selected.description = self.scenario_description.text()
 
     def scenario_output_changed(self):
-        self.scenario_selected.output = self.scenario_output.text()
+        self.scenario_selected.output = self.scenario_output.value()
 
     def scenario_content_changed(self):
         # check if there is some text
@@ -697,13 +697,24 @@ class MdiChild(QGroupBox,QModelIndex):
             self.event_del.setDisabled(True)
             self.event_play.setDisabled(True)
 
+    def output_new_func(self):
+        self.project.new_output()
+        self.outputs_refresh()
+
+    def outputs_refresh(self):
+        self.output_clear()
+        self.output_selector.setRange(1,len(self.project.outputs()))
+        self.scenario_output.setRange(1,len(self.project.outputs()))
+        self.output_display(self.output_selected)
+
     def output_selector_changed(self,index):
         self.output_clear()
         if self.project.outputs():
             index = index - 1
             output = self.project.outputs()[index]
-            self.output_display(output)
+            # Important to first set output_selected before output_display
             self.output_selected = output
+            self.output_display(output)
         else:
             self.output_selected = None
 
@@ -724,9 +735,7 @@ class MdiChild(QGroupBox,QModelIndex):
 
     def output_udp_changed(self):
         if self.output_selected:
-            self.output_selected.udp = self.output_udp.text()
-        for project in projekt.output_list:
-            print project.udp , self.output_selected.udp
+            self.output_selected.udp = self.output_udp.value()
 
     def output_ip_changed(self):
         if self.output_selected:
