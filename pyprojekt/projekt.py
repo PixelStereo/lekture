@@ -3,25 +3,33 @@ import os
 import sys
 import json
 import random
-from time import sleep
-import random
 import devicemanager
+from time import sleep
+from functions import timestamp
+from functions import unicode2_list
+from functions import unicode2string_dict
+from functions import unicode2string_list
 from OSC import OSCMessage , OSCClientError
 from devicemanager import OSCClient as OSCClient
 client = OSCClient()
-import lekture
 
 debug=True
-
 
 # this is not the best way to do.
 #But if i don't do that, I can't create scenario objects 
 # because when I call Scenario.getinstances(), the instances list is empty
+project_list = []
+output_list = []
 scenario_list = []
 event_list = []
-output_list = []
 
-debug = True
+def new_project():
+    taille = len(project_list)
+    the_project = None
+    project_list.append(the_project)
+    project_list[taille] = Project()
+    return project_list[taille]
+
 
 class Project(object):
     """docstring for Project"""
