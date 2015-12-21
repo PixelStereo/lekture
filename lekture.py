@@ -651,9 +651,7 @@ class MdiChild(QGroupBox,QModelIndex):
         self.scenario_selected.description = self.scenario_description.text()
 
     def scenario_output_changed(self):
-        print 'befire' , self.scenario_selected.output
         self.scenario_selected.output = self.scenario_output.value()
-        print 'after' , self.scenario_selected.output
 
     def scenario_content_changed(self):
         # check if there is some text
