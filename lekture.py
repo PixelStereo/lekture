@@ -3,7 +3,6 @@
 
 import os
 import sys
-import pjlink
 from time import sleep
 from PyQt5.QtGui import QIcon,QKeySequence
 from PyQt5.QtCore import QModelIndex,Qt,QSignalMapper,QSettings,QPoint,QSize,QSettings,QPoint,QFileInfo,QFile
@@ -19,9 +18,9 @@ lekture.debug = True
 class MainWindow(QMainWindow):
     def __init__(self):
         super(MainWindow, self).__init__()
-        self.settings = QSettings("Pixel Stereo", "lekture")
-        if self.settings.value("window_pos"):
-            self.restoreState(self.settings.value("window_pos"))#.toByteArray())
+
+        # remove close & maximize window buttons
+        self.setWindowFlags(Qt.CustomizeWindowHint|Qt.WindowMinimizeButtonHint)
 
         self.mdiArea = QMdiArea()
         self.mdiArea.setHorizontalScrollBarPolicy(Qt.ScrollBarAsNeeded)
@@ -43,11 +42,8 @@ class MainWindow(QMainWindow):
 
         self.setWindowTitle("LEKTURE")
 
-    def closeEvent(self, event):
-        self.settings.setValue("window_pos", self.saveState())
-        QMainWindow.closeEvent(self, event)
 
-    def closeScenario(self, scenario):
+    def closeEvent(self, scenario):
         self.mdiArea.closeAllSubWindows()
         if self.mdiArea.currentSubWindow():
             scenario.ignore()
@@ -210,16 +206,16 @@ class MainWindow(QMainWindow):
         self.statusBar().showMessage("Ready")
 
     def readSettings(self):
-        settings = QSettings('Trolltech', 'MDI Example')
+        settings = QSettings('Pixel Stereo', 'lekture')
         pos = settings.value('pos', QPoint(200, 200))
-        size = settings.value('size', QSize(400, 400))
+        #size = settings.value('size', QSize(400, 400))
         self.move(pos)
-        self.resize(size)
+        #self.resize(size)
 
     def writeSettings(self):
-        settings = QSettings('Trolltech', 'MDI Example')
+        settings = QSettings('Pixel Stereo', 'lekture')
         settings.setValue('pos', self.pos())
-        settings.setValue('size', self.size())
+        #settings.setValue('size', self.size())
 
     def activeMdiChild(self):
         activeSubWindow = self.mdiArea.activeSubWindow()
@@ -469,7 +465,7 @@ class MdiChild(QGroupBox,QModelIndex):
 
 
     def createTopLeftGroupBox(self):
-        self.topLeftGroupBox = QGroupBox("Scenarios List")
+        self.topLeftGroupBox = QGroupBox("Scenario List")
         self.scenario_list = QListWidget()
         self.scenario_list.itemSelectionChanged.connect(self.scenarioSelectionChanged)
         self.scenario_list.itemDoubleClicked.connect(self.scenario_list.editItem)
@@ -571,9 +567,7 @@ class MdiChild(QGroupBox,QModelIndex):
         self.scenario_content.addItem(empty)
 
     def createRightGroupBox(self):
-        self.RightGroupBox = QGroupBox("Editable")
-        self.RightGroupBox.setCheckable(True)
-        self.RightGroupBox.setChecked(True)
+        self.RightGroupBox = QGroupBox("Scenario Content")
 
         self.scenario_name_label = QLabel('name')
         self.scenario_name = QLineEdit()
@@ -737,6 +731,5 @@ if __name__ == "__main__":
     app = QApplication(sys.argv)
     mainWin = MainWindow()
     mainWin.setFixedSize(1000,550)
-    mainWin.move(0,0)
     mainWin.show()
     sys.exit(app.exec_())
