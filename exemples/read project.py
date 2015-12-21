@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 import os,sys
 lib_path = os.path.abspath('./../../lekture/pyprojekt')
 sys.path.append(lib_path)
