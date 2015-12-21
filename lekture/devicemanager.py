@@ -2,7 +2,7 @@ import threading
 import socket
 import select
 from OSC import ThreadingOSCServer, OSCClient , OSCMessage
-import pybonjour
+#import pybonjour
 client = OSCClient()
 
 def run(port=22222):
@@ -39,7 +39,7 @@ class OSCServer(object):
         self.__startServer__()
         info = self.serverThread.oscServer.address()
         print('OSC Server started on %s:%i' % (info[0], info[1]))
-        self.zeroconf()
+        #self.zeroconf()
     
     
     def register_callback(self,sdRef, flags, errorCode, name, regtype, domain):
