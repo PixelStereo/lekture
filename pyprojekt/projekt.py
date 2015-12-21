@@ -79,10 +79,6 @@ class Project(object):
                     if debug : print 'file reading : ' , path
                     loaded = json.load(in_file,object_hook=unicode2string_dict)
                     in_file.close()
-                    if 'attributes' in loaded.keys():
-                        'this is a valid project'
-                    else:
-                        'this is not a valid project'
                     for key,val in loaded.items():
                         if key == 'scenario' :
                             for scenario_dict in loaded['scenario']:
