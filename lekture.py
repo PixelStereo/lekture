@@ -462,11 +462,7 @@ class MdiChild(QGroupBox,QModelIndex):
         self.setWindowTitle(self.userFriendlyCurrentFile() + "[*]")
 
     def strippedName(self, fullFileName):
-        #return QFileInfo(fullFileName).fileName()
         return QFileInfo(fullFileName).baseName()
-
-
-
 
     def createScenarioListGroupBox(self):
         self.ScenarioListGroupBox = QGroupBox("Scenario List")
