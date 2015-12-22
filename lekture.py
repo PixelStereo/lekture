@@ -5,8 +5,8 @@ import sys
 from time import sleep
 from PyQt5.QtGui import QIcon,QKeySequence
 from PyQt5.QtCore import QModelIndex,Qt,QSignalMapper,QSettings,QPoint,QSize,QSettings,QPoint,QFileInfo,QFile
-from PyQt5.QtWidgets import QMainWindow,QGroupBox,QApplication,QMdiArea,QWidget,QAction,QListWidget,QPushButton,QMessageBox,QMenu
-from PyQt5.QtWidgets import QVBoxLayout,QLabel,QLineEdit,QGridLayout,QHBoxLayout,QSpinBox,QStyleFactory,QListWidgetItem,QFileDialog
+from PyQt5.QtWidgets import QMainWindow,QGroupBox,QApplication,QMdiArea,QWidget,QAction,QListWidget,QPushButton,QMessageBox,QFileDialog
+from PyQt5.QtWidgets import QVBoxLayout,QLabel,QLineEdit,QGridLayout,QHBoxLayout,QSpinBox,QStyleFactory,QListWidgetItem,QAbstractItemView,QMenu
 
 from pyprojekt import projekt
 
@@ -502,14 +502,18 @@ class MdiChild(QGroupBox,QModelIndex):
         QListWidget.dropEvent(self.scenario_list, event)
         scenario_list = self.project.scenarios()
         scenario_list[x] , scenario_list[y] = scenario_list[y] , scenario_list[x] 
-        """todo::CHANGE THAT . Don't use global"""
-        projekt.scenario_list = scenario_list
+        print 'NEED TO CREATE A FUNCTION TO SET ORDER IN API - PROJEKT.PY FILE '
 
     def scenarioSelectionChanged(self):
-        index = self.scenario_list.row(self.scenario_list.currentItem())
+        if self.scenario_list.currentItem():
+            index = self.scenario_list.row(self.scenario_list.currentItem())
         if index >= 0:
-            self.scenario_selected = self.project.scenarios()[index]
-            self.scenario_display(self.scenario_selected)
+            if self.project.scenarios() != []:
+                self.scenario_selected = self.project.scenarios()[index]
+                self.scenario_display(self.scenario_selected)
+            else:
+                self.scenario_selected = None    
+                self.scenario_display_clear()
         else:
             self.scenario_selected = None
             self.scenario_display_clear()
@@ -665,7 +669,6 @@ class MdiChild(QGroupBox,QModelIndex):
     def scenario_content_changed(self):
         # check if there is some text
         if self.scenario_content.currentItem().text():
-            print ('text')
             newline = self.scenario_content.currentItem().text()
             if isinstance(newline, unicode):
                 newline = newline.encode('utf-8')
@@ -686,8 +689,6 @@ class MdiChild(QGroupBox,QModelIndex):
                 self.event_play.setDisabled(False)
             else:
                 self.scenario_selected.events()[self.scenario_content.currentRow()].content = newline
-        else:
-            print('no text')
 
     def eventSelectionChanged(self):
         if self.scenario_content.currentRow() >= 0 and self.scenario_content.currentRow() < len(self.scenario_selected.events()):
