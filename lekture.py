@@ -528,7 +528,8 @@ class MdiChild(QGroupBox,QModelIndex):
 
     def newScenario(self):
     	scenario = self.project.new_scenario()
-        self.scenario_list_refresh()
+        item = QListWidgetItem(scenario.name)
+        self.scenario_list.addItem(item)
 
     def delScenario(self):
         self.project.del_scenario(self.scenario_selected)
