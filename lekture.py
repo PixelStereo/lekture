@@ -597,14 +597,14 @@ class MdiChild(QGroupBox,QModelIndex):
         layout = QGridLayout()
 
         layout.addWidget(self.scenario_description_label, 0, 0)
-        layout.addWidget(self.scenario_description, 1, 0 )
-        layout.addWidget(self.scenario_output_label, 0, 1)
-        layout.addWidget(self.scenario_output, 1, 1)
-        layout.addWidget(self.scenario_content_label, 2 , 0 ,2,2 )
-        layout.addWidget(self.scenario_content, 2, 1, 2, 2)
+        layout.addWidget(self.scenario_description, 0, 1, 1, 5)
+        layout.addWidget(self.scenario_output_label,1 , 0)
+        layout.addWidget(self.scenario_output, 2, 0)
+        layout.addWidget(self.scenario_content_label,1 ,1 )
+        layout.addWidget(self.scenario_content, 2, 1, 5, 5)
         layout.addWidget(self.event_play, 3, 0)
         layout.addWidget(self.event_del, 4, 0)
-        layout.setRowStretch(5, 1)
+        layout.setRowStretch(6, 1)
         self.ScenarioAttrGroupBox.setLayout(layout)
 
     def event_delete(self):
