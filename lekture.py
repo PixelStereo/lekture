@@ -491,18 +491,13 @@ class MdiChild(QGroupBox,QModelIndex):
         self.ScenarioListGroupBox.setLayout(layout)    
 
     def scenarioSelectionChanged(self):
-        items = self.scenario_list.selectedItems()
-        x=[]
-        for i in list(items):
-            x.append(str(i.text()))
-        self.scenario_display_clear()
-        if len(x)>0:
-            for scenario in self.project.scenarios():
-                if scenario.uid == x[0]:
-                    self.scenario_selected = scenario
+        index = self.scenario_list.row(self.scenario_list.currentItem())
+        if index >= 0:
+            self.scenario_selected = self.project.scenarios()[index]
             self.scenario_display(self.scenario_selected)
         else:
             self.scenario_selected = None
+            self.scenario_display_clear()
         if not self.scenario_selected:
             self.scenario_del.setDisabled(True)
             self.scenario_play.setDisabled(True)
@@ -518,8 +513,6 @@ class MdiChild(QGroupBox,QModelIndex):
             self.scenario_description.setDisabled(False)
             self.scenario_content.setDisabled(False)
 
-
-
     def newScenario(self):
     	scenario = self.project.new_scenario()
         self.scenario_list_refresh()
@@ -534,8 +527,9 @@ class MdiChild(QGroupBox,QModelIndex):
     def scenario_list_refresh(self):
         self.scenario_list.clear()
         for scenario in self.project.scenarios():
-            scenario_item = QListWidgetItem(scenario.uid)
-            self.scenario_list.addItem(scenario_item)
+            scenario = QListWidgetItem(scenario.name)
+            scenario.setFlags(Qt.ItemIsEnabled|Qt.ItemIsEditable|Qt.ItemIsSelectable|Qt.ItemIsDragEnabled)
+            self.scenario_list.addItem(scenario)
         self.scenario_list.show()
         last = len(self.scenario_list)
         last = last - 1
@@ -555,7 +549,7 @@ class MdiChild(QGroupBox,QModelIndex):
         self.scenario_description.setText(scenario.description)
         for event in scenario.events():
             line = event.content
-            'not really nice…'
+            #not really nice…
             if isinstance(line,unicode):
                 line = projekt.unicode2string_list(line)
             if isinstance(line,int):
