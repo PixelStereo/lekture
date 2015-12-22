@@ -468,6 +468,14 @@ class MdiChild(QGroupBox,QModelIndex):
         self.ScenarioListGroupBox = QGroupBox("Scenario List")
         self.scenario_list = QListWidget()
         self.scenario_list.itemSelectionChanged.connect(self.scenarioSelectionChanged)
+        # to get current and previous
+        #self.scenario_list.currentItemChanged.connect(self.scenarioSelectionChanged)
+        # enable drag and drop for internal move aka ordering
+        self.scenario_list.setDragDropMode(QAbstractItemView.InternalMove)
+        # détournement de la méthode dropEvent du QListWidget
+        self.scenario_list.setDropIndicatorShown(True)
+        self.scenario_list.setDefaultDropAction(Qt.MoveAction)
+        self.scenario_list.dropEvent = self.scenario_list_orderChanged
         self.scenario_list.itemDoubleClicked.connect(self.scenario_list.editItem)
         self.scenario_new = QPushButton(('New Scenario'))
         self.scenario_new.released.connect(self.newScenario)
@@ -485,6 +493,17 @@ class MdiChild(QGroupBox,QModelIndex):
         layout.addWidget(self.scenario_del)
         layout.addStretch(1)
         self.ScenarioListGroupBox.setLayout(layout)    
+
+    def scenario_list_orderChanged(self,event):
+        """appelé à chaque modif d'ordre"""
+        item = self.scenario_list.currentItem()
+        x = self.scenario_list.row(item)
+        y = self.scenario_list.row(self.scenario_list.currentItem())
+        QListWidget.dropEvent(self.scenario_list, event)
+        scenario_list = self.project.scenarios()
+        scenario_list[x] , scenario_list[y] = scenario_list[y] , scenario_list[x] 
+        """todo::CHANGE THAT . Don't use global"""
+        projekt.scenario_list = scenario_list
 
     def scenarioSelectionChanged(self):
         index = self.scenario_list.row(self.scenario_list.currentItem())
