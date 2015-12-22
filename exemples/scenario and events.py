@@ -20,7 +20,6 @@ my_other_project.version = '2.2.1'
 my_scenario = my_project.new_scenario()
 my_project.name = 'toto-la-roulette'
 print 'name' , my_scenario.name
-print 'uid' , my_scenario.uid
 print 'description' , my_scenario.description
 print 'output' , my_scenario.output
 for event in my_scenario.events():
@@ -66,7 +65,7 @@ print 'how many scenario :' , len(my_project.scenarios()) , my_project.scenarios
 #my_project.del_scenario(my_scenario)
 print 'how many scenario :' , len(my_project.scenarios()) , my_project.scenarios()
 
-my_project.path = '/Users/reno/Desktop/toto.json'
+my_project.path = 'test_project.json'
 my_project.write()
 
 
