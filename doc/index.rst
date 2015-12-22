@@ -3,14 +3,13 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to lekture's documentation!
-===================================
-
-Contents:
+pyprojekt
+=========
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 4
 
+   pyprojekt
 
 
 Indices and tables
