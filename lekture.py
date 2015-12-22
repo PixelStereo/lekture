@@ -501,14 +501,12 @@ class MdiChild(QGroupBox,QModelIndex):
         if not self.scenario_selected:
             self.scenario_del.setDisabled(True)
             self.scenario_play.setDisabled(True)
-            self.scenario_name.setDisabled(True)
             self.scenario_output.setDisabled(True)
             self.scenario_description.setDisabled(True)
             self.scenario_content.setDisabled(True)
         else:
             self.scenario_del.setDisabled(False)
             self.scenario_play.setDisabled(False)
-            self.scenario_name.setDisabled(False)
             self.scenario_output.setDisabled(False)
             self.scenario_description.setDisabled(False)
             self.scenario_content.setDisabled(False)
@@ -540,36 +538,34 @@ class MdiChild(QGroupBox,QModelIndex):
     def scenario_display_clear(self):
         self.scenario_content.clear()
         self.scenario_output.clear()
-        self.scenario_name.clear()
         self.scenario_description.clear()
 
     def scenario_display(self,scenario):
-        self.scenario_name.setText(scenario.name)
+        self.scenario_content.clear()
         self.scenario_output.setValue(scenario.output)
         self.scenario_description.setText(scenario.description)
-        for event in scenario.events():
-            line = event.content
-            #not really nice…
-            if isinstance(line,unicode):
-                line = projekt.unicode2string_list(line)
-            if isinstance(line,int):
-                line = str(line)
-            else:
-                line = str(line)
-                line = ''.join( c for c in line if  c not in "[]'," )
-            line = QListWidgetItem(line)
-            line.setFlags(Qt.ItemIsEnabled|Qt.ItemIsEditable|Qt.ItemIsSelectable|Qt.ItemIsDragEnabled)
-            self.scenario_content.addItem(line)
-        empty = QListWidgetItem()
-        empty.setFlags(Qt.ItemIsEnabled|Qt.ItemIsEditable|Qt.ItemIsSelectable|Qt.ItemIsDragEnabled)
-        self.scenario_content.addItem(empty)
+        if scenario.events() != []:
+            for event in scenario.events():
+                line = event.content
+                #not really nice…
+                if isinstance(line,unicode):
+                    line = projekt.unicode2string_list(line)
+                if isinstance(line,int):
+                    line = str(line)
+                else:
+                    line = str(line)
+                    line = ''.join( c for c in line if  c not in "[]'," )
+                line = QListWidgetItem(line)
+                line.setFlags(Qt.ItemIsEnabled|Qt.ItemIsEditable|Qt.ItemIsSelectable|Qt.ItemIsDragEnabled)
+                self.scenario_content.addItem(line)
+        else:
+            empty = QListWidgetItem()
+            empty.setFlags(Qt.ItemIsEnabled|Qt.ItemIsEditable|Qt.ItemIsSelectable|Qt.ItemIsDragEnabled)
+            self.scenario_content.addItem(empty)
 
     def createScenarioAttrGroupBox(self):
         self.ScenarioAttrGroupBox = QGroupBox("Scenario Content")
 
-        self.scenario_name_label = QLabel('name')
-        self.scenario_name = QLineEdit()
-        self.scenario_name.setDisabled(True)
         self.scenario_output_label = QLabel('output')
         self.scenario_output = QSpinBox()
         self.scenario_output.setDisabled(True)
@@ -590,7 +586,7 @@ class MdiChild(QGroupBox,QModelIndex):
 
         self.scenario_output.setRange(1,len(self.project.outputs()))
 
-        self.scenario_name.textEdited.connect(self.scenario_name_changed)
+        self.scenario_list.itemChanged.connect(self.scenario_name_changed)
         self.scenario_output.valueChanged.connect(self.scenario_output_changed)
         self.scenario_description.textEdited.connect(self.scenario_description_changed)
         self.scenario_content.itemChanged.connect(self.scenario_content_changed)
@@ -600,13 +596,11 @@ class MdiChild(QGroupBox,QModelIndex):
 
         layout = QGridLayout()
 
-        layout.addWidget(self.scenario_name_label, 0, 0)
-        layout.addWidget(self.scenario_name, 0, 1)
-        layout.addWidget(self.scenario_output_label, 0, 2)
-        layout.addWidget(self.scenario_output, 0, 3, 1, 2)
-        layout.addWidget(self.scenario_description_label, 1, 0)
-        layout.addWidget(self.scenario_description, 1, 1)
-        layout.addWidget(self.scenario_content_label, 2, 0)
+        layout.addWidget(self.scenario_description_label, 0, 0)
+        layout.addWidget(self.scenario_description, 1, 0 )
+        layout.addWidget(self.scenario_output_label, 0, 1)
+        layout.addWidget(self.scenario_output, 1, 1)
+        layout.addWidget(self.scenario_content_label, 2 , 0 ,2,2 )
         layout.addWidget(self.scenario_content, 2, 1, 2, 2)
         layout.addWidget(self.event_play, 3, 0)
         layout.addWidget(self.event_del, 4, 0)
@@ -642,7 +636,8 @@ class MdiChild(QGroupBox,QModelIndex):
             self.scenario_selected.play_from_here(self.event_selected)
 
     def scenario_name_changed(self):
-        self.scenario_selected.name = self.scenario_name.text()
+        self.scenario_selected.name = self.scenario_list.currentItem().text()
+        self.scenario_list_refresh()
 
     def scenario_description_changed(self):
         self.scenario_selected.description = self.scenario_description.text()
