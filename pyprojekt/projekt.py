@@ -219,7 +219,7 @@ class Project(object):
 
 class Scenario(Project):
     """Create a new scenario"""
-    def __init__(self,project,name='',uid='',description = '',output=''):
+    def __init__(self,project,name='',description = '',output=''):
         """create an scenario"""
         if debug == 2:
             print
@@ -227,17 +227,14 @@ class Scenario(Project):
             print
         if output == '':
             output = 1
-        if uid == '':
-            uid = timestamp()
         if description == '':
             description = "write a comment"
         if name == '':
-            name = 'untitled'
+            name = timestamp(format='nice')
         self.name=name
         self.project = project
         self.output=output
         self.description=description
-        self.uid=uid
         if test:
             self.new_event(content=['/node/integer',random.randint(65e2,65e3)]),self.new_event(content=random.randint(500,3000)),self.new_event(content=['/node/list',[float(random.randint(0,100))/100,random.randint(65e2, 65e3),"egg"]])
 

@@ -5,10 +5,15 @@ import time
 
 debug = False
 
-def timestamp():
+def timestamp(format='raw'):
     """Return a time stamp. Used to tag lastopened or to create unique ID"""
-    if debug:print 'timestamp' , str(int(time.time() * 1000))
-    return str(int(time.time() * 1000))
+    timestamp = int(time.time())
+    if format == 'raw':
+        print 'raw'
+        return str(timestamp*1000)
+    else:
+        print 'not raw'
+        return time.ctime(timestamp)
 
 def unicode2string_dict(data):
     """convert a unicode dict to a stringed dict"""
