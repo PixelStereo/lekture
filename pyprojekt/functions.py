@@ -1,15 +1,17 @@
 #! /usr/bin/env python
 # -*- coding: utf-8 -*-
+"""This file contains usefull functions for a project"""
 import time
 
 debug = False
 
 def timestamp():
-    """return a time stamp"""
+    """Return a time stamp. Used to tag lastopened or to create unique ID"""
     if debug:print 'timestamp' , str(int(time.time() * 1000))
     return str(int(time.time() * 1000))
 
 def unicode2string_dict(data):
+    """convert a unicode dict to a stringed dict"""
     rv = {}
     for key, value in data.iteritems():
         if isinstance(key, unicode):
@@ -24,6 +26,7 @@ def unicode2string_dict(data):
     return rv
 
 def unicode2string_list(data):
+    """convert a unicode list to a string list"""
     rv = []
     for item in data:
         if isinstance(item, unicode):
@@ -36,6 +39,7 @@ def unicode2string_list(data):
     return rv
 
 def unicode2_list(data):
+    """convert unicode to list"""
     if isinstance(data,list):
         if len(data) == 1:
             rv = data[0]
@@ -48,6 +52,7 @@ def unicode2_list(data):
     return rv
 
 def checkType(data):
+    """Transform an unicode into its original type"""
     if isinstance(data, unicode):
         data = data.encode('utf-8')
     if isinstance(data,str):
@@ -64,38 +69,49 @@ def checkType(data):
     return data
 
 def isString(value):
-  try:
-    str(value)
-    return True
-  except:
-    return False
+    """Check if value is a string.
+    Return True or False""" 
+    try:
+        str(value)
+        return True
+    except:
+        return False
+
 def isList(value):
-  try:
-    list(value)
-    return True
-  except:
-    return False
+    """Check if value is a list.
+    Return True or False"""
+    try:
+        list(value)
+        return True
+    except:
+        return False
 
 def isUnicode(value):
-  try:
-    unicode(value)
-    return True
-  except:
-    return False
+    """Check if value is a unicode string.
+    Return True or False"""
+    try:
+        unicode(value)
+        return True
+    except:
+        return False
 
 def isFloat(value):
-  try:
-    float(value)
-    return True
-  except:
-    return False
+    """Check if value is a float.
+    Return True or False"""
+    try:
+        float(value)
+        return True
+    except:
+        return False
 
 def isInt(value):
-  try:
-    int(value)
-    return True
-  except:
-    return False
+    """Check if value is an int.
+    Return True or False"""
+    try:
+        int(value)
+        return True
+    except:
+        return False
 
 """a_string = u'popo2'
 a_float = u'122.2'
@@ -106,6 +122,7 @@ print 'an_int' , checkType(an_int)"""
 
 
 
+""" TODO :: REMOVE THE FOLLWOING FUCNTIONS"""
 """these funcitons are not used now… these come from my first tests without classes using a dict"""
 
 def listdirectory2(path):  
@@ -117,7 +134,7 @@ def listdirectory2(path):
     return projects_list
 
 def dict2string(content):
-    """get scenario info (NEED TO BE """
+    """get scenario info"""
     c = None
     for a , b in content.items() : 
         b = str(b)  .replace(',','').replace('\'','') + '\n'

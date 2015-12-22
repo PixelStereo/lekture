@@ -6,10 +6,44 @@
 pyprojekt
 =========
 
-.. toctree::
-   :maxdepth: 4
+Indices and tables
+==================
 
-   pyprojekt
+* :ref:`genindex`
+* :ref:`modindex`
+* :ref:`search`
+
+Module contents
+===============
+
+.. automodule:: pyprojekt
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+pyprojekt.projekt module
+========================
+
+.. automodule:: pyprojekt.projekt
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+pyprojekt.devicemanager module
+==============================
+
+.. automodule:: pyprojekt.devicemanager
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+pyprojekt.functions module
+==========================
+
+.. automodule:: pyprojekt.functions
+    :members:
+    :undoc-members:
+    :show-inheritance:
 
 
 Indices and tables
@@ -18,4 +52,3 @@ Indices and tables
 * :ref:`genindex`
 * :ref:`modindex`
 * :ref:`search`
-
