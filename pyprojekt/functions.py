@@ -8,12 +8,10 @@ debug = False
 def timestamp(format='raw'):
     """Return a time stamp. Used to tag lastopened or to create unique ID"""
     timestamp = int(time.time())
-    if format == 'raw':
-        print 'raw'
-        return str(timestamp*1000)
-    else:
-        print 'not raw'
+    if format == 'nice':
         return time.ctime(timestamp)
+    else:
+        return str(timestamp*1000)
 
 def unicode2string_dict(data):
     """convert a unicode dict to a stringed dict"""
