@@ -16,6 +16,7 @@ projekt.test = False
 
 
 class MainWindow(QMainWindow):
+    """This create the main window of the application"""
     def __init__(self):
         super(MainWindow, self).__init__()
 
@@ -251,6 +252,7 @@ class Document(object):
 
 
 class MdiChild(QGroupBox,QModelIndex):
+    """This is the projekt class"""
     sequenceNumber = 1
 
     def __init__(self):
@@ -354,6 +356,7 @@ class MdiChild(QGroupBox,QModelIndex):
         self.outputs_GroupBox.setLayout(output_layout)   
 
     def newFile(self):
+        """create a new project"""
         self.isUntitled = True
         self.curFile = "project %d" % MdiChild.sequenceNumber
         MdiChild.sequenceNumber += 1
@@ -364,6 +367,7 @@ class MdiChild(QGroupBox,QModelIndex):
         #self.document().contentsChanged.connect(self.documentWasModified)
 
     def loadFile(self, fileName):
+        """open an existing project file"""
         file = QFile(fileName)
         if not file.open(QFile.ReadOnly | QFile.Text):
             QMessageBox.warning(self, "MDI",
