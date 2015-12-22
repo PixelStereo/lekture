@@ -15,6 +15,8 @@
 import sys
 import os
 import shlex
+lib_path = os.path.abspath('./../../lekture/')
+sys.path.append(lib_path)
 
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
