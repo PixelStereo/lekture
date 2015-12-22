@@ -1,5 +1,5 @@
-#!/bin/sh
+#!/bin/bash
 
 set -e
 
-pyinstaller --windowed --icon=icon/lekture.icns -n 'lecture 0.2' ../lekture.py
+pyinstaller --windowed --icon=icon/lekture.icns -n 'Lekture '$1 ../lekture.py
