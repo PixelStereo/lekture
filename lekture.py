@@ -677,8 +677,11 @@ class MdiChild(QGroupBox,QModelIndex):
             if isinstance(newline,float):
                 newline = int(newline)
                 self.scenario_content.currentItem().setText(str(newline))
+            # check if newline is int (wait) or not
+            if type(newline) == int:
+                pass
             # if we have a list as arguments, we need to keep a list
-            if len(newline) > 1:
+            elif len(newline) > 1:
                 newline = [newline[0],newline[1:]]
             # if it's a new line (the last line), append line to content attr of Scenario class and create a new Event instance
             if self.scenario_content.currentRow() + 1 == self.scenario_content.count():
