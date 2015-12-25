@@ -544,7 +544,7 @@ class Projekt(QGroupBox,QModelIndex):
     def delScenario(self):
         if self.scenario_selected:
             scenar2delete = self.scenario_selected
-            item = self.scenario_list.takeItem(self.scenario_list.row(self.scenario_list.currentItem()))
+            self.scenario_list.takeItem(self.scenario_list.row(self.scenario_list.currentItem()))
             self.project.del_scenario(scenar2delete)
 
     def playScenario(self):
@@ -634,11 +634,15 @@ class Projekt(QGroupBox,QModelIndex):
         if self.event_selected:
             # check if it's not the last line
             if self.scenario_content.row(self.scenario_content.currentItem()) != len(self.scenario_selected.events()):
-                event = self.event_selected
-                self.scenario_selected.del_event(event)
-                self.scenario_display_clear()
-                self.scenario_display(self.scenario_selected)
-                self.event_selected = None
+                event2delete = self.event_selected
+                self.scenario_content.takeItem(self.scenario_content.row(self.scenario_content.currentItem()))
+                self.scenario_selected.del_event(event2delete)
+            else:
+                # We need to check if 
+                print 'AH'
+                #self.scenario_display_clear()
+                #self.scenario_display(self.scenario_selected)
+                #self.event_selected = None
 
     def event_right_click(self,QPos):
         self.listMenu= QMenu()
