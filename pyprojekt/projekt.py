@@ -187,8 +187,13 @@ class Project(object):
         return output_list[taille]
 
     def del_scenario(self,scenario):
-        """delete a scenario of this project"""
+        """delete a scenario of this project
+        This function will delete events of the scenario"""
         if scenario in scenario_list:
+            # delete events of this scenario
+            for event in scenario.events():
+                scenario.del_event(event)
+            # delete the scenario itself
             scenario_list.remove(scenario)
             if debug == 2:
                 print 'delete scenario' , scenario , len(scenario_list)
