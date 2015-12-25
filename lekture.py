@@ -692,6 +692,8 @@ class Projekt(QGroupBox,QModelIndex):
                 empty.setFlags(Qt.ItemIsEnabled|Qt.ItemIsEditable|Qt.ItemIsSelectable|Qt.ItemIsDragEnabled)
                 self.scenario_content.addItem(empty)
                 self.event_play.setDisabled(False)
+                self.event_del.setDisabled(False)
+                self.event_selected = new_event
             else:
                 self.scenario_selected.events()[self.scenario_content.currentRow()].content = newline
 
