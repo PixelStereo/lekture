@@ -328,7 +328,7 @@ class Event(object):
         self.scenario = scenario
         self.description=description
         self.content = content
-        self.output = None
+        self.output = 'parent'
         
     @staticmethod
     def getinstances(scenario):
@@ -366,28 +366,16 @@ class Event(object):
                     print 'Connection refused'
 
     def getoutput(self):
-        """rerurn the current output for this event. If no output is set for this event, parent scenario output will be used"""
-        output = self.output - 1
+        """rerurn the current output for this event.
+        If no output is set for this event,
+        parent scenario output will be used"""
+        if self.output == 'parent':
+            output = self.scenario.output
+        else:
+            output = self.output
+        output = output - 1
         output = self.scenario.project.outputs()[output]
         return output
-
-    # ----------- OUTPUT -------------
-    @property
-    def output(self):
-        """Current output of the event. Default output of an event is the output of the scenario.
-        But you can assign a scpecific output for an event if you want"""
-        if self.__output:
-            return self.__output
-        else:
-            return self.scenario.output
-
-    @output.setter
-    def output(self, index):
-        self.__output = index
-
-    @output.deleter
-    def output(self):
-        pass
 
 
 class Output(Project):
