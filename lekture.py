@@ -544,8 +544,10 @@ class Projekt(QGroupBox,QModelIndex):
     def delScenario(self):
         if self.scenario_selected:
             scenar2delete = self.scenario_selected
-            self.scenario_list.takeItem(self.scenario_list.row(self.scenario_list.currentItem()))
+            # first delete scenario object…
             self.project.del_scenario(scenar2delete)
+            # … to be sure it does not exist anymore when a refresh will be done
+            self.scenario_list.takeItem(self.scenario_list.row(self.scenario_list.currentItem()))
 
     def playScenario(self):
         self.scenario_selected.play()
@@ -702,10 +704,13 @@ class Projekt(QGroupBox,QModelIndex):
                 self.scenario_selected.events()[self.scenario_content.currentRow()].content = newline
 
     def eventSelectionChanged(self):
-        if self.scenario_content.currentRow() >= 0 and self.scenario_content.currentRow() < len(self.scenario_selected.events()):
-            item = self.scenario_content.currentRow()
-            item = self.scenario_selected.events()[item]
-            self.event_selected = item
+        if self.scenario_selected:
+            if self.scenario_content.currentRow() >= 0 and self.scenario_content.currentRow() < len(self.scenario_selected.events()):
+                item = self.scenario_content.currentRow()
+                item = self.scenario_selected.events()[item]
+                self.event_selected = item
+            else:
+                self.event_selected = None
         else:
             self.event_selected = None
         if self.event_selected:
