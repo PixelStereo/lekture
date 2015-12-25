@@ -467,9 +467,8 @@ class MdiChild(QGroupBox,QModelIndex):
     def createScenarioListGroupBox(self):
         self.ScenarioListGroupBox = QGroupBox("Scenario List")
         self.scenario_list = QListWidget()
-        self.scenario_list.itemSelectionChanged.connect(self.scenarioSelectionChanged)
         # to get current and previous
-        #self.scenario_list.currentItemChanged.connect(self.scenarioSelectionChanged)
+        self.scenario_list.currentItemChanged.connect(self.scenarioSelectionChanged)
         # enable drag and drop for internal move aka ordering
         self.scenario_list.setDragDropMode(QAbstractItemView.InternalMove)
         # détournement de la méthode dropEvent du QListWidget
@@ -504,10 +503,9 @@ class MdiChild(QGroupBox,QModelIndex):
         scenario_list[x] , scenario_list[y] = scenario_list[y] , scenario_list[x] 
         print 'NEED TO CREATE A FUNCTION TO SET ORDER IN API - PROJEKT.PY FILE '
 
-    def scenarioSelectionChanged(self):
-        if self.scenario_list.currentItem():
-            index = self.scenario_list.row(self.scenario_list.currentItem())
-        if index >= 0:
+    def scenarioSelectionChanged(self,current,previous):
+        if current:
+            index = self.scenario_list.row(current)
             if self.project.scenarios() != []:
                 self.scenario_selected = self.project.scenarios()[index]
                 self.scenario_display(self.scenario_selected)
@@ -515,8 +513,17 @@ class MdiChild(QGroupBox,QModelIndex):
                 self.scenario_selected = None    
                 self.scenario_display_clear()
         else:
-            self.scenario_selected = None
-            self.scenario_display_clear()
+            if previous:
+                index = self.scenario_list.row(previous)
+                if self.project.scenarios() != []:
+                    self.scenario_selected = self.project.scenarios()[index]
+                    self.scenario_display(self.scenario_selected)
+                else:
+                    self.scenario_selected = None    
+                    self.scenario_display_clear()
+            else:
+                self.scenario_selected = None
+                self.scenario_display_clear()
         if not self.scenario_selected:
             self.scenario_del.setDisabled(True)
             self.scenario_play.setDisabled(True)
@@ -537,8 +544,10 @@ class MdiChild(QGroupBox,QModelIndex):
         self.scenario_list.setCurrentItem(item)
 
     def delScenario(self):
-        self.project.del_scenario(self.scenario_selected)
-        self.scenario_list_refresh()
+        if self.scenario_selected:
+            scenar2delete = self.scenario_selected
+            item = self.scenario_list.takeItem(self.scenario_list.row(self.scenario_list.currentItem()))
+            self.project.del_scenario(scenar2delete)
 
     def playScenario(self):
         self.scenario_selected.play()
@@ -550,11 +559,6 @@ class MdiChild(QGroupBox,QModelIndex):
             scenario.setFlags(Qt.ItemIsEnabled|Qt.ItemIsEditable|Qt.ItemIsSelectable|Qt.ItemIsDragEnabled)
             self.scenario_list.addItem(scenario)
         self.scenario_list.show()
-        last = len(self.scenario_list)
-        last = last - 1
-        last = self.scenario_list.item(last)
-        self.scenario_list.setCurrentItem(last)
-        self.scenario_list.setFocus()
 
     def scenario_display_clear(self):
         self.scenario_content.clear()
