@@ -568,6 +568,7 @@ class Projekt(QGroupBox,QModelIndex):
 
     def scenario_display(self,scenario):
         self.scenario_content.clear()
+        self.scenario_display_clear()
         self.scenario_output.setValue(scenario.output)
         self.scenario_description.setText(scenario.description)
         if scenario.events() != []:
