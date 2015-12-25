@@ -162,6 +162,15 @@ class Project(object):
         """return a list of available scenario for this project"""
         return Scenario.getinstances(self)
 
+    def scenarios_set(self,old,new):
+        """Change order of a scenario in the scenario list of the project"""
+        s_list = self.scenarios()
+        s_list[old] , s_list[new] = s_list[new] , s_list[old]
+        for scenario in s_list:
+            scenario_list.remove(scenario)
+        for scenario in s_list:
+            scenario_list.append(scenario)
+
     def outputs(self):
         """return a list of available output for this project"""
         return Output.getinstances(self)

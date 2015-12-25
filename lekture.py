@@ -494,15 +494,19 @@ class Projekt(QGroupBox,QModelIndex):
         layout.addStretch(1)
         self.ScenarioListGroupBox.setLayout(layout)    
 
+    def dropEvent_lw(self, event):
+        """appelé à chaque modif d'ordre"""
+        lw_item = self.lw.currentItem()
+        lw_row = self.lw.row(lw_item)
+        QListWidget.dropEvent(self.lw, event)
+        print lw_row, self.lw.row(lw_item)
+
     def scenario_list_orderChanged(self,event):
         """appelé à chaque modif d'ordre"""
         item = self.scenario_list.currentItem()
         x = self.scenario_list.row(item)
-        y = self.scenario_list.row(self.scenario_list.currentItem())
         QListWidget.dropEvent(self.scenario_list, event)
-        scenario_list = self.project.scenarios()
-        scenario_list[x] , scenario_list[y] = scenario_list[y] , scenario_list[x] 
-        print 'NEED TO CREATE A FUNCTION TO SET ORDER IN API - PROJEKT.PY FILE '
+        y = self.scenario_list.row(item)
 
     def scenarioSelectionChanged(self,current,previous):
         if current:
