@@ -188,7 +188,13 @@ class Project(object):
 
     def del_scenario(self,scenario):
         """delete a scenario of this project"""
-        scenario_list.remove(scenario)
+        if scenario in scenario_list:
+            scenario_list.remove(scenario)
+            if debug == 2:
+                print 'delete scenario' , scenario , len(scenario_list)
+        else:
+            if debug == 2:
+                print 'ERROR - trying to delete a scenario which not exists in scenario_list' , scenario
 
     def export_attributes(self):
         """export attributes of the project"""
