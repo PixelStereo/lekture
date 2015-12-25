@@ -509,29 +509,26 @@ class Projekt(QGroupBox,QModelIndex):
             index = self.scenario_list.row(current)
             if self.project.scenarios() != []:
                 self.scenario_selected = self.project.scenarios()[index]
-                self.scenario_display(self.scenario_selected)
             else:
                 self.scenario_selected = None    
-                self.scenario_display_clear()
         else:
             if previous:
                 index = self.scenario_list.row(previous)
                 if self.project.scenarios() != []:
                     self.scenario_selected = self.project.scenarios()[index]
-                    self.scenario_display(self.scenario_selected)
                 else:
                     self.scenario_selected = None    
-                    self.scenario_display_clear()
             else:
                 self.scenario_selected = None
-                self.scenario_display_clear()
         if not self.scenario_selected:
+            self.scenario_display_clear()
             self.scenario_del.setDisabled(True)
             self.scenario_play.setDisabled(True)
             self.scenario_output.setDisabled(True)
             self.scenario_description.setDisabled(True)
             self.scenario_content.setDisabled(True)
         else:
+            self.scenario_display(self.scenario_selected)
             self.scenario_del.setDisabled(False)
             self.scenario_play.setDisabled(False)
             self.scenario_output.setDisabled(False)
@@ -567,7 +564,6 @@ class Projekt(QGroupBox,QModelIndex):
         self.scenario_description.clear()
 
     def scenario_display(self,scenario):
-        self.scenario_content.clear()
         self.scenario_display_clear()
         self.scenario_output.setValue(scenario.output)
         self.scenario_description.setText(scenario.description)
