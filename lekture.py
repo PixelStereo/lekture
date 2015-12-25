@@ -51,19 +51,19 @@ class MainWindow(QMainWindow):
             scenario.accept()
 
     def newFile(self):
-        child = self.createMdiChild()
+        child = self.createProjekt()
         child.newFile()
         child.show()
 
     def open(self):
         fileName, _ = QFileDialog.getOpenFileName(self)
         if fileName:
-            existing = self.findMdiChild(fileName)
+            existing = self.findProjekt(fileName)
             if existing:
                 self.mdiArea.setActiveSubWindow(existing)
                 return
 
-            child = self.createMdiChild()
+            child = self.createProjekt()
             if child.loadFile(fileName):
                 self.statusBar().showMessage("File loaded", 2000)
                 child.show()
@@ -71,15 +71,15 @@ class MainWindow(QMainWindow):
                 child.close()
 
     def save(self):
-        if self.activeMdiChild() and self.activeMdiChild().save():
+        if self.activeProjekt() and self.activeProjekt().save():
             self.statusBar().showMessage("File saved", 2000)
 
     def saveAs(self):
-        if self.activeMdiChild() and self.activeMdiChild().saveAs():
+        if self.activeProjekt() and self.activeProjekt().saveAs():
             self.statusBar().showMessage("File saved", 2000)
 
     def openFolder(self):
-        if self.activeMdiChild() and self.activeMdiChild().openFolder():
+        if self.activeProjekt() and self.activeProjekt().openFolder():
             self.statusBar().showMessage("File revealed in Finder", 2000)
 
     def about(self):
@@ -88,15 +88,15 @@ class MainWindow(QMainWindow):
                 "This release is an alpha version. Don't use it in production !!")
 
     def updateMenus(self):
-        hasMdiChild = (self.activeMdiChild() is not None)
-        self.saveAct.setEnabled(hasMdiChild)
-        self.saveAsAct.setEnabled(hasMdiChild)
-        self.openFolderAct.setEnabled(hasMdiChild)
-        self.closeAct.setEnabled(hasMdiChild)
-        self.closeAllAct.setEnabled(hasMdiChild)
-        self.nextAct.setEnabled(hasMdiChild)
-        self.previousAct.setEnabled(hasMdiChild)
-        self.separatorAct.setVisible(hasMdiChild)
+        hasProjekt = (self.activeProjekt() is not None)
+        self.saveAct.setEnabled(hasProjekt)
+        self.saveAsAct.setEnabled(hasProjekt)
+        self.openFolderAct.setEnabled(hasProjekt)
+        self.closeAct.setEnabled(hasProjekt)
+        self.closeAllAct.setEnabled(hasProjekt)
+        self.nextAct.setEnabled(hasProjekt)
+        self.previousAct.setEnabled(hasProjekt)
+        self.separatorAct.setVisible(hasProjekt)
 
     def updateWindowMenu(self):
         self.windowMenu.clear()
@@ -119,12 +119,12 @@ class MainWindow(QMainWindow):
 
             action = self.windowMenu.addAction(text)
             action.setCheckable(True)
-            action.setChecked(child is self.activeMdiChild())
+            action.setChecked(child is self.activeProjekt())
             action.triggered.connect(self.windowMapper.map)
             self.windowMapper.setMapping(action, window)
 
-    def createMdiChild(self):
-        child = MdiChild()
+    def createProjekt(self):
+        child = Projekt()
         self.mdiArea.addSubWindow(child)
         return child
 
@@ -216,13 +216,13 @@ class MainWindow(QMainWindow):
         settings.setValue('pos', self.pos())
         #settings.setValue('size', self.size())
 
-    def activeMdiChild(self):
+    def activeProjekt(self):
         activeSubWindow = self.mdiArea.activeSubWindow()
         if activeSubWindow:
             return activeSubWindow.widget()
         return None
 
-    def findMdiChild(self, fileName):
+    def findProjekt(self, fileName):
         canonicalFilePath = QFileInfo(fileName).canonicalFilePath()
 
         for window in self.mdiArea.subWindowList():
@@ -240,23 +240,24 @@ class Document(object):
     def __init__(self, arg):
         super(Document, self).__init__()
         self.arg = arg
+        self.modified = True
 
     def contentsChanged(self):
         pass
 
     def isModified(self):
-        pass
+        return self.modified
 
     def setModified(self):
         pass
 
 
-class MdiChild(QGroupBox,QModelIndex):
+class Projekt(QGroupBox,QModelIndex):
     """This is the projekt class"""
     sequenceNumber = 1
 
     def __init__(self):
-        super(MdiChild, self).__init__()
+        super(Projekt, self).__init__()
 
         self.setAttribute(Qt.WA_DeleteOnClose)
         self.isUntitled = True
@@ -358,8 +359,8 @@ class MdiChild(QGroupBox,QModelIndex):
     def newFile(self):
         """create a new project"""
         self.isUntitled = True
-        self.curFile = "project %d" % MdiChild.sequenceNumber
-        MdiChild.sequenceNumber += 1
+        self.curFile = "project %d" % Projekt.sequenceNumber
+        Projekt.sequenceNumber += 1
         self.setWindowTitle(self.curFile + '[*]')
 
         self.project.name = self.curFile
