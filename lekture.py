@@ -268,7 +268,7 @@ class Projekt(QGroupBox,QModelIndex):
         self.event_selected = None
         self.output_selected = None
 
-        self.originalPalette = QApplication.palette()
+        #self.originalPalette = QApplication.palette()
 
         self.createProjectAttrGroupBox()
         self.createOuputAttrGroupBox()
@@ -286,9 +286,9 @@ class Projekt(QGroupBox,QModelIndex):
         self.setLayout(mainLayout)
         
         #QApplication.setStyle(QStyleFactory.create('Fusion'))
-        QApplication.setStyle(QStyleFactory.create('Macintosh'))
+        #QApplication.setStyle(QStyleFactory.create('Macintosh'))
         #QApplication.setStyle(QStyleFactory.create('Windows'))
-        QApplication.setPalette(QApplication.style().standardPalette())
+        #QApplication.setPalette(QApplication.style().standardPalette())
 
     
     def createProjectAttrGroupBox(self):
