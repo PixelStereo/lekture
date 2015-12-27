@@ -8,6 +8,11 @@ from PyQt5.QtCore import QModelIndex,Qt,QSignalMapper,QSettings,QPoint,QSize,QSe
 from PyQt5.QtWidgets import QMainWindow,QGroupBox,QApplication,QMdiArea,QWidget,QAction,QListWidget,QPushButton,QMessageBox,QFileDialog
 from PyQt5.QtWidgets import QVBoxLayout,QLabel,QLineEdit,QGridLayout,QHBoxLayout,QSpinBox,QStyleFactory,QListWidgetItem,QAbstractItemView,QMenu
 
+# for development of pyprojekt, use git version
+import os,sys
+lib_path = os.path.abspath('./../PyProjekt')
+sys.path.append(lib_path)
+
 from pyprojekt import projekt
 
 debug = True
@@ -494,19 +499,13 @@ class Projekt(QGroupBox,QModelIndex):
         layout.addStretch(1)
         self.ScenarioListGroupBox.setLayout(layout)    
 
-    def dropEvent_lw(self, event):
-        """appelé à chaque modif d'ordre"""
-        lw_item = self.lw.currentItem()
-        lw_row = self.lw.row(lw_item)
-        QListWidget.dropEvent(self.lw, event)
-        print lw_row, self.lw.row(lw_item)
-
     def scenario_list_orderChanged(self,event):
         """appelé à chaque modif d'ordre"""
         item = self.scenario_list.currentItem()
         x = self.scenario_list.row(item)
         QListWidget.dropEvent(self.scenario_list, event)
         y = self.scenario_list.row(item)
+        self.project.scenarios_set(x,y)
 
     def scenarioSelectionChanged(self,current,previous):
         if current:
