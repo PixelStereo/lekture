@@ -273,8 +273,6 @@ class Projekt(QGroupBox,QModelIndex):
         self.event_selected = None
         self.output_selected = None
 
-        #self.originalPalette = QApplication.palette()
-
         self.createProjectAttrGroupBox()
         self.createOuputAttrGroupBox()
         self.createScenarioListGroupBox()
@@ -289,12 +287,6 @@ class Projekt(QGroupBox,QModelIndex):
         mainLayout.setColumnStretch(0, 1)
         mainLayout.setColumnStretch(1, 1)
         self.setLayout(mainLayout)
-        
-        #QApplication.setStyle(QStyleFactory.create('Fusion'))
-        #QApplication.setStyle(QStyleFactory.create('Macintosh'))
-        #QApplication.setStyle(QStyleFactory.create('Windows'))
-        #QApplication.setPalette(QApplication.style().standardPalette())
-
     
     def createProjectAttrGroupBox(self):
         self.project_Groupbox = QGroupBox('Project')
