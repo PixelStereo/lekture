@@ -516,11 +516,14 @@ class Projekt(QGroupBox,QModelIndex):
                 self.scenario_selected = None    
         else:
             if previous:
-                index = self.scenario_list.row(previous)
-                if self.project.scenarios() != []:
-                    self.scenario_selected = self.project.scenarios()[index]
+                if self.scenario_list.currentRow() >= 0:
+                    index = self.scenario_list.row(previous)
+                    if self.project.scenarios() != []:
+                        self.scenario_selected = self.project.scenarios()[index]
+                    else:
+                        self.scenario_selected = None    
                 else:
-                    self.scenario_selected = None    
+                    self.scenario_selected = None
             else:
                 self.scenario_selected = None
         if not self.scenario_selected:
