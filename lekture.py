@@ -314,9 +314,9 @@ class Projekt(QGroupBox,QModelIndex):
 
     def createOuputAttrGroupBox(self):
         self.outputs_GroupBox = QGroupBox("Outputs")
-        output_layout = QHBoxLayout()
-        output_selector_label = QLabel('outputs')
+        output_selector_label = QLabel('output')
         output_selector = QSpinBox()
+        output_selector.setMinimumSize(50,20)
         output_ip_label = QLabel('ip address')
         output_ip = QLineEdit()
         output_udp_label = QLabel('udp port')
@@ -341,6 +341,7 @@ class Projekt(QGroupBox,QModelIndex):
         self.output_ip.textEdited.connect(self.output_ip_changed)
         self.output_udp.valueChanged.connect(self.output_udp_changed)
 
+        output_layout = QHBoxLayout()
         output_layout.addWidget(output_new)
         output_layout.addWidget(output_selector_label)
         output_layout.addWidget(output_selector)
@@ -473,7 +474,12 @@ class Projekt(QGroupBox,QModelIndex):
         self.scenario_list.setDropIndicatorShown(True)
         self.scenario_list.setDefaultDropAction(Qt.MoveAction)
         self.scenario_list.dropEvent = self.scenario_list_orderChanged
+        # Function to edit scenario's name when double-clicking on it
         self.scenario_list.itemDoubleClicked.connect(self.scenario_list.editItem)
+        # Function to rename a scenario if its name changed
+        self.scenario_list.itemChanged.connect(self.scenario_name_changed)
+        # Button to create a new scenario
+        self.scenario_list.setMinimumSize(120,290)
         self.scenario_new = QPushButton(('New Scenario'))
         self.scenario_new.released.connect(self.newScenario)
         self.scenario_play = QPushButton(('Play Scenario'))
@@ -562,11 +568,17 @@ class Projekt(QGroupBox,QModelIndex):
         self.scenario_content.clear()
         self.scenario_output.clear()
         self.scenario_description.clear()
+        self.scenario_output_text.clear()
+
+    def scenario_out_display(self,scenario):
+        out = self.project.outputs()[scenario.output-1]
+        self.scenario_output_text.setText(out.ip+':'+str(out.udp)+' ('+out.name+')')
 
     def scenario_display(self,scenario):
         self.scenario_display_clear()
         self.scenario_output.setValue(scenario.output)
         self.scenario_description.setText(scenario.description)
+        self.scenario_out_display(scenario)
         if scenario.events() != []:
             for event in scenario.events():
                 line = event.content
@@ -588,28 +600,34 @@ class Projekt(QGroupBox,QModelIndex):
 
     def createScenarioAttrGroupBox(self):
         self.ScenarioAttrGroupBox = QGroupBox("Scenario Content")
-
+        # Assign an output to the seleted scenario
         self.scenario_output_label = QLabel('output')
         self.scenario_output = QSpinBox()
+        self.scenario_output.setMinimumSize(50,20)
         self.scenario_output.setDisabled(True)
+        self.scenario_output.setRange(1,len(self.project.outputs()))
+        # Display the selected output
+        self.scenario_output_text = QLabel('')
+        # Description of the seleted scenario
         self.scenario_description_label = QLabel('description')
         self.scenario_description = QLineEdit()
+        self.scenario_description.setMinimumSize(450,20)
         self.scenario_description.setDisabled(True)
+        # List of the events of the selected scenario
         self.scenario_content_label = QLabel('Events')
         self.scenario_content = QListWidget()
         self.scenario_content.setContextMenuPolicy(Qt.CustomContextMenu)
         self.scenario_content.customContextMenuRequested.connect(self.event_right_click)
         self.scenario_content.setDisabled(True)
+        # Button to play the selected event
         self.event_play = QPushButton('play event')
         self.event_play.setMaximumWidth(100)
         self.event_play.setDisabled(True)
+        # Button to delete the selected event
         self.event_del = QPushButton('delete event')
         self.event_del.setMaximumWidth(100)
         self.event_del.setDisabled(True)
 
-        self.scenario_output.setRange(1,len(self.project.outputs()))
-
-        self.scenario_list.itemChanged.connect(self.scenario_name_changed)
         self.scenario_output.valueChanged.connect(self.scenario_output_changed)
         self.scenario_description.textEdited.connect(self.scenario_description_changed)
         self.scenario_content.itemChanged.connect(self.scenario_content_changed)
@@ -618,16 +636,16 @@ class Projekt(QGroupBox,QModelIndex):
         self.scenario_content.itemSelectionChanged.connect(self.eventSelectionChanged)
 
         layout = QGridLayout()
-
         layout.addWidget(self.scenario_description_label, 0, 0)
-        layout.addWidget(self.scenario_description, 0, 1, 1, 5)
+        layout.addWidget(self.scenario_description, 0, 1, 1, 9)
         layout.addWidget(self.scenario_output_label,1 , 0)
-        layout.addWidget(self.scenario_output, 2, 0)
-        layout.addWidget(self.scenario_content_label,1 ,1 )
-        layout.addWidget(self.scenario_content, 2, 1, 5, 5)
-        layout.addWidget(self.event_play, 3, 0)
-        layout.addWidget(self.event_del, 4, 0)
-        layout.setRowStretch(6, 1)
+        layout.addWidget(self.scenario_output, 1, 1)
+        layout.addWidget(self.scenario_output_text,1,2)
+        layout.addWidget(self.scenario_content_label,2 ,0 )
+        layout.addWidget(self.scenario_content, 2, 1, 9, 9)
+        layout.addWidget(self.event_play, 8, 0)
+        layout.addWidget(self.event_del, 9, 0)
+        layout.setRowStretch(8, 1)
         self.ScenarioAttrGroupBox.setLayout(layout)
 
     def event_delete(self):
@@ -671,6 +689,7 @@ class Projekt(QGroupBox,QModelIndex):
 
     def scenario_output_changed(self):
         self.scenario_selected.output = self.scenario_output.value()
+        self.scenario_out_display(self.scenario_selected)
 
     def scenario_content_changed(self):
         # check if there is some text
@@ -774,6 +793,6 @@ class Projekt(QGroupBox,QModelIndex):
 if __name__ == "__main__":
     app = QApplication(sys.argv)
     mainWin = MainWindow()
-    mainWin.setFixedSize(1000,550)
+    mainWin.setFixedSize(1000,650)
     mainWin.show()
     sys.exit(app.exec_())
