@@ -5,8 +5,8 @@ import sys
 from time import sleep
 from PyQt5.QtGui import QIcon,QKeySequence
 from PyQt5.QtCore import QModelIndex,Qt,QSignalMapper,QSettings,QPoint,QSize,QSettings,QPoint,QFileInfo,QFile
-from PyQt5.QtWidgets import QMainWindow,QGroupBox,QApplication,QMdiArea,QWidget,QAction,QListWidget,QPushButton,QMessageBox,QFileDialog
-from PyQt5.QtWidgets import QVBoxLayout,QLabel,QLineEdit,QGridLayout,QHBoxLayout,QSpinBox,QStyleFactory,QListWidgetItem,QAbstractItemView,QMenu
+from PyQt5.QtWidgets import QMainWindow,QGroupBox,QApplication,QMdiArea,QWidget,QAction,QListWidget,QPushButton,QMessageBox,QFileDialog,QMenu
+from PyQt5.QtWidgets import QVBoxLayout,QLabel,QLineEdit,QGridLayout,QHBoxLayout,QSpinBox,QStyleFactory,QListWidgetItem,QAbstractItemView,QComboBox
 
 # for development of pyprojekt, use git version
 import os,sys
@@ -314,12 +314,18 @@ class Projekt(QGroupBox,QModelIndex):
 
     def createOuputAttrGroupBox(self):
         self.outputs_GroupBox = QGroupBox("Outputs")
-        output_selector_label = QLabel('output')
+        output_protocol_label = QLabel('Protocol')
+        output_protocol = QComboBox()
+        output_protocol.addItem("OSC")
+        output_protocol.addItem("Artnet")
+        output_protocol.addItem("MIDI")
+        output_protocol.addItem("Serial")
+        output_selector_label = QLabel('Output')
         output_selector = QSpinBox()
         output_selector.setMinimumSize(50,20)
-        output_ip_label = QLabel('ip address')
+        output_ip_label = QLabel('IP address')
         output_ip = QLineEdit()
-        output_udp_label = QLabel('udp port')
+        output_udp_label = QLabel('UDP port')
         output_udp = QSpinBox()
         output_udp.setRange(0,65536)
         output_name_label = QLabel('name')
@@ -329,6 +335,7 @@ class Projekt(QGroupBox,QModelIndex):
         self.output_selector = output_selector
         self.output_udp = output_udp
         self.output_ip = output_ip
+        self.output_protocol = output_protocol
         self.output_name = output_name
         self.output_new = output_new
 
@@ -338,11 +345,14 @@ class Projekt(QGroupBox,QModelIndex):
         
         self.output_new.released.connect(self.output_new_func)
         self.output_name.textEdited.connect(self.output_name_changed)
+        self.output_protocol.currentIndexChanged.connect(self.output_protocol_changed)
         self.output_ip.textEdited.connect(self.output_ip_changed)
         self.output_udp.valueChanged.connect(self.output_udp_changed)
 
         output_layout = QHBoxLayout()
         output_layout.addWidget(output_new)
+        output_layout.addWidget(output_protocol_label)
+        output_layout.addWidget(output_protocol)
         output_layout.addWidget(output_selector_label)
         output_layout.addWidget(output_selector)
         output_layout.addWidget(output_ip_label)
@@ -788,6 +798,12 @@ class Projekt(QGroupBox,QModelIndex):
     def output_ip_changed(self):
         if self.output_selected:
             self.output_selected.ip = self.output_ip.text()
+
+    def output_protocol_changed(self,index):
+        if self.output_selected:
+            if index != 0:
+                print 'ONLY OSC PROTOCOL IS AVAILABLE FOR NOW'
+            #self.output_selected.protocol = self.output_protocol.text()
 
 
 if __name__ == "__main__":
