@@ -548,10 +548,10 @@ class Projekt(QGroupBox,QModelIndex):
     def delScenario(self):
         if self.scenario_selected:
             scenar2delete = self.scenario_selected
-            # first delete scenario object…
-            self.project.del_scenario(scenar2delete)
-            # … to be sure it does not exist anymore when a refresh will be done
+            # Remove the item from the QlistWidget
             self.scenario_list.takeItem(self.scenario_list.row(self.scenario_list.currentItem()))
+            # and then delete the scenario object
+            self.project.del_scenario(scenar2delete)
 
     def playScenario(self):
         self.scenario_selected.play()
