@@ -16,7 +16,7 @@ You need to install PyQt5, PyOSC and PyBonjour module. The simplest way to insta
 
     brew install python
     brew install PyQt5 --with-python --without-python3
-    pip install PyOSC
+    pip install pyprojekt
 
 ##Build Application
 
