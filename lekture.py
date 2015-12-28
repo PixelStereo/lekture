@@ -26,7 +26,8 @@ class MainWindow(QMainWindow):
         super(MainWindow, self).__init__()
 
         # remove close & maximize window buttons
-        self.setWindowFlags(Qt.CustomizeWindowHint|Qt.WindowMinimizeButtonHint)
+        #self.setWindowFlags(Qt.CustomizeWindowHint|Qt.WindowMinimizeButtonHint)
+        self.setMinimumSize(850,450)
 
         self.mdiArea = QMdiArea()
         self.mdiArea.setHorizontalScrollBarPolicy(Qt.ScrollBarAsNeeded)
@@ -292,6 +293,7 @@ class Projekt(QGroupBox,QModelIndex):
         self.project_Groupbox = QGroupBox('Project')
         project_layout = QHBoxLayout()
         project_author_label = QLabel('author')
+        project_author_label.setMinimumSize(80,10)
         project_author = QLineEdit(self.project.author)
         project_version_label = QLabel('version')
         project_version = QLineEdit(self.project.version)
@@ -372,6 +374,8 @@ class Projekt(QGroupBox,QModelIndex):
         self.setWindowTitle(self.curFile + '[*]')
 
         self.project.name = self.curFile
+        if not self.project.path:
+            self.project_path.setText('Project has not been saved')
         
         #self.document().contentsChanged.connect(self.documentWasModified)
 
@@ -499,12 +503,13 @@ class Projekt(QGroupBox,QModelIndex):
         self.scenario_del.setDisabled(True)
         self.scenario_del.released.connect(self.delScenario)
 
-        layout = QVBoxLayout()
-        layout.addWidget(self.scenario_new)
-        layout.addWidget(self.scenario_play)
-        layout.addWidget(self.scenario_list)
-        layout.addWidget(self.scenario_del)
-        layout.addStretch(1)
+        layout = QGridLayout()
+        layout.addWidget(self.scenario_new,1,0)
+        layout.addWidget(self.scenario_play,2,0)
+        layout.addWidget(self.scenario_list,3,0)
+        layout.addWidget(self.scenario_del,4,0)
+        layout.setRowStretch(2, 1)
+        layout.setColumnStretch(0, 1)
         self.ScenarioListGroupBox.setLayout(layout)    
 
     def scenario_list_orderChanged(self,event):
@@ -809,6 +814,6 @@ class Projekt(QGroupBox,QModelIndex):
 if __name__ == "__main__":
     app = QApplication(sys.argv)
     mainWin = MainWindow()
-    mainWin.setFixedSize(1000,650)
+    #mainWin.setFixedSize(1000,650)
     mainWin.show()
     sys.exit(app.exec_())
