@@ -40,6 +40,8 @@ class MainWindow(QMainWindow):
         self.windowMapper = QSignalMapper(self)
         self.windowMapper.mapped[QWidget].connect(self.setActiveSubWindow)
         
+        self.child = None
+
         self.createActions()
         self.createMenus()
         self.createStatusBar()
@@ -60,6 +62,7 @@ class MainWindow(QMainWindow):
         child = self.createProjekt()
         child.newFile()
         child.show()
+        self.child = child
 
     def open(self):
         fileName, _ = QFileDialog.getOpenFileName(self)
@@ -200,6 +203,7 @@ class MainWindow(QMainWindow):
 
         self.OutputsMenu = self.menuBar().addMenu("&Outputs")
         self.OutputsMenu.addAction(self.outputsAct)
+        self.OutputsMenu.setDisabled(True)
 
         self.windowMenu = self.menuBar().addMenu("&Window")
         self.updateWindowMenu()
@@ -228,8 +232,11 @@ class MainWindow(QMainWindow):
     def activeProjekt(self):
         activeSubWindow = self.mdiArea.activeSubWindow()
         if activeSubWindow:
+            self.OutputsMenu.setDisabled(False)
             return activeSubWindow.widget()
-        return None
+        else:
+            self.OutputsMenu.setDisabled(True)
+            return None
 
     def findProjekt(self, fileName):
         canonicalFilePath = QFileInfo(fileName).canonicalFilePath()
@@ -245,98 +252,19 @@ class MainWindow(QMainWindow):
 
     def openOutputsPanel(self):
         if self.child:
-            output_panel = OutputsPanel(self.child.project.outputs())
+            project = self.mdiArea.currentSubWindow()
+            print self.child , project
+            #output_panel = OutputsPanel(project)
 
 
 class OutputsPanel(QDialog):
     """docstring for OutputsPanel"""
-    def __init__(self, outputs):
+    def __init__(self, project):
         super(OutputsPanel, self).__init__()
+        self.project = project
+        print project , project.version
 
-        self.formatComboBox = QComboBox()
-        self.formatComboBox.addItem("Native")
-        self.formatComboBox.addItem("INI")
-
-        mainLayout = QGridLayout()
-        mainLayout.addWidget(self.formatComboBox, 0, 1)
-        self.setLayout(mainLayout)
-
-        self.setWindowTitle("Open Application Settings")
-        self.resize(650, 400)
-        
-
-class Document(object):
-    """docstring for Document"""
-    def __init__(self, arg):
-        super(Document, self).__init__()
-        self.arg = arg
-        self.modified = True
-
-    def contentsChanged(self):
-        pass
-
-    def isModified(self):
-        return self.modified
-
-    def setModified(self):
-        pass
-
-
-class Projekt(QGroupBox,QModelIndex):
-    """This is the projekt class"""
-    sequenceNumber = 1
-
-    def __init__(self):
-        super(Projekt, self).__init__()
-
-        self.setAttribute(Qt.WA_DeleteOnClose)
-        self.isUntitled = True
-        # I must change all 'document' class reference to 'project' class… so I need to enhance project with modify flags and signals
-        self.document = Document('unknown')
-        self.project = projekt.new_project()
-        self.scenario_selected = None
-        self.event_selected = None
-        self.output_selected = None
-
-        self.createProjectAttrGroupBox()
         self.createOuputAttrGroupBox()
-        self.createScenarioListGroupBox()
-        self.createScenarioAttrGroupBox()
-
-        mainLayout = QGridLayout()
-        mainLayout.addWidget(self.project_Groupbox, 0, 0, 1, 2)
-        mainLayout.addWidget(self.outputs_GroupBox, 1, 0, 1, 2)
-        mainLayout.addWidget(self.ScenarioListGroupBox, 2, 0)
-        mainLayout.addWidget(self.ScenarioAttrGroupBox, 2, 1)
-        mainLayout.setRowStretch(2, 1)
-        mainLayout.setColumnStretch(0, 1)
-        mainLayout.setColumnStretch(1, 1)
-        self.setLayout(mainLayout)
-    
-    def createProjectAttrGroupBox(self):
-        self.project_Groupbox = QGroupBox('Project')
-        project_layout = QHBoxLayout()
-        project_author_label = QLabel('author')
-        project_author_label.setMinimumSize(80,10)
-        project_author = QLineEdit(self.project.author)
-        project_version_label = QLabel('version')
-        project_version = QLineEdit(self.project.version)
-        project_path_label = QLabel('path')
-        project_path = QLabel(self.project.path)
-        project_path.setFixedWidth(400)
-
-        self.project_author = project_author
-        self.project_version = project_version
-        self.project_path = project_path
-
-        project_layout.addWidget(project_author_label)
-        project_layout.addWidget(project_author)
-        project_layout.addWidget(project_version_label)
-        project_layout.addWidget(project_version)
-        project_layout.addWidget(project_path_label)
-        project_layout.addWidget(project_path)
-        project_layout.addStretch(1)
-        self.project_Groupbox.setLayout(project_layout)   
 
     def createOuputAttrGroupBox(self):
         self.outputs_GroupBox = QGroupBox("Outputs")
@@ -375,7 +303,7 @@ class Projekt(QGroupBox,QModelIndex):
         self.output_ip.textEdited.connect(self.output_ip_changed)
         self.output_udp.valueChanged.connect(self.output_udp_changed)
 
-        output_layout = QHBoxLayout()
+        output_layout = QVBoxLayout()
         output_layout.addWidget(output_new)
         output_layout.addWidget(output_protocol_label)
         output_layout.addWidget(output_protocol)
@@ -388,7 +316,140 @@ class Projekt(QGroupBox,QModelIndex):
         output_layout.addWidget(output_name_label)
         output_layout.addWidget(output_name)
         output_layout.addStretch(1)
-        self.outputs_GroupBox.setLayout(output_layout)   
+
+        self.setLayout(output_layout)
+        self.setWindowTitle("Output")
+        self.resize(650, 400)
+        self.exec_()
+        
+
+    def output_new_func(self):
+        # create a new output
+        self.project.new_output()
+        # refresh display
+        self.outputs_refresh()
+        # select new output that have been just created
+        last = len(self.project.outputs()) + 1
+        self.output_selector.setValue(last)
+
+    def outputs_refresh(self):
+        self.output_clear()
+        self.output_selector.setRange(1,len(self.project.outputs()))
+        """todo:: update scenario outputs available / NEXT LINE"""
+        #self.scenario_output.setRange(1,len(self.project.outputs()))
+        self.output_display(self.output_selected)
+
+    def output_selector_changed(self,index):
+        self.output_clear()
+        if self.project.outputs():
+            index = index - 1
+            output = self.project.outputs()[index]
+            # Important to first set output_selected before output_display
+            self.output_selected = output
+            self.output_display(output)
+        else:
+            self.output_selected = None
+
+    def output_display(self,output):
+        if output:
+            self.output_ip.setText(output.ip)
+            self.output_udp.setValue(output.udp)
+            self.output_name.setText(output.name)
+
+    def output_clear(self):
+        self.output_udp.clear()
+        self.output_name.clear()
+        self.output_ip.clear()
+
+    def output_name_changed(self):
+        if self.output_selected:
+            self.output_selected.name = self.output_name.text()
+
+    def output_udp_changed(self):
+        if self.output_selected:
+            self.output_selected.udp = self.output_udp.value()
+
+    def output_ip_changed(self):
+        if self.output_selected:
+            self.output_selected.ip = self.output_ip.text()
+
+    def output_protocol_changed(self,index):
+        if self.output_selected:
+            if index != 0:
+                print 'ONLY OSC PROTOCOL IS AVAILABLE FOR NOW'
+            #self.output_selected.protocol = self.output_protocol.text()
+
+class Document(object):
+    """docstring for Document"""
+    def __init__(self, arg):
+        super(Document, self).__init__()
+        self.arg = arg
+        self.modified = True
+
+    def contentsChanged(self):
+        pass
+
+    def isModified(self):
+        return self.modified
+
+    def setModified(self):
+        pass
+
+
+class Projekt(QGroupBox,QModelIndex):
+    """This is the projekt class"""
+    sequenceNumber = 1
+
+    def __init__(self):
+        super(Projekt, self).__init__()
+
+        self.setAttribute(Qt.WA_DeleteOnClose)
+        self.isUntitled = True
+        # I must change all 'document' class reference to 'project' class… so I need to enhance project with modify flags and signals
+        self.document = Document('unknown')
+        self.project = projekt.new_project()
+        self.scenario_selected = None
+        self.event_selected = None
+        self.output_selected = None
+
+        self.createProjectAttrGroupBox()
+        self.createScenarioListGroupBox()
+        self.createScenarioAttrGroupBox()
+
+        mainLayout = QGridLayout()
+        mainLayout.addWidget(self.project_Groupbox, 0, 0, 1, 2)
+        #mainLayout.addWidget(self.outputs_GroupBox, 1, 0, 1, 2)
+        mainLayout.addWidget(self.ScenarioListGroupBox, 2, 0)
+        mainLayout.addWidget(self.ScenarioAttrGroupBox, 2, 1)
+        mainLayout.setRowStretch(2, 1)
+        mainLayout.setColumnStretch(0, 1)
+        mainLayout.setColumnStretch(1, 1)
+        self.setLayout(mainLayout)
+    
+    def createProjectAttrGroupBox(self):
+        self.project_Groupbox = QGroupBox('Project')
+        project_layout = QHBoxLayout()
+        project_author_label = QLabel('author')
+        project_author_label.setMinimumSize(80,10)
+        project_author = QLineEdit(self.project.author)
+        project_version_label = QLabel('version')
+        project_version = QLineEdit(self.project.version)
+        project_path_label = QLabel('path')
+        project_path = QLabel(self.project.path)
+        project_path.setFixedWidth(400)
+
+        self.project_author = project_author
+        self.project_version = project_version
+        self.project_path = project_path
+
+        project_layout.addWidget(project_author_label)
+        project_layout.addWidget(project_author)
+        project_layout.addWidget(project_version_label)
+        project_layout.addWidget(project_version)
+        project_layout.addWidget(project_path_label)
+        project_layout.addWidget(project_path)
+        project_layout.addStretch(1)
+        self.project_Groupbox.setLayout(project_layout)   
 
     def newFile(self):
         """create a new project"""
@@ -777,61 +838,6 @@ class Projekt(QGroupBox,QModelIndex):
         else:
             self.event_del.setDisabled(True)
             self.event_play.setDisabled(True)
-
-    def output_new_func(self):
-        # create a new output
-        self.project.new_output()
-        # refresh display
-        self.outputs_refresh()
-        # select new output that have been just created
-        last = len(self.project.outputs()) + 1
-        self.output_selector.setValue(last)
-
-    def outputs_refresh(self):
-        self.output_clear()
-        self.output_selector.setRange(1,len(self.project.outputs()))
-        self.scenario_output.setRange(1,len(self.project.outputs()))
-        self.output_display(self.output_selected)
-
-    def output_selector_changed(self,index):
-        self.output_clear()
-        if self.project.outputs():
-            index = index - 1
-            output = self.project.outputs()[index]
-            # Important to first set output_selected before output_display
-            self.output_selected = output
-            self.output_display(output)
-        else:
-            self.output_selected = None
-
-    def output_display(self,output):
-        if output:
-            self.output_ip.setText(output.ip)
-            self.output_udp.setValue(output.udp)
-            self.output_name.setText(output.name)
-
-    def output_clear(self):
-        self.output_udp.clear()
-        self.output_name.clear()
-        self.output_ip.clear()
-
-    def output_name_changed(self):
-        if self.output_selected:
-            self.output_selected.name = self.output_name.text()
-
-    def output_udp_changed(self):
-        if self.output_selected:
-            self.output_selected.udp = self.output_udp.value()
-
-    def output_ip_changed(self):
-        if self.output_selected:
-            self.output_selected.ip = self.output_ip.text()
-
-    def output_protocol_changed(self,index):
-        if self.output_selected:
-            if index != 0:
-                print 'ONLY OSC PROTOCOL IS AVAILABLE FOR NOW'
-            #self.output_selected.protocol = self.output_protocol.text()
 
 
 if __name__ == "__main__":
