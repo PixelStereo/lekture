@@ -5,8 +5,8 @@ import sys
 from time import sleep
 from PyQt5.QtGui import QIcon,QKeySequence
 from PyQt5.QtCore import QModelIndex,Qt,QSignalMapper,QSettings,QPoint,QSize,QSettings,QPoint,QFileInfo,QFile
-from PyQt5.QtWidgets import QMainWindow,QGroupBox,QApplication,QMdiArea,QWidget,QAction,QListWidget,QPushButton,QMessageBox,QFileDialog,QMenu
-from PyQt5.QtWidgets import QVBoxLayout,QLabel,QLineEdit,QGridLayout,QHBoxLayout,QSpinBox,QStyleFactory,QListWidgetItem,QAbstractItemView,QComboBox
+from PyQt5.QtWidgets import QMainWindow,QGroupBox,QApplication,QMdiArea,QWidget,QAction,QListWidget,QPushButton,QMessageBox,QFileDialog,QDialog,QMenu
+from PyQt5.QtWidgets import QVBoxLayout,QLabel,QLineEdit,QGridLayout,QHBoxLayout,QSpinBox,QStyleFactory,QListWidgetItem,QAbstractItemView,QComboBox,QTableWidget
 
 # for development of pyprojekt, use git version
 import os,sys
@@ -132,18 +132,19 @@ class MainWindow(QMainWindow):
     def createProjekt(self):
         child = Projekt()
         self.mdiArea.addSubWindow(child)
+        self.child = child
         return child
 
     def createActions(self):
-        self.newAct = QAction(QIcon(':/images/new.png'), "&New", self,
+        self.newAct = QAction("&New", self,
                 shortcut=QKeySequence.New, statusTip="Create a new file",
                 triggered=self.newFile)
 
-        self.openAct = QAction(QIcon(':/images/open.png'), "&Open...", self,
+        self.openAct = QAction("&Open...", self,
                 shortcut=QKeySequence.Open, statusTip="Open an existing file",
                 triggered=self.open)
 
-        self.saveAct = QAction(QIcon(':/images/save.png'), "&Save", self,
+        self.saveAct = QAction("&Save", self,
                 shortcut=QKeySequence.Save,
                 statusTip="Save the document to disk", triggered=self.save)
 
@@ -162,6 +163,10 @@ class MainWindow(QMainWindow):
         self.closeAct = QAction("Cl&ose", self,
                 statusTip="Close the active window",
                 triggered=self.mdiArea.closeActiveSubWindow)
+
+        self.outputsAct = QAction("Outputs", self,
+                statusTip="Open the outputs panel",
+                triggered=self.openOutputsPanel)
 
         self.closeAllAct = QAction("Close &All", self,
                 statusTip="Close all the windows",
@@ -183,10 +188,6 @@ class MainWindow(QMainWindow):
                 statusTip="Show the application's About box",
                 triggered=self.about)
 
-        self.aboutQtAct = QAction("About &Qt", self,
-                statusTip="Show the Qt library's About box",
-                triggered=QApplication.instance().aboutQt)
-
     def createMenus(self):
         self.fileMenu = self.menuBar().addMenu("&File")
         self.fileMenu.addAction(self.newAct)
@@ -197,6 +198,9 @@ class MainWindow(QMainWindow):
         self.fileMenu.addAction(self.openFolderAct)
         self.fileMenu.addAction(self.exitAct)
 
+        self.OutputsMenu = self.menuBar().addMenu("&Outputs")
+        self.OutputsMenu.addAction(self.outputsAct)
+
         self.windowMenu = self.menuBar().addMenu("&Window")
         self.updateWindowMenu()
         self.windowMenu.aboutToShow.connect(self.updateWindowMenu)
@@ -205,7 +209,6 @@ class MainWindow(QMainWindow):
 
         self.helpMenu = self.menuBar().addMenu("&Help")
         self.helpMenu.addAction(self.aboutAct)
-        self.helpMenu.addAction(self.aboutQtAct)
 
     def createStatusBar(self):
         self.statusBar().showMessage("Ready")
@@ -213,14 +216,14 @@ class MainWindow(QMainWindow):
     def readSettings(self):
         settings = QSettings('Pixel Stereo', 'lekture')
         pos = settings.value('pos', QPoint(200, 200))
-        #size = settings.value('size', QSize(400, 400))
+        size = settings.value('size', QSize(1000, 650))
         self.move(pos)
-        #self.resize(size)
+        self.resize(size)
 
     def writeSettings(self):
         settings = QSettings('Pixel Stereo', 'lekture')
         settings.setValue('pos', self.pos())
-        #settings.setValue('size', self.size())
+        settings.setValue('size', self.size())
 
     def activeProjekt(self):
         activeSubWindow = self.mdiArea.activeSubWindow()
@@ -240,6 +243,27 @@ class MainWindow(QMainWindow):
         if window:
             self.mdiArea.setActiveSubWindow(window)
 
+    def openOutputsPanel(self):
+        if self.child:
+            output_panel = OutputsPanel(self.child.project.outputs())
+
+
+class OutputsPanel(QDialog):
+    """docstring for OutputsPanel"""
+    def __init__(self, outputs):
+        super(OutputsPanel, self).__init__()
+
+        self.formatComboBox = QComboBox()
+        self.formatComboBox.addItem("Native")
+        self.formatComboBox.addItem("INI")
+
+        mainLayout = QGridLayout()
+        mainLayout.addWidget(self.formatComboBox, 0, 1)
+        self.setLayout(mainLayout)
+
+        self.setWindowTitle("Open Application Settings")
+        self.resize(650, 400)
+        
 
 class Document(object):
     """docstring for Document"""
@@ -375,8 +399,7 @@ class Projekt(QGroupBox,QModelIndex):
 
         self.project.name = self.curFile
         if not self.project.path:
-            self.project_path.setText('Project has not been saved')
-        
+            self.project_path.setText('Project has not been saved')      
         #self.document().contentsChanged.connect(self.documentWasModified)
 
     def loadFile(self, fileName):
@@ -493,7 +516,7 @@ class Projekt(QGroupBox,QModelIndex):
         # Function to rename a scenario if its name changed
         self.scenario_list.itemChanged.connect(self.scenario_name_changed)
         # Button to create a new scenario
-        self.scenario_list.setMinimumSize(120,290)
+        #self.scenario_list.setMinimumSize(120,290)
         self.scenario_new = QPushButton(('New Scenario'))
         self.scenario_new.released.connect(self.newScenario)
         self.scenario_play = QPushButton(('Play Scenario'))
@@ -508,7 +531,7 @@ class Projekt(QGroupBox,QModelIndex):
         layout.addWidget(self.scenario_play,2,0)
         layout.addWidget(self.scenario_list,3,0)
         layout.addWidget(self.scenario_del,4,0)
-        layout.setRowStretch(2, 1)
+        layout.setRowStretch(4, 1)
         layout.setColumnStretch(0, 1)
         self.ScenarioListGroupBox.setLayout(layout)    
 
@@ -814,6 +837,5 @@ class Projekt(QGroupBox,QModelIndex):
 if __name__ == "__main__":
     app = QApplication(sys.argv)
     mainWin = MainWindow()
-    #mainWin.setFixedSize(1000,650)
     mainWin.show()
     sys.exit(app.exec_())
