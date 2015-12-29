@@ -38,6 +38,6 @@ You need to install PyQt5, PyOSC and PyBonjour module. The simplest way to insta
 GPL Licence
 
 ##Credits
-Produced and Developped by Pixel Stereo
+* *Produced and Developped by Pixel Stereo*
 * *icon by WOLF LΔMBERT*
 
