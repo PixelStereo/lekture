@@ -28,7 +28,7 @@ You need to install PyQt5, PyOSC and PyBonjour module. The simplest way to insta
     pip install pyinstaller
     pyinstaller --windowed --icon=icon/lekture.icns lekture.py
 
-####uild Documentation
+####Build Documentation
 
     pip install sphinx
     cd doc
