@@ -252,37 +252,41 @@ class MainWindow(QMainWindow):
 
     def openOutputsPanel(self):
         if self.child:
-            project = self.mdiArea.currentSubWindow()
-            print self.child , project
-            #output_panel = OutputsPanel(project)
+            #project = self.mdiArea.currentSubWindow()
+            project = self.activeProjekt().project
+            pos = self.pos()
+            size = self.size()
+            output_panel = OutputsPanel(project,pos)
 
 
 class OutputsPanel(QDialog):
     """docstring for OutputsPanel"""
-    def __init__(self, project):
+    def __init__(self, project,pos):
         super(OutputsPanel, self).__init__()
         self.project = project
-        print project , project.version
-
+        self.setFixedSize(150,350)
+        self.move(pos)
+        # create Outputs Interface
         self.createOuputAttrGroupBox()
+
 
     def createOuputAttrGroupBox(self):
         self.outputs_GroupBox = QGroupBox("Outputs")
+        output_selector_label = QLabel('Output')
+        output_selector = QSpinBox()
+        output_selector.setMinimumSize(50,20)
         output_protocol_label = QLabel('Protocol')
         output_protocol = QComboBox()
         output_protocol.addItem("OSC")
         output_protocol.addItem("Artnet")
         output_protocol.addItem("MIDI")
         output_protocol.addItem("Serial")
-        output_selector_label = QLabel('Output')
-        output_selector = QSpinBox()
-        output_selector.setMinimumSize(50,20)
         output_ip_label = QLabel('IP address')
         output_ip = QLineEdit()
         output_udp_label = QLabel('UDP port')
         output_udp = QSpinBox()
         output_udp.setRange(0,65536)
-        output_name_label = QLabel('name')
+        output_name_label = QLabel('name (optional)')
         output_name = QLineEdit()
         output_new = QPushButton('New Output')
 
@@ -321,7 +325,6 @@ class OutputsPanel(QDialog):
         self.setWindowTitle("Output")
         self.resize(650, 400)
         self.exec_()
-        
 
     def output_new_func(self):
         # create a new output
@@ -378,6 +381,7 @@ class OutputsPanel(QDialog):
             if index != 0:
                 print 'ONLY OSC PROTOCOL IS AVAILABLE FOR NOW'
             #self.output_selected.protocol = self.output_protocol.text()
+
 
 class Document(object):
     """docstring for Document"""
