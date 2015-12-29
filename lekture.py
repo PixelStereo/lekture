@@ -431,7 +431,7 @@ class Projekt(QGroupBox,QModelIndex):
         self.setLayout(mainLayout)
     
     def createProjectAttrGroupBox(self):
-        self.project_Groupbox = QGroupBox('Project')
+        self.project_Groupbox = QGroupBox()
         project_layout = QHBoxLayout()
         project_author_label = QLabel('author')
         project_author_label.setMinimumSize(80,10)
