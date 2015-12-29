@@ -442,6 +442,9 @@ class Projekt(QGroupBox,QModelIndex):
         self.project_version = project_version
         self.project_path = project_path
 
+        self.project_author.textEdited.connect(self.project_author_changed)
+        self.project_version.textEdited.connect(self.project_version_changed)
+
         project_layout.addWidget(project_author_label)
         project_layout.addWidget(project_author)
         project_layout.addWidget(project_version_label)
@@ -838,6 +841,12 @@ class Projekt(QGroupBox,QModelIndex):
         else:
             self.event_del.setDisabled(True)
             self.event_play.setDisabled(True)
+
+    def project_author_changed(self):
+        self.project.author = self.project_author.text()
+
+    def project_version_changed(self):
+        self.project.version = self.project_version.text()
 
 
 if __name__ == "__main__":
