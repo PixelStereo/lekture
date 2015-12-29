@@ -264,7 +264,7 @@ class OutputsPanel(QDialog):
     def __init__(self, project,pos):
         super(OutputsPanel, self).__init__()
         self.project = project
-        self.setFixedSize(150,350)
+        self.setFixedSize(350,350)
         self.move(pos)
         # create Outputs Interface
         self.createOuputAttrGroupBox()
@@ -273,14 +273,14 @@ class OutputsPanel(QDialog):
     def createOuputAttrGroupBox(self):
         self.outputs_GroupBox = QGroupBox("Outputs")
         output_selector_label = QLabel('Output')
-        output_selector = QSpinBox()
-        output_selector.setMinimumSize(50,20)
-        output_protocol_label = QLabel('Protocol')
         output_protocol = QComboBox()
         output_protocol.addItem("OSC")
+        output_protocol.addItem("PJ-Link")
         output_protocol.addItem("Artnet")
         output_protocol.addItem("MIDI")
         output_protocol.addItem("Serial")
+        output_selector = QSpinBox()
+        output_selector.setMinimumSize(50,20)
         output_ip_label = QLabel('IP address')
         output_ip = QLineEdit()
         output_udp_label = QLabel('UDP port')
@@ -307,10 +307,9 @@ class OutputsPanel(QDialog):
         self.output_ip.textEdited.connect(self.output_ip_changed)
         self.output_udp.valueChanged.connect(self.output_udp_changed)
 
-        output_layout = QVBoxLayout()
-        output_layout.addWidget(output_new)
-        output_layout.addWidget(output_protocol_label)
-        output_layout.addWidget(output_protocol)
+        output_layout = QGridLayout()
+        output_layout.addWidget(output_new, 0, 0)
+        output_layout.addWidget(output_protocol, 0, 1)
         output_layout.addWidget(output_selector_label)
         output_layout.addWidget(output_selector)
         output_layout.addWidget(output_ip_label)
@@ -319,7 +318,7 @@ class OutputsPanel(QDialog):
         output_layout.addWidget(output_udp)
         output_layout.addWidget(output_name_label)
         output_layout.addWidget(output_name)
-        output_layout.addStretch(1)
+        #output_layout.addStretch(1)
 
         self.setLayout(output_layout)
         self.setWindowTitle("Output")
