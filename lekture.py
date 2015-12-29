@@ -508,8 +508,10 @@ class Projekt(QGroupBox,QModelIndex):
         QApplication.setOverrideCursor(Qt.WaitCursor)
         if fileName:
             self.project.write(fileName)
+            self.project_path.setText(fileName)
         else:
             self.project.write()
+            self.project_path.setText(self.project.path)
         QApplication.restoreOverrideCursor()
         self.setCurrentFile(fileName)
         return True
