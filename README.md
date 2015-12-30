@@ -10,6 +10,7 @@ I develop on OSX.X, but lekture should work on Linux and Windows too, but I didn
 Lekture is bundled in an applicaition. Just donwload the [latest release](http://github.com/PixelStereo/lekture/releases/latest) and double-click on it to start !!
 
 ##Developper
+[![Build Status](https://travis-ci.org/PixelStereo/lekture.svg?branch=master)](https://travis-ci.org/PixelStereo/lekture)
 [![Coverage Status](https://coveralls.io/repos/PixelStereo/lekture/badge.svg?branch=master&service=github)](https://coveralls.io/github/PixelStereo/lekture?branch=master)
 ###Install
 You need to install PyQt5, PyOSC and PyBonjour module. The simplest way to install PyQt5 is with using brew.
