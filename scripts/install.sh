@@ -18,6 +18,6 @@ case "$TRAVIS_OS_NAME" in
 esac
 cd -
 
-pip install PyOSC
+pip install pyproject
 pip install pyinstaller
 pyinstaller --windowed --icon=icon/lekture.icns lekture.py
