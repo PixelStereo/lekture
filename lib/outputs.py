@@ -25,7 +25,7 @@ class OutputsPanel(QDialog):
     def __init__(self, project,pos):
         super(OutputsPanel, self).__init__()
         self.project = project
-        self.setFixedSize(350,350)
+        self.setFixedSize(500,350)
         self.move(pos)
         # create Outputs Interface
         self.createOuputAttrGroupBox()
@@ -33,54 +33,32 @@ class OutputsPanel(QDialog):
 
     def createOuputAttrGroupBox(self):
         self.outputs_GroupBox = QGroupBox("Outputs")
-        output_selector_label = QLabel('Output')
+        #output_selector_label = QLabel('Output')
         output_protocol = QComboBox()
         for protocol in projekt.protocol_list:
             output_protocol.addItem(protocol)
-        output_selector = QSpinBox()
-        output_selector.setMinimumSize(50,20)
-        output_ip_label = QLabel('IP address')
-        output_ip = QLineEdit()
-        output_udp_label = QLabel('UDP port')
-        output_udp = QSpinBox()
-        output_udp.setRange(0,65536)
-        output_name_label = QLabel('name (optional)')
-        output_name = QLineEdit()
         output_new = QPushButton('New Output')
+        osc_table = QTableWidget(len(self.project.outputs('OSC')),4)
+        osc_table.setColumnWidth(0,40)
+        osc_table.setColumnWidth(1,120)
+        osc_table.setColumnWidth(2,65)
+        osc_table.setColumnWidth(3,140)
+        osc_table.setFixedWidth(390)
 
-        self.output_selector = output_selector
-        self.output_udp = output_udp
-        self.output_ip = output_ip
         self.output_protocol = output_protocol
-        self.output_name = output_name
         self.output_new = output_new
-
-        self.output_selector.valueChanged.connect(self.output_selector_changed)
-        output_selector.setValue(1)
-        output_selector.setRange(1,len(self.project.outputs()))
+        self.osc_table = osc_table
         
         self.output_new.released.connect(self.output_new_func)
-        self.output_name.textEdited.connect(self.output_name_changed)
         self.output_protocol.currentIndexChanged.connect(self.output_protocol_changed)
-        self.output_ip.textEdited.connect(self.output_ip_changed)
-        self.output_udp.valueChanged.connect(self.output_udp_changed)
 
         output_layout = QGridLayout()
         output_layout.addWidget(output_new, 0, 0)
         output_layout.addWidget(output_protocol, 0, 1)
-        output_layout.addWidget(output_selector_label)
-        output_layout.addWidget(output_selector)
-        output_layout.addWidget(output_ip_label)
-        output_layout.addWidget(output_ip)
-        output_layout.addWidget(output_udp_label)
-        output_layout.addWidget(output_udp)
-        output_layout.addWidget(output_name_label)
-        output_layout.addWidget(output_name)
-        #output_layout.addStretch(1)
+        output_layout.addWidget(osc_table )
 
         self.setLayout(output_layout)
-        self.setWindowTitle("Output")
-        self.resize(650, 400)
+        self.setWindowTitle("Outputs")
         self.exec_()
 
     def output_new_func(self):
@@ -117,9 +95,7 @@ class OutputsPanel(QDialog):
             self.output_name.setText(output.name)
 
     def output_clear(self):
-        self.output_udp.clear()
-        self.output_name.clear()
-        self.output_ip.clear()
+        self.osc_table.clear()
 
     def output_name_changed(self):
         if self.output_selected:
