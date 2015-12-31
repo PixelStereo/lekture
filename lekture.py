@@ -410,23 +410,34 @@ class Projekt(QGroupBox,QModelIndex):
         self.isUntitled = True
         # I must change all 'document' class reference to 'project' class… so I need to enhance project with modify flags and signals
         self.document = Document('unknown')
+        # Create a new project
         self.project = projekt.new_project()
+        # Create a new output
+        self.project.new_output('OSC')
+
+        # initialize selection (this might be done with models later)
         self.scenario_selected = None
         self.event_selected = None
         self.output_selected = None
 
+        # Create Project Attributes layout
         self.createProjectAttrGroupBox()
+        # Create Scenario List layout
         self.createScenarioListGroupBox()
+        # Create Scenario Attributes layout
         self.createScenarioAttrGroupBox()
 
+        # Create the main layout
         mainLayout = QGridLayout()
+        # Integrate the layout previously created
         mainLayout.addWidget(self.project_Groupbox, 0, 0, 1, 2)
-        #mainLayout.addWidget(self.outputs_GroupBox, 1, 0, 1, 2)
         mainLayout.addWidget(self.ScenarioListGroupBox, 2, 0)
         mainLayout.addWidget(self.ScenarioAttrGroupBox, 2, 1)
+        # Make the main layout strechable when resizing main window
         mainLayout.setRowStretch(2, 1)
         mainLayout.setColumnStretch(0, 1)
         mainLayout.setColumnStretch(1, 1)
+        # Integrate main layout to the main window
         self.setLayout(mainLayout)
     
     def createProjectAttrGroupBox(self):
@@ -457,6 +468,91 @@ class Projekt(QGroupBox,QModelIndex):
         project_layout.addStretch(1)
         self.project_Groupbox.setLayout(project_layout)   
 
+    def createScenarioListGroupBox(self):
+        self.ScenarioListGroupBox = QGroupBox("Scenario List")
+        self.scenario_list = QListWidget()
+        # to get current and previous
+        self.scenario_list.currentItemChanged.connect(self.scenarioSelectionChanged)
+        # enable drag and drop for internal move aka ordering
+        self.scenario_list.setDragDropMode(QAbstractItemView.InternalMove)
+        # détournement de la méthode dropEvent du QListWidget
+        self.scenario_list.setDropIndicatorShown(True)
+        self.scenario_list.setDefaultDropAction(Qt.MoveAction)
+        self.scenario_list.dropEvent = self.scenario_list_orderChanged
+        # Function to edit scenario's name when double-clicking on it
+        self.scenario_list.itemDoubleClicked.connect(self.scenario_list.editItem)
+        # Function to rename a scenario if its name changed
+        self.scenario_list.itemChanged.connect(self.scenario_name_changed)
+        # Button to create a new scenario
+        #self.scenario_list.setMinimumSize(120,290)
+        self.scenario_new = QPushButton(('New Scenario'))
+        self.scenario_new.released.connect(self.newScenario)
+        self.scenario_play = QPushButton(('Play Scenario'))
+        self.scenario_play.setDisabled(True)
+        self.scenario_play.released.connect(self.playScenario)
+        self.scenario_del = QPushButton(('Delete Scenario'))
+        self.scenario_del.setDisabled(True)
+        self.scenario_del.released.connect(self.delScenario)
+
+        layout = QGridLayout()
+        layout.addWidget(self.scenario_new,1,0)
+        layout.addWidget(self.scenario_play,2,0)
+        layout.addWidget(self.scenario_list,3,0)
+        layout.addWidget(self.scenario_del,4,0)
+        layout.setRowStretch(4, 1)
+        layout.setColumnStretch(0, 1)
+        self.ScenarioListGroupBox.setLayout(layout)  
+
+    def createScenarioAttrGroupBox(self):
+        self.ScenarioAttrGroupBox = QGroupBox("Scenario Content")
+        # Assign an output to the seleted scenario
+        self.scenario_output_label = QLabel('output')
+        self.scenario_output = QSpinBox()
+        self.scenario_output.setMinimumSize(50,20)
+        self.scenario_output.setDisabled(True)
+        self.scenario_output.setRange(1,len(self.project.outputs()))
+        # Display the selected output
+        self.scenario_output_text = QLabel('')
+        # Description of the seleted scenario
+        self.scenario_description_label = QLabel('description')
+        self.scenario_description = QLineEdit()
+        self.scenario_description.setMinimumSize(450,20)
+        self.scenario_description.setDisabled(True)
+        # List of the events of the selected scenario
+        self.scenario_content_label = QLabel('Events')
+        self.scenario_content = QListWidget()
+        self.scenario_content.setContextMenuPolicy(Qt.CustomContextMenu)
+        self.scenario_content.customContextMenuRequested.connect(self.event_right_click)
+        self.scenario_content.setDisabled(True)
+        # Button to play the selected event
+        self.event_play = QPushButton('play event')
+        self.event_play.setMaximumWidth(100)
+        self.event_play.setDisabled(True)
+        # Button to delete the selected event
+        self.event_del = QPushButton('delete event')
+        self.event_del.setMaximumWidth(100)
+        self.event_del.setDisabled(True)
+
+        self.scenario_output.valueChanged.connect(self.scenario_output_changed)
+        self.scenario_description.textEdited.connect(self.scenario_description_changed)
+        self.scenario_content.itemChanged.connect(self.scenario_content_changed)
+        self.event_play.released.connect(self.event_play_func)
+        self.event_del.released.connect(self.event_delete)
+        self.scenario_content.itemSelectionChanged.connect(self.eventSelectionChanged)
+
+        layout = QGridLayout()
+        layout.addWidget(self.scenario_description_label, 0, 0)
+        layout.addWidget(self.scenario_description, 0, 1, 1, 9)
+        layout.addWidget(self.scenario_output_label,1 , 0)
+        layout.addWidget(self.scenario_output, 1, 1)
+        layout.addWidget(self.scenario_output_text,1,2)
+        layout.addWidget(self.scenario_content_label,2 ,0 )
+        layout.addWidget(self.scenario_content, 2, 1, 9, 9)
+        layout.addWidget(self.event_play, 8, 0)
+        layout.addWidget(self.event_del, 9, 0)
+        layout.setRowStretch(8, 1)
+        self.ScenarioAttrGroupBox.setLayout(layout)
+
     def newFile(self):
         """create a new project"""
         self.isUntitled = True
@@ -486,11 +582,6 @@ class Projekt(QGroupBox,QModelIndex):
         self.setCurrentFile(fileName)
         #self.document().contentsChanged.connect(self.documentWasModified)
         return True
-
-    def project_display(self):
-        self.project_author.setText(self.project.author)
-        self.project_version.setText(self.project.version)
-        self.project_path.setText(self.project.path)
 
     def save(self):
         if self.isUntitled:
@@ -529,17 +620,22 @@ class Projekt(QGroupBox,QModelIndex):
         else:
             False
 
+    def project_display(self):
+        self.project_author.setText(self.project.author)
+        self.project_version.setText(self.project.version)
+        self.project_path.setText(self.project.path)
+
     def userFriendlyCurrentFile(self):
         return self.strippedName(self.curFile)
 
     def currentFile(self):
         return self.curFile
 
-    def closeScenario(self, scenario):
+    def closeEvent(self, event):
         if self.maybeSave():
-            scenario.accept()
+            event.accept()
         else:
-            scenario.ignore()
+            event.ignore()
 
     def documentWasModified(self):
         self.setWindowModified(self.document().isModified())
@@ -568,42 +664,7 @@ class Projekt(QGroupBox,QModelIndex):
 
     def strippedName(self, fullFileName):
         return QFileInfo(fullFileName).baseName()
-
-    def createScenarioListGroupBox(self):
-        self.ScenarioListGroupBox = QGroupBox("Scenario List")
-        self.scenario_list = QListWidget()
-        # to get current and previous
-        self.scenario_list.currentItemChanged.connect(self.scenarioSelectionChanged)
-        # enable drag and drop for internal move aka ordering
-        self.scenario_list.setDragDropMode(QAbstractItemView.InternalMove)
-        # détournement de la méthode dropEvent du QListWidget
-        self.scenario_list.setDropIndicatorShown(True)
-        self.scenario_list.setDefaultDropAction(Qt.MoveAction)
-        self.scenario_list.dropEvent = self.scenario_list_orderChanged
-        # Function to edit scenario's name when double-clicking on it
-        self.scenario_list.itemDoubleClicked.connect(self.scenario_list.editItem)
-        # Function to rename a scenario if its name changed
-        self.scenario_list.itemChanged.connect(self.scenario_name_changed)
-        # Button to create a new scenario
-        #self.scenario_list.setMinimumSize(120,290)
-        self.scenario_new = QPushButton(('New Scenario'))
-        self.scenario_new.released.connect(self.newScenario)
-        self.scenario_play = QPushButton(('Play Scenario'))
-        self.scenario_play.setDisabled(True)
-        self.scenario_play.released.connect(self.playScenario)
-        self.scenario_del = QPushButton(('Delete Scenario'))
-        self.scenario_del.setDisabled(True)
-        self.scenario_del.released.connect(self.delScenario)
-
-        layout = QGridLayout()
-        layout.addWidget(self.scenario_new,1,0)
-        layout.addWidget(self.scenario_play,2,0)
-        layout.addWidget(self.scenario_list,3,0)
-        layout.addWidget(self.scenario_del,4,0)
-        layout.setRowStretch(4, 1)
-        layout.setColumnStretch(0, 1)
-        self.ScenarioListGroupBox.setLayout(layout)    
-
+  
     def scenario_list_orderChanged(self,event):
         """appelé à chaque modif d'ordre"""
         item = self.scenario_list.currentItem()
@@ -704,56 +765,6 @@ class Projekt(QGroupBox,QModelIndex):
             empty = QListWidgetItem()
             empty.setFlags(Qt.ItemIsEnabled|Qt.ItemIsEditable|Qt.ItemIsSelectable|Qt.ItemIsDragEnabled)
             self.scenario_content.addItem(empty)
-
-    def createScenarioAttrGroupBox(self):
-        self.ScenarioAttrGroupBox = QGroupBox("Scenario Content")
-        # Assign an output to the seleted scenario
-        self.scenario_output_label = QLabel('output')
-        self.scenario_output = QSpinBox()
-        self.scenario_output.setMinimumSize(50,20)
-        self.scenario_output.setDisabled(True)
-        self.scenario_output.setRange(1,len(self.project.outputs()))
-        # Display the selected output
-        self.scenario_output_text = QLabel('')
-        # Description of the seleted scenario
-        self.scenario_description_label = QLabel('description')
-        self.scenario_description = QLineEdit()
-        self.scenario_description.setMinimumSize(450,20)
-        self.scenario_description.setDisabled(True)
-        # List of the events of the selected scenario
-        self.scenario_content_label = QLabel('Events')
-        self.scenario_content = QListWidget()
-        self.scenario_content.setContextMenuPolicy(Qt.CustomContextMenu)
-        self.scenario_content.customContextMenuRequested.connect(self.event_right_click)
-        self.scenario_content.setDisabled(True)
-        # Button to play the selected event
-        self.event_play = QPushButton('play event')
-        self.event_play.setMaximumWidth(100)
-        self.event_play.setDisabled(True)
-        # Button to delete the selected event
-        self.event_del = QPushButton('delete event')
-        self.event_del.setMaximumWidth(100)
-        self.event_del.setDisabled(True)
-
-        self.scenario_output.valueChanged.connect(self.scenario_output_changed)
-        self.scenario_description.textEdited.connect(self.scenario_description_changed)
-        self.scenario_content.itemChanged.connect(self.scenario_content_changed)
-        self.event_play.released.connect(self.event_play_func)
-        self.event_del.released.connect(self.event_delete)
-        self.scenario_content.itemSelectionChanged.connect(self.eventSelectionChanged)
-
-        layout = QGridLayout()
-        layout.addWidget(self.scenario_description_label, 0, 0)
-        layout.addWidget(self.scenario_description, 0, 1, 1, 9)
-        layout.addWidget(self.scenario_output_label,1 , 0)
-        layout.addWidget(self.scenario_output, 1, 1)
-        layout.addWidget(self.scenario_output_text,1,2)
-        layout.addWidget(self.scenario_content_label,2 ,0 )
-        layout.addWidget(self.scenario_content, 2, 1, 9, 9)
-        layout.addWidget(self.event_play, 8, 0)
-        layout.addWidget(self.event_del, 9, 0)
-        layout.setRowStretch(8, 1)
-        self.ScenarioAttrGroupBox.setLayout(layout)
 
     def event_delete(self):
         if self.event_selected:
