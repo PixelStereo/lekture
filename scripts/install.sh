@@ -5,9 +5,8 @@ set -v
 cd ${HOME}
 case "$TRAVIS_OS_NAME" in
   linux)
-  echo 'this is linux, so apt-get'
-  sudo apt-get -y install python-qt5
-  echo "import PyQt5" |python
+  echo "apt-get PyQt5 for Ubuntu " |python
+  sudo apt-get -y install pyqt5
   
    ;;
   osx)
