@@ -1,8 +1,8 @@
 language: python
 sudo: true
 os:
-#- osx
-- linux
+- osx
+#- linux
 python:
   - "2.7"
   # does not have headers provided, please ask https://launchpad.net/~pypy/+archive/ppa
