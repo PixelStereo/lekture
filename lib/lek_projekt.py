@@ -12,6 +12,7 @@ sys.path.append(projekt_path)
 from pyprojekt import projekt
 from panels import createProjectAttrGroupBox, createScenarioListGroupBox, createScenarioAttrGroupBox
 
+
 class Document(object):
     """docstring for Document"""
     def __init__(self, arg):
