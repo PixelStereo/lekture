@@ -2,22 +2,14 @@
 # -*- coding: utf-8 -*-
 import os
 import sys
-from time import sleep
-from PyQt5.QtGui import QIcon,QKeySequence
-from PyQt5.QtCore import QModelIndex,Qt,QSignalMapper,QSettings,QPoint,QSize,QSettings,QPoint,QFileInfo,QFile
-from PyQt5.QtWidgets import QMainWindow,QGroupBox,QApplication,QMdiArea,QWidget,QAction,QListWidget,QPushButton,QMessageBox,QFileDialog,QDialog,QMenu
-from PyQt5.QtWidgets import QVBoxLayout,QLabel,QLineEdit,QGridLayout,QHBoxLayout,QSpinBox,QStyleFactory,QListWidgetItem,QAbstractItemView,QComboBox,QTableWidget
+from PyQt5.QtWidgets import QGroupBox,QHBoxLayout,QLabel,QLineEdit,QListWidget,QAbstractItemView,QPushButton,QGridLayout,QSpinBox,QComboBox,QFileDialog,QListWidgetItem,QApplication,QMessageBox
+from PyQt5.QtCore import Qt,QModelIndex,QFileInfo
 
 # for development of pyprojekt, use git version
-projekt_path = os.path.abspath('./../PyProjekt')
+projekt_path = os.path.abspath('./../../PyProjekt')
 sys.path.append(projekt_path)
 
 from pyprojekt import projekt
-
-debug = True
-projekt.debug = True
-projekt.test = False
-
 
 class Document(object):
     """docstring for Document"""
