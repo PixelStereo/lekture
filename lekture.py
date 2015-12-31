@@ -338,7 +338,7 @@ class OutputsPanel(QDialog):
         self.output_clear()
         self.output_selector.setRange(1,len(self.project.outputs()))
         """todo:: update scenario outputs available / NEXT LINE"""
-        #self.scenario_output.setRange(1,len(self.project.outputs()))
+        #self.scenario_output_index.setRange(1,len(self.project.outputs()))
         self.output_display(self.output_selected)
 
     def output_selector_changed(self,index):
@@ -413,7 +413,7 @@ class Projekt(QGroupBox,QModelIndex):
         # Create a new project
         self.project = projekt.new_project()
         # Create a new output
-        self.project.new_output('OSC')
+        the_out = self.project.new_output('OSC')
 
         # initialize selection (this might be done with models later)
         self.scenario_selected = None
@@ -507,10 +507,16 @@ class Projekt(QGroupBox,QModelIndex):
         self.ScenarioAttrGroupBox = QGroupBox("Scenario Content")
         # Assign an output to the seleted scenario
         self.scenario_output_label = QLabel('output')
-        self.scenario_output = QSpinBox()
-        self.scenario_output.setMinimumSize(50,20)
-        self.scenario_output.setDisabled(True)
-        self.scenario_output.setRange(1,len(self.project.outputs()))
+        self.scenario_output_index = QSpinBox()
+        self.scenario_output_index.setMinimumSize(50,20)
+        self.scenario_output_index.setDisabled(True)
+        self.scenario_output_index.setRange(1,len(self.project.outputs()))
+        self.scenario_output_protocol = QComboBox()
+        self.scenario_output_protocol.addItem('OSC')
+        self.scenario_output_protocol.addItem('PJLINK')
+        self.scenario_output_protocol.addItem('MIDI')
+        self.scenario_output_protocol.addItem('ARTNET')
+        self.scenario_output_protocol.setDisabled(True)
         # Display the selected output
         self.scenario_output_text = QLabel('')
         # Description of the seleted scenario
@@ -533,7 +539,8 @@ class Projekt(QGroupBox,QModelIndex):
         self.event_del.setMaximumWidth(100)
         self.event_del.setDisabled(True)
 
-        self.scenario_output.valueChanged.connect(self.scenario_output_changed)
+        self.scenario_output_index.valueChanged.connect(self.scenario_output_index_changed)
+        self.scenario_output_protocol.currentTextChanged.connect(self.scenario_output_protocol_changed)
         self.scenario_description.textEdited.connect(self.scenario_description_changed)
         self.scenario_content.itemChanged.connect(self.scenario_content_changed)
         self.event_play.released.connect(self.event_play_func)
@@ -544,8 +551,9 @@ class Projekt(QGroupBox,QModelIndex):
         layout.addWidget(self.scenario_description_label, 0, 0)
         layout.addWidget(self.scenario_description, 0, 1, 1, 9)
         layout.addWidget(self.scenario_output_label,1 , 0)
-        layout.addWidget(self.scenario_output, 1, 1)
-        layout.addWidget(self.scenario_output_text,1,2)
+        layout.addWidget(self.scenario_output_protocol, 1, 1)
+        layout.addWidget(self.scenario_output_index, 1, 2)
+        layout.addWidget(self.scenario_output_text,1,3)
         layout.addWidget(self.scenario_content_label,2 ,0 )
         layout.addWidget(self.scenario_content, 2, 1, 9, 9)
         layout.addWidget(self.event_play, 8, 0)
@@ -696,14 +704,16 @@ class Projekt(QGroupBox,QModelIndex):
             self.scenario_display_clear()
             self.scenario_del.setDisabled(True)
             self.scenario_play.setDisabled(True)
-            self.scenario_output.setDisabled(True)
+            self.scenario_output_index.setDisabled(True)
+            self.scenario_output_protocol.setDisabled(True)
             self.scenario_description.setDisabled(True)
             self.scenario_content.setDisabled(True)
         else:
             self.scenario_display(self.scenario_selected)
             self.scenario_del.setDisabled(False)
             self.scenario_play.setDisabled(False)
-            self.scenario_output.setDisabled(False)
+            self.scenario_output_index.setDisabled(False)
+            self.scenario_output_protocol.setDisabled(False)
             self.scenario_description.setDisabled(False)
             self.scenario_content.setDisabled(False)
 
@@ -734,19 +744,39 @@ class Projekt(QGroupBox,QModelIndex):
 
     def scenario_display_clear(self):
         self.scenario_content.clear()
-        self.scenario_output.clear()
-        self.scenario_description.clear()
+        self.scenario_output_index.clear()
+        self.scenario_output_protocol.clear()
         self.scenario_output_text.clear()
+        self.scenario_description.clear()
 
     def scenario_out_display(self,scenario):
-        out = self.project.outputs()[scenario.output-1]
-        self.scenario_output_text.setText(out.ip+':'+str(out.udp)+' ('+out.name+')')
+        self.scenario_output_protocol.clear()
+        protocols = []
+        for protocol in self.project.getprotocols():
+            if not protocol in protocols:
+                protocols.append(protocol)
+        for protocol in protocols:
+            self.scenario_output_protocol.addItem(protocol)
+        out = self.scenario_selected.getoutput()
+        if out:
+            self.scenario_output_text.setText(out.ip+':'+str(out.udp)+' ('+out.name+')')
+        else:
+            print 'no outputs available'
 
     def scenario_display(self,scenario):
         self.scenario_display_clear()
-        self.scenario_output.setValue(scenario.output)
-        self.scenario_description.setText(scenario.description)
         self.scenario_out_display(scenario)
+        if scenario.output:
+            out_protocol = scenario.output[0]
+            out_index = scenario.output[1]
+            self.scenario_output_index.setValue(scenario.output[1])
+            self.scenario_output_protocol.setCurrentIndex(self.scenario_output_protocol.findText(scenario.output[0]))
+        else:
+            if self.project.outputs() == []:
+                self.scenario_output_text.setText('No available output')
+                self.scenario_output_protocol.setDisabled(True)
+                self.scenario_output_index.setDisabled(True)
+        self.scenario_description.setText(scenario.description)
         if scenario.events() != []:
             for event in scenario.events():
                 line = event.content
@@ -805,9 +835,26 @@ class Projekt(QGroupBox,QModelIndex):
     def scenario_description_changed(self):
         self.scenario_selected.description = self.scenario_description.text()
 
-    def scenario_output_changed(self):
-        self.scenario_selected.output = self.scenario_output.value()
+    def scenario_output_index_changed(self):
+        self.scenario_selected.output[1] = self.scenario_output_index.value()
         self.scenario_out_display(self.scenario_selected)
+
+    def scenario_output_protocol_changed(self):
+        protocol = self.scenario_output_protocol.currentText()
+        protocol = protocol.encode('utf-8')
+        if protocol:
+            length = len(self.project.outputs(protocol))
+            self.scenario_output_index.setRange(1,length)
+            self.scenario_output_index.setDisabled(False)
+            if not self.scenario_selected.output:
+                # current scenario has no output, so we will create it
+                self.scenario_selected.output = [None,None]
+                self.scenario_selected.output[0] = protocol
+                if len(self.scenario_selected.output) == 1:
+                    self.scenario_selected.output.append(1)
+                else:
+                    self.scenario_selected.output[1] = 1
+                self.scenario_output_index.setValue(1)
 
     def scenario_content_changed(self):
         # check if there is some text
