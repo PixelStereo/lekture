@@ -46,6 +46,13 @@ class MainWindow(QMainWindow):
         self.readSettings()
         self.setWindowTitle("LEKTURE")
 
+        self.toolbar = self.addToolBar('Outputs')
+        self.toolbar.addAction(self.newAct)
+        self.toolbar.addAction(self.openAct)
+        self.toolbar.addAction(self.saveAct)
+        self.toolbar.addAction(self.saveAsAct)
+        self.toolbar.addAction(self.outputsAct)
+
 
     def closeEvent(self, scenario):
         self.mdiArea.closeAllSubWindows()
@@ -97,6 +104,7 @@ class MainWindow(QMainWindow):
         hasProjekt = (self.activeProjekt() is not None)
         self.saveAct.setEnabled(hasProjekt)
         self.saveAsAct.setEnabled(hasProjekt)
+        self.outputsAct.setEnabled(hasProjekt)
         self.openFolderAct.setEnabled(hasProjekt)
         self.closeAct.setEnabled(hasProjekt)
         self.closeAllAct.setEnabled(hasProjekt)

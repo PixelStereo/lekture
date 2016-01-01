@@ -5,7 +5,7 @@ import sys
 from time import sleep
 from PyQt5.QtGui import QIcon,QKeySequence
 from PyQt5.QtCore import QModelIndex,Qt,QSignalMapper,QSettings,QPoint,QSize,QSettings,QPoint,QFileInfo,QFile
-from PyQt5.QtWidgets import QMainWindow,QGroupBox,QApplication,QMdiArea,QWidget,QAction,QListWidget,QPushButton,QMessageBox,QFileDialog,QDialog,QMenu
+from PyQt5.QtWidgets import QMainWindow,QGroupBox,QApplication,QMdiArea,QWidget,QAction,QListWidget,QPushButton,QMessageBox,QFileDialog,QDialog,QMenu,QTableWidgetItem
 from PyQt5.QtWidgets import QVBoxLayout,QLabel,QLineEdit,QGridLayout,QHBoxLayout,QSpinBox,QStyleFactory,QListWidgetItem,QAbstractItemView,QComboBox,QTableWidget
 
 # for development of pyprojekt, use git version
@@ -29,73 +29,60 @@ class OutputsPanel(QDialog):
         self.move(pos)
         # create Outputs Interface
         self.createOuputAttrGroupBox()
-
-
-    def createOuputAttrGroupBox(self):
-        self.outputs_GroupBox = QGroupBox("Outputs")
-        #output_selector_label = QLabel('Output')
-        output_protocol = QComboBox()
-        for protocol in projekt.protocol_list:
-            output_protocol.addItem(protocol)
-        output_new = QPushButton('New Output')
-        osc_table = QTableWidget(len(self.project.outputs('OSC')),4)
-        osc_table.setColumnWidth(0,40)
-        osc_table.setColumnWidth(1,120)
-        osc_table.setColumnWidth(2,65)
-        osc_table.setColumnWidth(3,140)
-        osc_table.setFixedWidth(390)
-
-        self.output_protocol = output_protocol
-        self.output_new = output_new
-        self.osc_table = osc_table
-        
-        self.output_new.released.connect(self.output_new_func)
-        self.output_protocol.currentIndexChanged.connect(self.output_protocol_changed)
-
-        output_layout = QGridLayout()
-        output_layout.addWidget(output_new, 0, 0)
-        output_layout.addWidget(output_protocol, 0, 1)
-        output_layout.addWidget(osc_table )
-
-        self.setLayout(output_layout)
+        self.protocol.setCurrentText('OSC')
+        self.protocol_display()
         self.setWindowTitle("Outputs")
         self.exec_()
 
-    def output_new_func(self):
+    def createOuputAttrGroupBox(self):
+        self.outs_GroupBox = QGroupBox("Outputs")
+        # creare a menu to chosse which protocol to display
+        self.protocol = QComboBox()
+        for protocol in projekt.protocol_list:
+            self.protocol.addItem(protocol)
+        # create a button for creating a new output
+        self.output_new = QPushButton('New Output')
+        # create the table to display outputs for each protocols
+        protocol_table = QTableWidget(len(self.project.outputs('OSC')),3)
+        protocol_table.setColumnWidth(0,140)
+        protocol_table.setColumnWidth(1,70)
+        protocol_table.setColumnWidth(2,160)
+        protocol_table.setFixedWidth(420)
+        self.protocol_table = protocol_table
         # create a new output
-        self.project.new_output()
-        # refresh display
-        self.outputs_refresh()
-        # select new output that have been just created
-        last = len(self.project.outputs()) + 1
-        self.output_selector.setValue(last)
+        self.output_new.released.connect(self.new_output_func)
+        # display protocol
+        self.protocol.currentIndexChanged.connect(self.protocol_display)
+        output_layout = QGridLayout()
+        output_layout.addWidget(self.output_new, 0, 0)
+        output_layout.addWidget(self.protocol, 0, 1)
+        output_layout.addWidget(self.protocol_table )
+        self.setLayout(output_layout)
 
-    def outputs_refresh(self):
-        self.output_clear()
-        self.output_selector.setRange(1,len(self.project.outputs()))
-        """todo:: update scenario outputs available / NEXT LINE"""
-        #self.scenario_output_index.setRange(1,len(self.project.outputs()))
-        self.output_display(self.output_selected)
+    def new_output_func(self):
+        protocol = self.protocol.currentText()
+        self.project.new_output(protocol)
+        self.protocol_display()
 
-    def output_selector_changed(self,index):
-        self.output_clear()
-        if self.project.outputs():
-            index = index - 1
-            output = self.project.outputs()[index]
-            # Important to first set output_selected before output_display
-            self.output_selected = output
-            self.output_display(output)
-        else:
-            self.output_selected = None
-
-    def output_display(self,output):
-        if output:
-            self.output_ip.setText(output.ip)
-            self.output_udp.setValue(output.udp)
-            self.output_name.setText(output.name)
-
-    def output_clear(self):
-        self.osc_table.clear()
+    def protocol_display(self):
+        self.protocol_table.clear()
+        protocol = self.protocol.currentText()
+        self.protocol_table.setRowCount(len(self.project.outputs(protocol)))
+        if protocol:
+            row = 0
+            for out in self.project.outputs(protocol):
+                col = 0
+                attrs = out.vars_()
+                attrs.sort()
+                if attrs:
+                    self.protocol_table.setColumnCount(len(attrs))
+                    for attr in attrs:
+                        header = QTableWidgetItem(attr)
+                        self.protocol_table.setHorizontalHeaderItem(col,header)
+                        item = QTableWidgetItem(str(getattr(out,attr)))
+                        self.protocol_table.setItem(row,col,item)
+                        col = col + 1
+                    row = row + 1
 
     def output_name_changed(self):
         if self.output_selected:
