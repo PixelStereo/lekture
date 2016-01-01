@@ -49,6 +49,7 @@ class OutputsPanel(QDialog):
         protocol_table.setColumnWidth(2,160)
         protocol_table.setFixedWidth(420)
         self.protocol_table = protocol_table
+        self.protocol_table.cellChanged.connect(self.dataChanged)
         # create a new output
         self.output_new.released.connect(self.new_output_func)
         # display protocol
@@ -84,21 +85,9 @@ class OutputsPanel(QDialog):
                         col = col + 1
                     row = row + 1
 
-    def output_name_changed(self):
-        if self.output_selected:
-            self.output_selected.name = self.output_name.text()
-
-    def output_udp_changed(self):
-        if self.output_selected:
-            self.output_selected.udp = self.output_udp.value()
-
-    def output_ip_changed(self):
-        if self.output_selected:
-            self.output_selected.ip = self.output_ip.text()
-
-    def output_protocol_changed(self,index):
-        if self.output_selected:
-            if index != 0:
-                print 'ONLY OSC PROTOCOL IS AVAILABLE FOR NOW'
-            #self.output_selected.protocol = self.output_protocol.text()
-
+    def dataChanged(self,row,col):
+        if self.protocol_table.currentItem():
+            protocol = self.protocol.currentText()
+            out = self.project.outputs()
+            print out , protocol
+            print row,col , self.protocol_table.currentItem().text()
