@@ -5,7 +5,7 @@ import sys
 from time import sleep
 from PyQt5.QtGui import QIcon,QKeySequence
 from PyQt5.QtCore import QModelIndex,Qt,QSignalMapper,QSettings,QPoint,QSize,QSettings,QPoint,QFileInfo,QFile
-from PyQt5.QtWidgets import QMainWindow,QGroupBox,QApplication,QMdiArea,QWidget,QAction,QListWidget,QPushButton,QMessageBox,QFileDialog,QDialog,QMenu
+from PyQt5.QtWidgets import QMainWindow,QGroupBox,QApplication,QMdiArea,QWidget,QAction,QListWidget,QPushButton,QMessageBox,QFileDialog,QDialog,QMenu,QToolBar
 from PyQt5.QtWidgets import QVBoxLayout,QLabel,QLineEdit,QGridLayout,QHBoxLayout,QSpinBox,QStyleFactory,QListWidgetItem,QAbstractItemView,QComboBox,QTableWidget
 
 # for development of pyprojekt, use git version
@@ -46,13 +46,14 @@ class MainWindow(QMainWindow):
         self.readSettings()
         self.setWindowTitle("LEKTURE")
 
-        self.toolbar = self.addToolBar('Outputs')
-        self.toolbar.addAction(self.newAct)
-        self.toolbar.addAction(self.openAct)
-        self.toolbar.addAction(self.saveAct)
-        self.toolbar.addAction(self.saveAsAct)
-        self.toolbar.addAction(self.outputsAct)
-
+        mytoolbar = QToolBar() 
+        #self.toolbar = self.addToolBar()
+        mytoolbar.addAction(self.newAct)
+        mytoolbar.addAction(self.openAct)
+        mytoolbar.addAction(self.saveAct)
+        mytoolbar.addAction(self.saveAsAct)
+        mytoolbar.addAction(self.outputsAct)
+        self.addToolBar( Qt.LeftToolBarArea , mytoolbar )
 
     def closeEvent(self, scenario):
         self.mdiArea.closeAllSubWindows()
