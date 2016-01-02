@@ -10,7 +10,7 @@ from PyQt5.QtWidgets import QVBoxLayout,QLabel,QLineEdit,QGridLayout,QHBoxLayout
 
 # for development of pyprojekt, use git version
 import os,sys
-lib_path = os.path.abspath('./../PyProjekt')
+lib_path = os.path.abspath('./../../PyProjekt')
 sys.path.append(lib_path)
 
 from pyprojekt import projekt
@@ -18,7 +18,6 @@ from pyprojekt import projekt
 debug = True
 projekt.debug = True
 projekt.test = False
-
 
 class OutputsPanel(QDialog):
     """docstring for OutputsPanel"""
@@ -43,7 +42,7 @@ class OutputsPanel(QDialog):
         # create a button for creating a new output
         self.output_new = QPushButton('New Output')
         # create the table to display outputs for each protocols
-        protocol_table = QTableWidget(len(self.project.outputs('OSC')),3)
+        protocol_table = QTableWidget(len(self.project.outputs(protocol='OSC')),3)
         protocol_table.setColumnWidth(0,140)
         protocol_table.setColumnWidth(1,70)
         protocol_table.setColumnWidth(2,160)
