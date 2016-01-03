@@ -270,7 +270,8 @@ class Projekt(QGroupBox,QModelIndex):
         self.scenario_output_text.clear()
         self.scenario_description.clear()
 
-    def scenario_out_fill(self,scenario):
+    def scenario_out_fill(self):
+        scenario = self.scenario_selected
         self.out_locked = True
         self.scenario_output_protocol.clear()
         protocols = []
@@ -280,6 +281,8 @@ class Projekt(QGroupBox,QModelIndex):
                 protocols.append(protocol)
         for protocol in protocols:
             self.scenario_output_protocol.addItem(protocol)
+        if scenario:
+            self.scenario_output_protocol.setCurrentIndex(self.scenario_output_protocol.findText(scenario.output[0]))
         self.out_locked = False
 
     def scenario_out_display(self,scenario):
@@ -301,7 +304,7 @@ class Projekt(QGroupBox,QModelIndex):
     def scenario_display(self,scenario):
         """This function is called when scenario_selected changed"""
         self.scenario_display_clear()
-        self.scenario_out_fill(scenario)
+        self.scenario_out_fill()
         self.scenario_out_display(scenario)
         self.scenario_description.setText(scenario.description)
         if scenario.events() != []:

@@ -37,6 +37,7 @@ class OutputsPanel(QDialog):
 
     def close(self):
         self.projekt.scenario_output_index_range()
+        self.projekt.scenario_out_fill()
 
     def createOuputAttrGroupBox(self):
         self.outs_GroupBox = QGroupBox("Outputs")
