@@ -8,6 +8,10 @@ from PyQt5.QtCore import QModelIndex,Qt,QSignalMapper,QSettings,QPoint,QSize,QSe
 from PyQt5.QtWidgets import QMainWindow,QGroupBox,QApplication,QMdiArea,QWidget,QAction,QListWidget,QPushButton,QMessageBox,QFileDialog,QDialog,QMenu,QToolBar
 from PyQt5.QtWidgets import QVBoxLayout,QLabel,QLineEdit,QGridLayout,QHBoxLayout,QSpinBox,QStyleFactory,QListWidgetItem,QAbstractItemView,QComboBox,QTableWidget
 
+# for development of pyprojekt, use git version
+projekt_path = os.path.abspath('./../PyProjekt')
+sys.path.append(projekt_path)
+
 # import projekt
 from lek_projekt import Projekt
 # import outputs panel
