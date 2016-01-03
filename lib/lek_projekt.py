@@ -194,18 +194,19 @@ class Projekt(QGroupBox,QModelIndex):
         self.project.scenarios_set(x,y)
 
     def scenarioSelectionChanged(self,current,previous):
+        scenarios = self.project.scenarios()
         if current:
             index = self.scenario_list.row(current)
-            if self.project.scenarios() != []:
-                self.scenario_selected = self.project.scenarios()[index]
+            if scenarios != []:
+                self.scenario_selected = scenarios[index]
             else:
                 self.scenario_selected = None    
         else:
             if previous:
                 if self.scenario_list.currentRow() >= 0:
                     index = self.scenario_list.row(previous)
-                    if self.project.scenarios() != []:
-                        self.scenario_selected = self.project.scenarios()[index]
+                    if scenarios != []:
+                        self.scenario_selected = scenarios[index]
                     else:
                         self.scenario_selected = None    
                 else:
@@ -269,7 +270,6 @@ class Projekt(QGroupBox,QModelIndex):
 
     def scenario_out_fill(self,scenario):
         self.out_locked = True
-        print 'FILL OUTPUT' , scenario.output
         self.scenario_output_protocol.clear()
         protocols = []
         for protocol in self.project.getprotocols():
@@ -282,15 +282,19 @@ class Projekt(QGroupBox,QModelIndex):
 
     def scenario_out_display(self,scenario):
         self.out_locked = True
-        print 'FILL DISPLAY' , scenario.output
         out = scenario.getoutput()
         self.scenario_output_index.setValue(scenario.output[1])
         self.scenario_output_protocol.setCurrentIndex(self.scenario_output_protocol.findText(scenario.output[0]))
+        self.scenario_out_text_display()
+        self.out_locked = False
+
+    def scenario_out_text_display(self):
+        scenario = self.scenario_selected
+        out = out = scenario.getoutput()
         if scenario.output[0] == 'OSC' or scenario.output[0] == 'PJLINK':
             self.scenario_output_text.setText(out.ip+':'+str(out.udp)+' ('+out.name+')')
         else:
             self.scenario_output_text.setText('need to set attrs for '+scenario.output[0]+' protocol')
-        self.out_locked = False
 
     def scenario_display(self,scenario):
         """This function is called when scenario_selected changed"""
@@ -361,10 +365,7 @@ class Projekt(QGroupBox,QModelIndex):
         if not self.out_locked:
             self.scenario_selected.output[1] = self.scenario_output_index.value()
             if self.scenario_selected:
-                print 'BEFORE' , self.scenario_selected.output
-            #self.scenario_out_display(self.scenario_selected)
-            if self.scenario_selected:
-                print 'AFTER' , self.scenario_selected.output
+                self.scenario_out_text_display()
 
     def scenario_output_protocol_changed(self):
         # We set a lock when fillin the menu
