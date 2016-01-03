@@ -51,6 +51,8 @@ class Projekt(QGroupBox,QModelIndex):
         self.event_selected = None
         self.output_selected = None
 
+        self.out_locked = False
+
         # Create Project Attributes layout
         createProjectAttrGroupBox(self)
         # Create Scenario List layout
@@ -231,6 +233,12 @@ class Projekt(QGroupBox,QModelIndex):
         scenario = self.project.new_scenario()
         item = QListWidgetItem(scenario.name)
         self.scenario_list.addItem(item)
+        # The current scenario has not an output available, so assign the first one.
+        # In lekture, we always have a default output (OSC), created when creating a project
+        scenario.output = [None,None]
+        scenario.output[0] = self.project.getprotocols()[0]
+        scenario.output[1] = 1
+        # setting selection will trigger scenario_display function
         self.scenario_list.setCurrentItem(item)
 
     def delScenario(self):
@@ -259,33 +267,36 @@ class Projekt(QGroupBox,QModelIndex):
         self.scenario_output_text.clear()
         self.scenario_description.clear()
 
-    def scenario_out_display(self,scenario):
+    def scenario_out_fill(self,scenario):
+        self.out_locked = True
+        print 'FILL OUTPUT' , scenario.output
         self.scenario_output_protocol.clear()
         protocols = []
         for protocol in self.project.getprotocols():
+            # we want to have protocol only once in the menu
             if not protocol in protocols:
                 protocols.append(protocol)
         for protocol in protocols:
             self.scenario_output_protocol.addItem(protocol)
-        out = self.scenario_selected.getoutput()
-        if out:
+        self.out_locked = False
+
+    def scenario_out_display(self,scenario):
+        self.out_locked = True
+        print 'FILL DISPLAY' , scenario.output
+        out = scenario.getoutput()
+        self.scenario_output_index.setValue(scenario.output[1])
+        self.scenario_output_protocol.setCurrentIndex(self.scenario_output_protocol.findText(scenario.output[0]))
+        if scenario.output[0] == 'OSC' or scenario.output[0] == 'PJLINK':
             self.scenario_output_text.setText(out.ip+':'+str(out.udp)+' ('+out.name+')')
         else:
-            print 'no outputs available'
+            self.scenario_output_text.setText('need to set attrs for '+scenario.output[0]+' protocol')
+        self.out_locked = False
 
     def scenario_display(self,scenario):
+        """This function is called when scenario_selected changed"""
         self.scenario_display_clear()
+        self.scenario_out_fill(scenario)
         self.scenario_out_display(scenario)
-        if scenario.output:
-            out_protocol = scenario.output[0]
-            out_index = scenario.output[1]
-            self.scenario_output_index.setValue(scenario.output[1])
-            self.scenario_output_protocol.setCurrentIndex(self.scenario_output_protocol.findText(scenario.output[0]))
-        else:
-            if self.project.outputs() == []:
-                self.scenario_output_text.setText('No available output')
-                self.scenario_output_protocol.setDisabled(True)
-                self.scenario_output_index.setDisabled(True)
         self.scenario_description.setText(scenario.description)
         if scenario.events() != []:
             for event in scenario.events():
@@ -346,25 +357,30 @@ class Projekt(QGroupBox,QModelIndex):
         self.scenario_selected.description = self.scenario_description.text()
 
     def scenario_output_index_changed(self):
-        self.scenario_selected.output[1] = self.scenario_output_index.value()
-        self.scenario_out_display(self.scenario_selected)
+        # We set a lock when fillin the menu
+        if not self.out_locked:
+            self.scenario_selected.output[1] = self.scenario_output_index.value()
+            if self.scenario_selected:
+                print 'BEFORE' , self.scenario_selected.output
+            #self.scenario_out_display(self.scenario_selected)
+            if self.scenario_selected:
+                print 'AFTER' , self.scenario_selected.output
 
     def scenario_output_protocol_changed(self):
-        protocol = self.scenario_output_protocol.currentText()
-        protocol = protocol.encode('utf-8')
-        if protocol:
-            length = len(self.project.outputs(protocol))
-            self.scenario_output_index.setRange(1,length)
-            self.scenario_output_index.setDisabled(False)
-            if not self.scenario_selected.output:
-                # current scenario has no output, so we will create it
-                self.scenario_selected.output = [None,None]
-                self.scenario_selected.output[0] = protocol
-                if len(self.scenario_selected.output) == 1:
-                    self.scenario_selected.output.append(1)
-                else:
-                    self.scenario_selected.output[1] = 1
+        # We set a lock when fillin the menu
+        if not self.out_locked:
+            protocol = self.scenario_output_protocol.currentText()
+            protocol = protocol.encode('utf-8')
+            if protocol:
+                if self.scenario_selected:
+                    print 'proto changed' , self.scenario_selected.output
+                # When protocol change, we set the output_index to 1
+                length = len(self.project.outputs(protocol))
+                self.scenario_output_index.setRange(1,length)
+                self.scenario_output_index.setDisabled(False)
                 self.scenario_output_index.setValue(1)
+                # change to the new value inputed by user
+                self.scenario_selected.output = [protocol,1]
 
     def scenario_content_changed(self):
         # check if there is some text
