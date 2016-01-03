@@ -262,4 +262,5 @@ class MainWindow(QMainWindow):
             project = self.activeProjekt().project
             pos = self.pos()
             size = self.size()
-            output_panel = OutputsPanel(project,pos)
+            output_panel = OutputsPanel(project,pos,self.activeProjekt())
+

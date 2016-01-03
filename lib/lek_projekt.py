@@ -365,8 +365,8 @@ class Projekt(QGroupBox,QModelIndex):
     def scenario_output_index_changed(self):
         # We set a lock when fillin the menu
         if not self.out_locked:
-            self.scenario_selected.output[1] = self.scenario_output_index.value()
             if self.scenario_selected:
+                self.scenario_selected.output[1] = self.scenario_output_index.value()
                 self.scenario_out_text_display()
 
     def scenario_output_protocol_changed(self):
@@ -383,7 +383,10 @@ class Projekt(QGroupBox,QModelIndex):
 
     def scenario_output_index_range(self):
         """update range to existing outputs of this protocol"""
-        length = len(self.project.outputs(self.scenario_selected.output[0]))
+        if self.scenario_selected:
+            length = len(self.project.outputs(self.scenario_selected.output[0]))
+        else:
+            length = None
         if length:
             self.scenario_output_index.setRange(1,length)
             self.scenario_output_index.setDisabled(False)

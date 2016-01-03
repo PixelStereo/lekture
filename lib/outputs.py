@@ -21,7 +21,7 @@ projekt.test = False
 
 class OutputsPanel(QDialog):
     """docstring for OutputsPanel"""
-    def __init__(self, project,pos):
+    def __init__(self, project, pos, projekt):
         super(OutputsPanel, self).__init__()
         self.project = project
         self.setFixedSize(600,350)
@@ -31,7 +31,12 @@ class OutputsPanel(QDialog):
         self.protocol.setCurrentText('OSC')
         self.protocol_display()
         self.setWindowTitle("Outputs")
+        self.finished.connect(self.close)
+        self.projekt = projekt
         self.exec_()
+
+    def close(self):
+        self.projekt.scenario_output_index_range()
 
     def createOuputAttrGroupBox(self):
         self.outs_GroupBox = QGroupBox("Outputs")
