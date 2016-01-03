@@ -222,6 +222,8 @@ class Projekt(QGroupBox,QModelIndex):
             self.scenario_description.setDisabled(True)
             self.scenario_content.setDisabled(True)
         else:
+            # Selection has changed
+            self.scenario_output_index_range()
             self.scenario_display(self.scenario_selected)
             self.scenario_del.setDisabled(False)
             self.scenario_play.setDisabled(False)
@@ -294,7 +296,7 @@ class Projekt(QGroupBox,QModelIndex):
         if scenario.output[0] == 'OSC' or scenario.output[0] == 'PJLINK':
             self.scenario_output_text.setText(out.ip+':'+str(out.udp)+' ('+out.name+')')
         else:
-            self.scenario_output_text.setText(scenario.output[0]+' protocol is not working for now')
+            self.scenario_output_text.setText(scenario.output[0]+' protocol is not working')
 
     def scenario_display(self,scenario):
         """This function is called when scenario_selected changed"""
@@ -373,15 +375,21 @@ class Projekt(QGroupBox,QModelIndex):
             protocol = self.scenario_output_protocol.currentText()
             protocol = protocol.encode('utf-8')
             if protocol:
-                if self.scenario_selected:
-                    print 'proto changed' , self.scenario_selected.output
                 # When protocol change, we set the output_index to 1
-                length = len(self.project.outputs(protocol))
-                self.scenario_output_index.setRange(1,length)
-                self.scenario_output_index.setDisabled(False)
+                self.scenario_output_index_range()
                 self.scenario_output_index.setValue(1)
                 # change to the new value inputed by user
                 self.scenario_selected.output = [protocol,1]
+
+    def scenario_output_index_range(self):
+        """update range to existing outputs of this protocol"""
+        length = len(self.project.outputs(self.scenario_selected.output[0]))
+        if length:
+            self.scenario_output_index.setRange(1,length)
+            self.scenario_output_index.setDisabled(False)
+        else:
+            self.scenario_output_index.setRange(0,0)
+            self.scenario_output_index.setDisabled(True)
 
     def scenario_content_changed(self):
         # check if there is some text
