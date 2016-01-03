@@ -24,7 +24,7 @@ class OutputsPanel(QDialog):
     def __init__(self, project,pos):
         super(OutputsPanel, self).__init__()
         self.project = project
-        self.setFixedSize(500,350)
+        self.setFixedSize(600,350)
         self.move(pos)
         # create Outputs Interface
         self.createOuputAttrGroupBox()
@@ -37,16 +37,17 @@ class OutputsPanel(QDialog):
         self.outs_GroupBox = QGroupBox("Outputs")
         # creare a menu to chosse which protocol to display
         self.protocol = QComboBox()
-        for protocol in projekt.protocol_list:
+        for protocol in projekt.Output.protocols():
             self.protocol.addItem(protocol)
         # create a button for creating a new output
         self.output_new = QPushButton('New Output')
         # create the table to display outputs for each protocols
         protocol_table = QTableWidget(len(self.project.outputs(protocol='OSC')),3)
-        protocol_table.setColumnWidth(0,140)
-        protocol_table.setColumnWidth(1,70)
-        protocol_table.setColumnWidth(2,160)
-        protocol_table.setFixedWidth(420)
+        protocol_table.setColumnWidth(0,130)
+        protocol_table.setColumnWidth(1,130)
+        protocol_table.setColumnWidth(2,130)
+        protocol_table.setColumnWidth(3,130)
+        protocol_table.setFixedWidth(550)
         self.protocol_table = protocol_table
         self.protocol_table.cellChanged.connect(self.dataChanged)
         # create a new output
@@ -73,6 +74,9 @@ class OutputsPanel(QDialog):
             for out in self.project.outputs(protocol):
                 col = 0
                 attrs = out.vars_()
+                for attr in attrs:
+                    if attr.startswith('_'):
+                        attrs.remove(attr)
                 attrs.sort()
                 if attrs:
                     self.protocol_table.setColumnCount(len(attrs))
@@ -87,6 +91,9 @@ class OutputsPanel(QDialog):
     def dataChanged(self,row,col):
         if self.protocol_table.currentItem():
             protocol = self.protocol.currentText()
-            out = self.project.outputs()
-            print out , protocol
-            print row,col , self.protocol_table.currentItem().text()
+            outs = self.project.outputs(protocol)
+            out = outs[row]
+            attr = self.protocol_table.horizontalHeaderItem(col).text()
+            value = self.protocol_table.currentItem().text()
+            setattr(out,attr,value)
+
