@@ -294,7 +294,7 @@ class Projekt(QGroupBox,QModelIndex):
         if scenario.output[0] == 'OSC' or scenario.output[0] == 'PJLINK':
             self.scenario_output_text.setText(out.ip+':'+str(out.udp)+' ('+out.name+')')
         else:
-            self.scenario_output_text.setText('need to set attrs for '+scenario.output[0]+' protocol')
+            self.scenario_output_text.setText(scenario.output[0]+' protocol is not working for now')
 
     def scenario_display(self,scenario):
         """This function is called when scenario_selected changed"""
