@@ -10,7 +10,7 @@ from PyQt5.QtWidgets import QGroupBox,QHBoxLayout,QLabel,QLineEdit,QListWidget,Q
 projekt_path = os.path.abspath('./../../PyProjekt')
 sys.path.append(projekt_path)
 
-from pyprojekt import projekt
+from pyprojekt import project
 from panels import createProjectAttrGroupBox, createScenarioListGroupBox, createScenarioAttrGroupBox, createOuputAttrGroupBox
 
 
@@ -43,7 +43,7 @@ class Projekt(QGroupBox,QModelIndex):
         # I must change all 'document' class reference to 'project' class… so I need to enhance project with modify flags and signals
         self.document = Document('unknown')
         # Create a new project
-        self.project = projekt.new_project()
+        self.project = project.new_project()
         # Create a new output
         the_out = self.project.new_output('OSC')
 
@@ -329,7 +329,7 @@ class Projekt(QGroupBox,QModelIndex):
                 line = event.content
                 #not really nice…
                 if isinstance(line,unicode):
-                    line = projekt.unicode2string_list(line)
+                    line = project.unicode2string_list(line)
                 if isinstance(line,int):
                     line = str(line)
                 else:
@@ -422,7 +422,7 @@ class Projekt(QGroupBox,QModelIndex):
             if isinstance(newline, unicode):
                 newline = newline.encode('utf-8')
             newline = newline.split(' ')
-            newline = projekt.unicode2_list(newline)
+            newline = project.unicode2_list(newline)
             if isinstance(newline,float):
                 newline = int(newline)
                 self.scenario_content.currentItem().setText(str(newline))

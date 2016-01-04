@@ -10,7 +10,7 @@ import os,sys
 projekt_path = os.path.abspath('./../../PyProjekt')
 sys.path.append(projekt_path)
 
-from pyprojekt import projekt
+from pyprojekt import project
  
 def createProjectAttrGroupBox(self):
     self.project_Groupbox = QGroupBox()
@@ -137,7 +137,7 @@ def createOuputAttrGroupBox(self):
     self.outputs_group = QGroupBox("Outputs")
     # creare a menu to chosse which protocol to display
     self.protocol = QComboBox()
-    for protocol in projekt.Output.protocols():
+    for protocol in project.Output.protocols():
         self.protocol.addItem(protocol)
     # create a button for creating a new output
     self.output_new = QPushButton('New Output')
