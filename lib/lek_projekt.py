@@ -235,6 +235,7 @@ class Projekt(QGroupBox,QModelIndex):
     def newScenario(self):
         scenario = self.project.new_scenario()
         item = QListWidgetItem(scenario.name)
+        item.setFlags(Qt.ItemIsEnabled|Qt.ItemIsEditable|Qt.ItemIsSelectable|Qt.ItemIsDragEnabled)
         self.scenario_list.addItem(item)
         # The current scenario has not an output available, so assign the first one.
         # In lekture, we always have a default output (OSC), created when creating a project
