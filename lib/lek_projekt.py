@@ -351,8 +351,8 @@ class Projekt(QGroupBox,QModelIndex):
                 self.scenario_content.takeItem(self.scenario_content.row(self.scenario_content.currentItem()))
                 self.scenario_selected.del_event(event2delete)
             else:
-                # We need to check if 
-                print 'AH'
+                # If it's the last line, we don't delete the last line
+                pass
                 #self.scenario_display_clear()
                 #self.scenario_display(self.scenario_selected)
                 #self.event_selected = None
