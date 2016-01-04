@@ -416,8 +416,9 @@ class Projekt(QGroupBox,QModelIndex):
 
     def scenario_content_changed(self):
         # check if there is some text
-        if self.scenario_content.currentItem().text():
-            newline = self.scenario_content.currentItem().text()
+        item = self.scenario_content.currentItem().text()
+        if item:
+            newline = item
             if isinstance(newline, unicode):
                 newline = newline.encode('utf-8')
             newline = newline.split(' ')
@@ -476,26 +477,25 @@ class Projekt(QGroupBox,QModelIndex):
 
     def protocol_display(self):
         self.protocol_table.clear()
+        # we know there is at least one protocol in lekture, OSC is create when creating a project
         protocol = self.protocol.currentText()
         self.protocol_table.setRowCount(len(self.project.outputs(protocol)))
-        if protocol:
-            row = 0
-            for out in self.project.outputs(protocol):
-                col = 0
-                attrs = out.vars_()
-                for attr in attrs:
-                    if attr.startswith('_'):
-                        attrs.remove(attr)
-                attrs.sort()
-                if attrs:
-                    self.protocol_table.setColumnCount(len(attrs))
-                    for attr in attrs:
-                        header = QTableWidgetItem(attr)
-                        self.protocol_table.setHorizontalHeaderItem(col,header)
-                        item = QTableWidgetItem(str(getattr(out,attr)))
-                        self.protocol_table.setItem(row,col,item)
-                        col = col + 1
-                    row = row + 1
+        row = 0
+        for out in self.project.outputs(protocol):
+            col = 0
+            attrs = out.vars_()
+            for attr in attrs:
+                if attr.startswith('_'):
+                    attrs.remove(attr)
+            attrs.sort()
+            self.protocol_table.setColumnCount(len(attrs))
+            for attr in attrs:
+                header = QTableWidgetItem(attr)
+                self.protocol_table.setHorizontalHeaderItem(col,header)
+                item = QTableWidgetItem(str(getattr(out,attr)))
+                self.protocol_table.setItem(row,col,item)
+                col = col + 1
+            row = row + 1
 
     def dataChanged(self,row,col):
         if self.protocol_table.currentItem():
