@@ -396,10 +396,10 @@ class Projekt(QGroupBox,QModelIndex):
             protocol = protocol.encode('utf-8')
             if protocol:
                 # When protocol change, we set the output_index to 1
-                self.scenario_output_index_range()
                 self.scenario_output_index.setValue(1)
                 # change to the new value inputed by user
                 self.scenario_selected.output = [protocol,1]
+                self.scenario_output_index_range()
 
     def scenario_output_index_range(self):
         """update range to existing outputs of this protocol"""
