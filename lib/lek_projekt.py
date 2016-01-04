@@ -59,17 +59,21 @@ class Projekt(QGroupBox,QModelIndex):
         createScenarioListGroupBox(self)
         # Create Scenario Attributes layout
         createScenarioAttrGroupBox(self)
+        # Integrate Both scenario_list and scenario_attr in a group
+        scenario_layout = QGridLayout()
+        scenario_layout.addWidget(self.ScenarioListGroupBox, 2, 0)
+        scenario_layout.addWidget(self.ScenarioAttrGroupBox, 2, 1)
+        scenario_layout.setRowStretch(2, 1)
+        scenario_layout.setColumnStretch(0, 1)
+        scenario_layout.setColumnStretch(1, 1)
+        scenario_group = QGroupBox()
+        scenario_group.setLayout(scenario_layout)
 
         # Create the main layout
         mainLayout = QGridLayout()
         # Integrate the layout previously created
         mainLayout.addWidget(self.project_Groupbox, 0, 0, 1, 2)
-        mainLayout.addWidget(self.ScenarioListGroupBox, 2, 0)
-        mainLayout.addWidget(self.ScenarioAttrGroupBox, 2, 1)
-        # Make the main layout strechable when resizing main window
-        mainLayout.setRowStretch(2, 1)
-        mainLayout.setColumnStretch(0, 1)
-        mainLayout.setColumnStretch(1, 1)
+        mainLayout.addWidget(scenario_group, 1, 0)
         # Integrate main layout to the main window
         self.setLayout(mainLayout)
 
