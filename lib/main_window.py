@@ -49,8 +49,10 @@ class MainWindow(QMainWindow):
         mytoolbar.addAction(self.openAct)
         mytoolbar.addAction(self.saveAct)
         mytoolbar.addAction(self.saveAsAct)
+        mytoolbar.addSeparator()
         mytoolbar.addAction(self.outputsAct)
         mytoolbar.addAction(self.scenarioAct)
+        self.scenarioAct.setVisible(False)
         self.addToolBar( Qt.LeftToolBarArea , mytoolbar )
 
     def closeEvent(self, scenario):
@@ -210,9 +212,11 @@ class MainWindow(QMainWindow):
         self.fileMenu.addAction(self.openFolderAct)
         self.fileMenu.addAction(self.exitAct)
 
+        self.viewMenu = self.menuBar().addMenu("&View")
+        self.viewMenu.addAction(self.outputsAct)
+        self.viewMenu.addAction(self.scenarioAct)
+
         self.windowMenu = self.menuBar().addMenu("&Window")
-        self.windowMenu.addAction(self.outputsAct)
-        self.windowMenu.addAction(self.scenarioAct)
         self.updateWindowMenu()
         self.windowMenu.aboutToShow.connect(self.updateWindowMenu)
 
@@ -260,6 +264,8 @@ class MainWindow(QMainWindow):
             project = self.activeProjekt()
             project.scenario_group.setVisible(False)
             project.outputs_group.setVisible(True)
+            self.scenarioAct.setVisible(True)
+            self.outputsAct.setVisible(False)
 
     def openScenarioPanel(self):
         if self.child:
@@ -268,3 +274,5 @@ class MainWindow(QMainWindow):
             project.scenario_out_fill()
             project.outputs_group.setVisible(False)
             project.scenario_group.setVisible(True)
+            self.scenarioAct.setVisible(False)
+            self.outputsAct.setVisible(True)
