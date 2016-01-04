@@ -1,8 +1,9 @@
 #! /usr/bin/env python,
 # -*- coding: utf-8 -*-
 
-from PyQt5.QtWidgets import QGroupBox,QHBoxLayout,QListWidget,QAbstractItemView,QPushButton,QGridLayout,QLabel,QLineEdit,QSpinBox,QComboBox,QTableWidget
 from PyQt5.QtCore import Qt
+from PyQt5.QtWidgets import QLabel,QLineEdit,QSpinBox,QComboBox,QTableWidget,QVBoxLayout
+from PyQt5.QtWidgets import QGroupBox,QHBoxLayout,QListWidget,QAbstractItemView,QPushButton,QGridLayout
 
 import os,sys
 # for development of pyprojekt, use git version
@@ -146,18 +147,16 @@ def createOuputAttrGroupBox(self):
     protocol_table.setColumnWidth(1,130)
     protocol_table.setColumnWidth(2,130)
     protocol_table.setColumnWidth(3,130)
-    protocol_table.setFixedWidth(550)
     self.protocol_table = protocol_table
     self.protocol_table.cellChanged.connect(self.dataChanged)
     # create a new output
     self.output_new.released.connect(self.new_output_func)
     # display protocol
     self.protocol.currentIndexChanged.connect(self.protocol_display)
-    output_layout = QGridLayout()
-    output_layout.addWidget(self.output_new, 0, 0)
-    output_layout.addWidget(self.protocol, 0, 1)
+    output_layout = QVBoxLayout()
+    output_layout.addWidget(self.output_new)
+    output_layout.addWidget(self.protocol)
     output_layout.addWidget(self.protocol_table )
-    #self.setLayout(output_layout)
     self.outputs_group.setLayout(output_layout)
 
     
