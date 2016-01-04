@@ -1,8 +1,15 @@
 #! /usr/bin/env python,
 # -*- coding: utf-8 -*-
 
-from PyQt5.QtWidgets import QGroupBox,QHBoxLayout,QListWidget,QAbstractItemView,QPushButton,QGridLayout,QLabel,QLineEdit,QSpinBox,QComboBox
+from PyQt5.QtWidgets import QGroupBox,QHBoxLayout,QListWidget,QAbstractItemView,QPushButton,QGridLayout,QLabel,QLineEdit,QSpinBox,QComboBox,QTableWidget
 from PyQt5.QtCore import Qt
+
+import os,sys
+# for development of pyprojekt, use git version
+projekt_path = os.path.abspath('./../../PyProjekt')
+sys.path.append(projekt_path)
+
+from pyprojekt import projekt
  
 def createProjectAttrGroupBox(self):
     self.project_Groupbox = QGroupBox()
@@ -124,3 +131,33 @@ def createScenarioAttrGroupBox(self):
     layout.addWidget(self.event_del, 9, 0)
     layout.setRowStretch(8, 1)
     self.ScenarioAttrGroupBox.setLayout(layout)
+
+def createOuputAttrGroupBox(self):
+    self.outputs_group = QGroupBox("Outputs")
+    # creare a menu to chosse which protocol to display
+    self.protocol = QComboBox()
+    for protocol in projekt.Output.protocols():
+        self.protocol.addItem(protocol)
+    # create a button for creating a new output
+    self.output_new = QPushButton('New Output')
+    # create the table to display outputs for each protocols
+    protocol_table = QTableWidget(len(self.project.outputs(protocol='OSC')),3)
+    protocol_table.setColumnWidth(0,130)
+    protocol_table.setColumnWidth(1,130)
+    protocol_table.setColumnWidth(2,130)
+    protocol_table.setColumnWidth(3,130)
+    protocol_table.setFixedWidth(550)
+    self.protocol_table = protocol_table
+    self.protocol_table.cellChanged.connect(self.dataChanged)
+    # create a new output
+    self.output_new.released.connect(self.new_output_func)
+    # display protocol
+    self.protocol.currentIndexChanged.connect(self.protocol_display)
+    output_layout = QGridLayout()
+    output_layout.addWidget(self.output_new, 0, 0)
+    output_layout.addWidget(self.protocol, 0, 1)
+    output_layout.addWidget(self.protocol_table )
+    #self.setLayout(output_layout)
+    self.outputs_group.setLayout(output_layout)
+
+    

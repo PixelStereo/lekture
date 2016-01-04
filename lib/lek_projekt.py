@@ -2,15 +2,16 @@
 # -*- coding: utf-8 -*-
 import os
 import sys
-from PyQt5.QtWidgets import QGroupBox,QHBoxLayout,QLabel,QLineEdit,QListWidget,QAbstractItemView,QPushButton,QGridLayout,QSpinBox,QComboBox,QFileDialog,QListWidgetItem,QApplication,QMessageBox
 from PyQt5.QtCore import Qt,QModelIndex,QFileInfo
+from PyQt5.QtWidgets import QFileDialog,QListWidgetItem,QApplication,QMessageBox,QTableWidgetItem,QSpinBox,QComboBox
+from PyQt5.QtWidgets import QGroupBox,QHBoxLayout,QLabel,QLineEdit,QListWidget,QAbstractItemView,QPushButton,QGridLayout
 
 # for development of pyprojekt, use git version
 projekt_path = os.path.abspath('./../../PyProjekt')
 sys.path.append(projekt_path)
 
 from pyprojekt import projekt
-from panels import createProjectAttrGroupBox, createScenarioListGroupBox, createScenarioAttrGroupBox
+from panels import createProjectAttrGroupBox, createScenarioListGroupBox, createScenarioAttrGroupBox, createOuputAttrGroupBox
 
 
 class Document(object):
@@ -51,6 +52,7 @@ class Projekt(QGroupBox,QModelIndex):
         self.event_selected = None
         self.output_selected = None
 
+        # this lock is used when fillin out_protocol QComboBox
         self.out_locked = False
 
         # Create Project Attributes layout
@@ -59,6 +61,8 @@ class Projekt(QGroupBox,QModelIndex):
         createScenarioListGroupBox(self)
         # Create Scenario Attributes layout
         createScenarioAttrGroupBox(self)
+        # Create Outputs layout
+        createOuputAttrGroupBox(self)
         # Integrate Both scenario_list and scenario_attr in a group
         scenario_layout = QGridLayout()
         scenario_layout.addWidget(self.ScenarioListGroupBox, 2, 0)
@@ -68,12 +72,17 @@ class Projekt(QGroupBox,QModelIndex):
         scenario_layout.setColumnStretch(1, 1)
         scenario_group = QGroupBox()
         scenario_group.setLayout(scenario_layout)
+        self.scenario_group = scenario_group
+        self.outputs_group.setVisible(False)
+        self.protocol_display()
 
         # Create the main layout
         mainLayout = QGridLayout()
         # Integrate the layout previously created
         mainLayout.addWidget(self.project_Groupbox, 0, 0, 1, 2)
         mainLayout.addWidget(scenario_group, 1, 0)
+        mainLayout.addWidget(self.outputs_group, 1, 0)
+        self.mainLayout = mainLayout
         # Integrate main layout to the main window
         self.setLayout(mainLayout)
 
@@ -300,11 +309,14 @@ class Projekt(QGroupBox,QModelIndex):
 
     def scenario_out_text_display(self):
         scenario = self.scenario_selected
-        out = out = scenario.getoutput()
-        if scenario.output[0] == 'OSC' or scenario.output[0] == 'PJLINK':
-            self.scenario_output_text.setText(out.ip+':'+str(out.udp)+' ('+out.name+')')
+        out = scenario.getoutput()
+        if out:
+            if scenario.output[0] == 'OSC' or scenario.output[0] == 'PJLINK':
+                self.scenario_output_text.setText(out.ip+':'+str(out.udp)+' ('+out.name+')')
+            else:
+                self.scenario_output_text.setText(scenario.output[0]+' protocol is not working')
         else:
-            self.scenario_output_text.setText(scenario.output[0]+' protocol is not working')
+            self.scenario_output_text.setText('No output')
 
     def scenario_display(self,scenario):
         """This function is called when scenario_selected changed"""
@@ -456,3 +468,40 @@ class Projekt(QGroupBox,QModelIndex):
 
     def project_version_changed(self):
         self.project.version = self.project_version.text()
+
+    def new_output_func(self):
+        protocol = self.protocol.currentText()
+        self.project.new_output(protocol)
+        self.protocol_display()
+
+    def protocol_display(self):
+        self.protocol_table.clear()
+        protocol = self.protocol.currentText()
+        self.protocol_table.setRowCount(len(self.project.outputs(protocol)))
+        if protocol:
+            row = 0
+            for out in self.project.outputs(protocol):
+                col = 0
+                attrs = out.vars_()
+                for attr in attrs:
+                    if attr.startswith('_'):
+                        attrs.remove(attr)
+                attrs.sort()
+                if attrs:
+                    self.protocol_table.setColumnCount(len(attrs))
+                    for attr in attrs:
+                        header = QTableWidgetItem(attr)
+                        self.protocol_table.setHorizontalHeaderItem(col,header)
+                        item = QTableWidgetItem(str(getattr(out,attr)))
+                        self.protocol_table.setItem(row,col,item)
+                        col = col + 1
+                    row = row + 1
+
+    def dataChanged(self,row,col):
+        if self.protocol_table.currentItem():
+            protocol = self.protocol.currentText()
+            outs = self.project.outputs(protocol)
+            out = outs[row]
+            attr = self.protocol_table.horizontalHeaderItem(col).text()
+            value = self.protocol_table.currentItem().text()
+            setattr(out,attr,value)

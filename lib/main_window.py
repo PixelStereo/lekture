@@ -14,8 +14,6 @@ sys.path.append(projekt_path)
 
 # import projekt
 from lek_projekt import Projekt
-# import outputs panel
-from outputs import OutputsPanel
 
 class MainWindow(QMainWindow):
     """This create the main window of the application"""
@@ -53,6 +51,7 @@ class MainWindow(QMainWindow):
         mytoolbar.addAction(self.saveAct)
         mytoolbar.addAction(self.saveAsAct)
         mytoolbar.addAction(self.outputsAct)
+        mytoolbar.addAction(self.scenarioAct)
         self.addToolBar( Qt.LeftToolBarArea , mytoolbar )
 
     def closeEvent(self, scenario):
@@ -106,6 +105,7 @@ class MainWindow(QMainWindow):
         self.saveAct.setEnabled(hasProjekt)
         self.saveAsAct.setEnabled(hasProjekt)
         self.outputsAct.setEnabled(hasProjekt)
+        self.scenarioAct.setEnabled(hasProjekt)
         self.openFolderAct.setEnabled(hasProjekt)
         self.closeAct.setEnabled(hasProjekt)
         self.closeAllAct.setEnabled(hasProjekt)
@@ -177,6 +177,10 @@ class MainWindow(QMainWindow):
                 statusTip="Open the outputs panel",
                 triggered=self.openOutputsPanel)
 
+        self.scenarioAct = QAction("Scenario", self,
+                statusTip="Open the scenario panel",
+                triggered=self.openScenarioPanel)
+
         self.closeAllAct = QAction("Close &All", self,
                 statusTip="Close all the windows",
                 triggered=self.mdiArea.closeAllSubWindows)
@@ -207,11 +211,9 @@ class MainWindow(QMainWindow):
         self.fileMenu.addAction(self.openFolderAct)
         self.fileMenu.addAction(self.exitAct)
 
-        self.OutputsMenu = self.menuBar().addMenu("&Outputs")
-        self.OutputsMenu.addAction(self.outputsAct)
-        self.OutputsMenu.setDisabled(True)
-
         self.windowMenu = self.menuBar().addMenu("&Window")
+        self.windowMenu.addAction(self.outputsAct)
+        self.windowMenu.addAction(self.scenarioAct)
         self.updateWindowMenu()
         self.windowMenu.aboutToShow.connect(self.updateWindowMenu)
 
@@ -238,10 +240,8 @@ class MainWindow(QMainWindow):
     def activeProjekt(self):
         activeSubWindow = self.mdiArea.activeSubWindow()
         if activeSubWindow:
-            self.OutputsMenu.setDisabled(False)
             return activeSubWindow.widget()
         else:
-            self.OutputsMenu.setDisabled(True)
             return None
 
     def findProjekt(self, fileName):
@@ -258,9 +258,14 @@ class MainWindow(QMainWindow):
 
     def openOutputsPanel(self):
         if self.child:
-            #project = self.mdiArea.currentSubWindow()
-            project = self.activeProjekt().project
-            pos = self.pos()
-            size = self.size()
-            output_panel = OutputsPanel(project,pos,self.activeProjekt())
+            project = self.activeProjekt()
+            project.scenario_group.setVisible(False)
+            project.outputs_group.setVisible(True)
 
+    def openScenarioPanel(self):
+        if self.child:
+            project = self.activeProjekt()
+            project.scenario_output_index_range()
+            project.scenario_out_fill()
+            project.outputs_group.setVisible(False)
+            project.scenario_group.setVisible(True)
