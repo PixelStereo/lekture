@@ -35,12 +35,12 @@ def unicode2string_list(data):
 def read() : 
     path = os.path.abspath('/Users/reno/Desktop/one scenario.scorejson')
     if not os.path.exists(path):
-        print "ERROR - THIS PATH IS NOT VALID" , path
+        print ("ERROR - THIS PATH IS NOT VALID" , path)
     else :
         print 'loading' , path
         try:
             with open(path) as in_file :
-                """ TODO :  FIRST WE NEED TO CLEAR THE EVENTS,DEVICES AND MODULAR APPLICATION INSTANCES"""
+                # TODO :  FIRST WE NEED TO CLEAR THE EVENTS,DEVICES AND MODULAR APPLICATION INSTANCES
                 if debug : print 'file reading : ' , path
                 loaded = json.load(in_file,object_hook=unicode2string_dict)
                 in_file.close()
