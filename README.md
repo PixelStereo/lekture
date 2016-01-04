@@ -12,6 +12,9 @@ Lekture is bundled in an applicaition. Just donwload the [latest release](http:/
 ##Developper
 [![Build Status](https://travis-ci.org/PixelStereo/lekture.svg?branch=master)](https://travis-ci.org/PixelStereo/lekture)
 [![Coverage Status](https://coveralls.io/repos/PixelStereo/lekture/badge.svg?branch=master&service=github)](https://coveralls.io/github/PixelStereo/lekture?branch=master)
+[![Code Climate](https://codeclimate.com/github/PixelStereo/lekture/badges/gpa.svg)](https://codeclimate.com/github/PixelStereo/lekture)
+[![Test Coverage](https://codeclimate.com/github/PixelStereo/lekture/badges/coverage.svg)](https://codeclimate.com/github/PixelStereo/lekture/coverage)
+[![Issue Count](https://codeclimate.com/github/PixelStereo/lekture/badges/issue_count.svg)](https://codeclimate.com/github/PixelStereo/lekture)
 ###Install
 You need to install PyQt5, PyOSC and PyBonjour module. The simplest way to install PyQt5 is with using brew.
 
