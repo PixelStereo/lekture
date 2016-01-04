@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 import os
 import sys
-from PyQt5.QtCore import Qt,QModelIndex,QFileInfo
+from PyQt5.QtCore import Qt,QModelIndex,QFileInfo,QFile
 from PyQt5.QtWidgets import QFileDialog,QListWidgetItem,QApplication,QMessageBox,QTableWidgetItem,QSpinBox,QComboBox
 from PyQt5.QtWidgets import QGroupBox,QHBoxLayout,QLabel,QLineEdit,QListWidget,QAbstractItemView,QPushButton,QGridLayout
 
@@ -108,7 +108,7 @@ class Projekt(QGroupBox,QModelIndex):
         QApplication.setOverrideCursor(Qt.WaitCursor)
         # read a project and create scenario
         self.project.read(fileName)
-        self.outputs_refresh()
+        #self.outputs_refresh()
         self.scenario_list_refresh()
         self.project_display()
         QApplication.restoreOverrideCursor()
