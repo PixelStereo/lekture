@@ -2,4 +2,4 @@
 
 set -e
 
-pyinstaller --windowed --icon=icon/lekture.icns -n 'Lekture '$1 ../lekture.py
+pyinstaller --windowed --icon=../icon/lekture.icns -n 'Lekture_'$1 ../lekture.py
