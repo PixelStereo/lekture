@@ -53,6 +53,8 @@ class MainWindow(QMainWindow):
         mytoolbar.addAction(self.outputsAct)
         mytoolbar.addAction(self.scenarioAct)
         self.scenarioAct.setVisible(False)
+        mytoolbar.setMovable(False)
+        mytoolbar.setFixedWidth(60)
         self.addToolBar( Qt.LeftToolBarArea , mytoolbar )
 
     def closeEvent(self, scenario):
