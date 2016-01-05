@@ -1,20 +1,27 @@
-language: python
-sudo: true
-os:
-#python is not available for OSX in travis platform
-- osx
-#- linux
-#python:
-  #- "2.7"
-  # does not have headers provided, please ask https://launchpad.net/~pypy/+archive/ppa
-  # maintainers to fix their pypy-dev package.
-  # - "pypy"
-# command to install dependencies
-install:
-- "./scripts/install.sh"
-script:
-- "./scripts/build.sh"
-#after_success:
-#- "./script/deploy.sh"
-# command to run tests
-script: nosetests
+language: objective-c
+python:
+- '2.7'
+before_install:
+- which python
+- brew install python --universal --framework
+- brew install wget
+- which python
+- pip install pyinstaller
+- cd scripts
+- ./build.sh 0.1
+- hdiutil create dist/lekture_0.1.dmg -srcfolder dist/ -ov
+- zip -r dist/lekture_0.1.zip dist/lekture_0.1.app
+- ls dist/
+install: true
+deploy:
+  provider: releases
+  skip_cleanup: true
+  api_key:
+    secure: KjdN4hSHWU3ZDg6lpDNMB2we9jLayM9C8pwyQrV/Xzq8HNH5eNHP8ScI64tvnS0yJegOXnHFwUhUrkMtEs3X29TKrom+8tJ5E52IdBO7xO8fqOfeugC2239vLzc3tNI6RJX/K7CZTsSRu5U++1RJVgcWYjrCln87DuXG+HZRdOI=
+  file: 
+    - "dist/hw.dmg"
+    - "dist/hw.zip"
+  on:
+    tags: true
+    all_branches: true
+    repo: PixelStereo/lekture
