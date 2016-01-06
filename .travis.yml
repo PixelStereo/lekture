@@ -4,8 +4,8 @@ python:
 - '2.7'
 before_install:
 - which python
-#- brew install python --universal --framework
-#- travis_wait brew install PyQt5 --with-python --without-python3
+- brew install python --universal --framework
+- travis_wait brew install PyQt5 --with-python --without-python3
 - sudo pip install --pre pyOSC
 - sudo pip install pyprojekt
 - sudo pip install pyinstaller
