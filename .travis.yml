@@ -11,7 +11,7 @@ before_install:
 - sudo pip install pyinstaller
 - pyinstaller --windowed --icon=icon/lekture.icns -n Lekture_${TRAVIS_TAG} lekture.py
 - cd dist
-- zip -r lekture_${TRAVIS_TAG}_OSX.zip dist/lekture_${TRAVIS_TAG}.app
+- zip -r lekture_${TRAVIS_TAG}_OSX.zip lekture_${TRAVIS_TAG}.app
 - cd ../
 install: true
 deploy:
