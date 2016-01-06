@@ -5,7 +5,7 @@ before_install:
 - which python
 #- brew install python --universal --framework
 #- travis_wait brew install PyQt5 --with-python --without-python3
-- pip install pyOSC --allow-external
+- pip install pyOSC --allow-external pyOSC
 #- pip install pyprojekt
 #- pip install pyinstaller
 #- cd scripts
