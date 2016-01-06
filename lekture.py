@@ -2,8 +2,9 @@
 # -*- coding: utf-8 -*-
 from os.path import abspath
 from sys import path,argv,exit
-
 from PyQt5.QtWidgets import QApplication
+# I need to import these modules here because of pyinstaller
+import json, socket, OSC, pjlink
 
 # add lib path to python path
 lib_path = abspath('./lib')
