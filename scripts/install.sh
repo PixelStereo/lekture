@@ -10,9 +10,12 @@ case "$TRAVIS_OS_NAME" in
    ;;
   osx)
   echo 'this is osx, so brew'
-  ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+  which python
   brew install python
-  brew install PyQt5 --with-python --without-python3
+  travis_wait brew install PyQt5 --with-python --without-python3
+  sudo pip install --pre pyOSC
+  sudo pip install pyprojekt
+  sudo pip install pyinstaller
   ;;
 esac
 cd -
