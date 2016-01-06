@@ -1,3 +1,0 @@
-New Design for Output Panel
-Add left side ToolBar 
-Various bug Fixes
