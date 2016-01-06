@@ -7,8 +7,8 @@ before_install:
 #- brew install python --universal --framework
 #- travis_wait brew install PyQt5 --with-python --without-python3
 - sudo pip install --pre pyOSC
-- pip install pyprojekt
-- pip install pyinstaller
+- sudo pip install pyprojekt
+- sudo pip install pyinstaller
 - cd scripts
 - ./build.sh 0.1
 - zip -r dist/lekture_0.1.zip dist/lekture_0.1.app
