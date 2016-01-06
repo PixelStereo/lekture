@@ -22,7 +22,7 @@ def createProjectAttrGroupBox(self):
     project_version = QLineEdit(self.project.version)
     project_path_label = QLabel('path')
     project_path = QLabel(self.project.path)
-    project_path.setFixedWidth(400)
+    project_path.setMinimumWidth(400)
 
     self.project_author = project_author
     self.project_version = project_version
@@ -94,7 +94,7 @@ def createScenarioAttrGroupBox(self):
     # Description of the seleted scenario
     self.scenario_description_label = QLabel('description')
     self.scenario_description = QLineEdit()
-    self.scenario_description.setMinimumSize(450,20)
+    self.scenario_description.setMinimumSize(400,20)
     self.scenario_description.setDisabled(True)
     # List of the events of the selected scenario
     self.scenario_content_label = QLabel('Events')
