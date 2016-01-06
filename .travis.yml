@@ -3,7 +3,6 @@ sudo: true
 python:
 - '2.7'
 before_install:
-- cd scripts
 - which python
 - brew install python
 - travis_wait brew install PyQt5 --with-python --without-python3
