@@ -1,5 +1,4 @@
 language: objective-c
-os: osx
 sudo: true
 python:
 - '2.7'
