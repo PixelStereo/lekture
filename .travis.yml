@@ -9,7 +9,7 @@ before_install:
 - sudo pip install --pre pyOSC
 - sudo pip install pyprojekt
 - sudo pip install pyinstaller
-- pyinstaller --windowed --icon=../icon/lekture.icns -n Lekture_${TRAVIS_TAG} lekture.py
+- pyinstaller --windowed --icon=icon/lekture.icns -n Lekture_${TRAVIS_TAG} lekture.py
 - zip -r dist/lekture_${TRAVIS_TAG}_OSX.zip dist/lekture_${TRAVIS_TAG}.app
 - ls dist/
 install: true
