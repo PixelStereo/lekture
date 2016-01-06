@@ -4,8 +4,13 @@ python:
 - '2.7'
 before_install:
 - cd scripts
-- ./install.sh
-- ./build.sh ${TRAVIS_TAG}
+- which python
+- brew install python
+- travis_wait brew install PyQt5 --with-python --without-python3
+- sudo pip install --pre pyOSC
+- sudo pip install pyprojekt
+- sudo pip install pyinstaller
+- pyinstaller --windowed --icon=../icon/lekture.icns -n Lekture_${TRAVIS_TAG} ../lekture.py
 - zip -r dist/lekture_${TRAVIS_TAG}.zip dist/lekture_${TRAVIS_TAG}.app
 - ls dist/
 install: true
