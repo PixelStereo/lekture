@@ -1,4 +1,3 @@
-language: ruby
 sudo: true
 os:
 - osx
