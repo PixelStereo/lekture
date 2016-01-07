@@ -213,15 +213,14 @@ class Projekt(QGroupBox,QModelIndex):
         self.project.scenarios_set(x,y)
 
     def scenarioSelectionChanged(self,current,previous):
-        scenarios = self.project.scenarios()
         if current:
             scenar = current
-        else:
+        elif:
             if previous and self.scenario_list.currentRow() >= 0:
                 scenar = previous
-            else:
-                scenar = None
-        if scenar and scenarios != []:
+        else:
+            scenar = None
+        if scenar and self.project.scenarios() != []:
             index = self.scenario_list.row(scenar)
             self.scenario_selected = scenarios[index]
             self.scenario_output_index_range()
