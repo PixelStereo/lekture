@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 import os
 import sys
+import subprocess
 from PyQt5.QtCore import Qt,QModelIndex,QFileInfo,QFile
 from PyQt5.QtWidgets import QFileDialog,QListWidgetItem,QApplication,QMessageBox,QTableWidgetItem,QSpinBox,QComboBox
 from PyQt5.QtWidgets import QGroupBox,QHBoxLayout,QLabel,QLineEdit,QListWidget,QAbstractItemView,QPushButton,QGridLayout
@@ -147,9 +148,13 @@ class Projekt(QGroupBox,QModelIndex):
     def openFolder(self):
         """ open project directory"""
         if self.project.path:
-            directory, filename = os.path.split(self.project.path)
-            from subprocess import call
-            call(["open", directory])
+            path = self.project.path
+            if sys.platform == 'darwin':
+                subprocess.check_call(["open", "-R", path])
+            elif sys.platform == 'win32':
+                subprocess.check_call(['explorer', path])
+            elif sys.platform.startswith('linux'):
+                subprocess.check_call(['xdg-open', '--', path])
             return True
         else:
             False
