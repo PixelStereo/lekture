@@ -7,10 +7,17 @@ before_install:
 - brew install python
 - travis_wait brew install PyQt5 --with-python --without-python3
 - sudo pip install --pre pyOSC
-- sudo pip install pyprojekt
+- sudo pip install pjlink
 - sudo pip install pyinstaller
 - cd src
 - pyinstaller --windowed --icon=icon/lekture.icns -n Lekture_${TRAVIS_TAG} main.py
+- cp functions.py dist/lekture_${TRAVIS_TAG}.app/Contents/MacOS/
+- cp panels.py dist/lekture_${TRAVIS_TAG}.app/Contents/MacOS/
+- cp child.py dist/lekture_${TRAVIS_TAG}.app/Contents/MacOS/
+- cp functions.py dist/lekture_${TRAVIS_TAG}.app/Contents/MacOS/
+- wget https://github.com/PixelStereo/PyProjekt/archive/master.zip
+- unzip PyProjekt-master.zip
+- mv PyProjekt-master/pyprojekt dist/lekture_${TRAVIS_TAG}.app/Contents/MacOS/
 - cd dist
 - zip -r lekture_${TRAVIS_TAG}_OSX.zip lekture_${TRAVIS_TAG}.app
 - cd ../
