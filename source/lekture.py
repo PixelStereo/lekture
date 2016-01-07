@@ -14,11 +14,7 @@ from PyQt5.QtWidgets import QVBoxLayout,QLabel,QLineEdit,QGridLayout,QHBoxLayout
 projekt_path = os.path.abspath('./../PyProjekt')
 sys.path.append(projekt_path)
 
-# add lib path to python path
-lib_path = os.path.abspath('./lib')
-sys.path.append(lib_path)
-
-from lek_projekt import Projekt
+from child import Projekt
 
 class MainWindow(QMainWindow):
     """This create the main window of the application"""
