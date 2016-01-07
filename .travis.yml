@@ -4,8 +4,12 @@ dist: trusty
 os:
 - osx
 - linux
-before_install: travis_wait scripts/install-deps.sh
+before_install:
+  - travis_wait scripts/install-deps.sh
+  - pip install codecov
 install: scripts/install.sh
+after_success:
+  - codecov
 deploy:
   provider: releases
   skip_cleanup: true
