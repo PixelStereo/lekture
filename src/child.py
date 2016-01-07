@@ -12,7 +12,7 @@ sys.path.append(projekt_path)
 
 from pyprojekt import project
 from panels import createProjectAttrGroupBox, createScenarioListGroupBox, createScenarioAttrGroupBox, createOuputAttrGroupBox
-
+from functions import event2line, line2event
 
 class Document(object):
     """docstring for Document"""
@@ -209,23 +209,17 @@ class Projekt(QGroupBox,QModelIndex):
     def scenarioSelectionChanged(self,current,previous):
         scenarios = self.project.scenarios()
         if current:
-            index = self.scenario_list.row(current)
-            if scenarios != []:
-                self.scenario_selected = scenarios[index]
-            else:
-                self.scenario_selected = None    
+            scenar = current
         else:
-            if previous:
-                if self.scenario_list.currentRow() >= 0:
-                    index = self.scenario_list.row(previous)
-                    if scenarios != []:
-                        self.scenario_selected = scenarios[index]
-                    else:
-                        self.scenario_selected = None    
-                else:
-                    self.scenario_selected = None
+            if previous and self.scenario_list.currentRow() >= 0:
+                scenar = previous
             else:
-                self.scenario_selected = None
+                scenar = None
+        if scenar and scenarios != []:
+            index = self.scenario_list.row(scenar)
+            self.scenario_selected = scenarios[index]
+        else:
+            self.scenario_selected = None    
         if not self.scenario_selected:
             self.scenario_display_clear()
             self.scenario_del.setDisabled(True)
@@ -327,14 +321,7 @@ class Projekt(QGroupBox,QModelIndex):
         if scenario.events() != []:
             for event in scenario.events():
                 line = event.content
-                #not really nice…
-                if isinstance(line,unicode):
-                    line = project.unicode2string_list(line)
-                if isinstance(line,int):
-                    line = str(line)
-                else:
-                    line = str(line)
-                    line = ''.join( c for c in line if  c not in "[]'," )
+                line = event2line(line)
                 line = QListWidgetItem(line)
                 line.setFlags(Qt.ItemIsEnabled|Qt.ItemIsEditable|Qt.ItemIsSelectable|Qt.ItemIsDragEnabled)
                 self.scenario_content.addItem(line)
@@ -418,20 +405,7 @@ class Projekt(QGroupBox,QModelIndex):
         # check if there is some text
         item = self.scenario_content.currentItem().text()
         if item:
-            newline = item
-            if isinstance(newline, unicode):
-                newline = newline.encode('utf-8')
-            newline = newline.split(' ')
-            newline = project.unicode2_list(newline)
-            if isinstance(newline,float):
-                newline = int(newline)
-                self.scenario_content.currentItem().setText(str(newline))
-            # check if newline is int (wait) or not
-            if type(newline) == int:
-                pass
-            # if we have a list as arguments, we need to keep a list
-            elif len(newline) > 1:
-                newline = [newline[0],newline[1:]]
+            newline = line2event(self,item)
             # if it's a new line (the last line), append line to content attr of Scenario class and create a new Event instance
             if self.scenario_content.currentRow() + 1 == self.scenario_content.count():
                 new_event = self.scenario_selected.new_event(content=newline)
@@ -445,22 +419,17 @@ class Projekt(QGroupBox,QModelIndex):
                 self.scenario_selected.events()[self.scenario_content.currentRow()].content = newline
 
     def eventSelectionChanged(self):
-        if self.scenario_selected:
-            if self.scenario_content.currentRow() >= 0 and self.scenario_content.currentRow() < len(self.scenario_selected.events()):
-                item = self.scenario_content.currentRow()
-                item = self.scenario_selected.events()[item]
-                self.event_selected = item
-            else:
-                self.event_selected = None
-        else:
-            self.event_selected = None
-        if self.event_selected:
+        if self.scenario_selected and self.scenario_content.currentRow() >= 0 and self.scenario_content.currentRow() < len(self.scenario_selected.events()):
+            item = self.scenario_content.currentRow()
+            item = self.scenario_selected.events()[item]
+            self.event_selected = item
             self.event_del.setDisabled(False)
             if type(self.event_selected.content) != int:
                 self.event_play.setDisabled(False)
             else:
                 self.event_play.setDisabled(True)
         else:
+            self.event_selected = None
             self.event_del.setDisabled(True)
             self.event_play.setDisabled(True)
 
