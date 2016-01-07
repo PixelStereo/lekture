@@ -136,6 +136,7 @@ class Projekt(QGroupBox,QModelIndex):
         if fileName:
             self.project.write(fileName)
             self.project_path.setText(fileName)
+            self.project.path = fileName
         else:
             self.project.write()
             self.project_path.setText(self.project.path)
