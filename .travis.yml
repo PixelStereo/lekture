@@ -4,8 +4,8 @@ python:
 - '2.7'
 before_install:
 - which python
-- brew install python
-- travis_wait brew install PyQt5 --with-python --without-python3
+#- brew install python
+#- travis_wait brew install PyQt5 --with-python --without-python3
 - sudo pip install --pre pyOSC
 - sudo pip install pjlink
 - sudo pip install pyinstaller
