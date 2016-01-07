@@ -13,7 +13,6 @@ before_install:
 - pyinstaller --windowed --icon=icon/lekture.icns -n Lekture_${TRAVIS_TAG} main.py
 - cd dist
 - zip -r lekture_${TRAVIS_TAG}_OSX.zip lekture_${TRAVIS_TAG}.app
-- lekture_${TRAVIS_TAG}.app/Contents/MacOS/Lekture_${TRAVIS_TAG}
 - cd ../
 install: true
 deploy:
