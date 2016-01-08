@@ -1,4 +1,4 @@
-language: perl
+language: c
 sudo: required
 dist: trusty
 os:
