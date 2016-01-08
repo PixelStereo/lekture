@@ -220,7 +220,15 @@ class Projekt(QGroupBox,QModelIndex):
             scenar = previous
         else:
             scenar = None
-        if scenar and scenarios != []:
+            self.scenario_selected = None    
+            self.scenario_display_clear()
+            self.scenario_del.setDisabled(True)
+            self.scenario_play.setDisabled(True)
+            self.scenario_output_index.setDisabled(True)
+            self.scenario_output_protocol.setDisabled(True)
+            self.scenario_description.setDisabled(True)
+            self.scenario_content.setDisabled(True)
+        if scenar:
             index = self.scenario_list.row(scenar)
             self.scenario_selected = scenarios[index]
             self.scenario_output_index_range()
@@ -231,15 +239,6 @@ class Projekt(QGroupBox,QModelIndex):
             self.scenario_output_protocol.setDisabled(False)
             self.scenario_description.setDisabled(False)
             self.scenario_content.setDisabled(False)
-        else:
-            self.scenario_selected = None    
-            self.scenario_display_clear()
-            self.scenario_del.setDisabled(True)
-            self.scenario_play.setDisabled(True)
-            self.scenario_output_index.setDisabled(True)
-            self.scenario_output_protocol.setDisabled(True)
-            self.scenario_description.setDisabled(True)
-            self.scenario_content.setDisabled(True)
 
     def newScenario(self):
         scenario = self.project.new_scenario()
