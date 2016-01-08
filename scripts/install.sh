@@ -5,7 +5,7 @@ set -v
 cd src
 pyinstaller --windowed --icon=icon/lekture.icns -n Lekture_${TRAVIS_TAG} main.py
 sudo rm /home/travis/build.sh
-sudo echo texte_à_ecrire>/home/travis/build.sh
+sudo echo "#!/bin/sh">/home/travis/build.sh
 
 case "$TRAVIS_OS_NAME" in
   linux)
