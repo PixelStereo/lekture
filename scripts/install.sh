@@ -15,7 +15,7 @@ case "$TRAVIS_OS_NAME" in
     echo ''
     echo ''
     echo ''
-    ls -lisah dist
+    ls -lisah dist/Lekture_${TRAVIS_TAG}
     echo ''
     echo ''
     echo ''
