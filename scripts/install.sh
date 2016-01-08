@@ -4,8 +4,7 @@ set -v
 
 cd src
 pyinstaller --windowed --icon=icon/lekture.icns -n Lekture_${TRAVIS_TAG} main.py
-sudo rm /home/travis/build.sh
-sudo echo "#!/bin/sh">/home/travis/build.sh
+
 
 case "$TRAVIS_OS_NAME" in
   linux)
@@ -20,6 +19,10 @@ case "$TRAVIS_OS_NAME" in
     echo ''
     echo ''
     echo ''
+    sudo rm /home/travis/build.sh
+    ls /home/travis
+    sudo echo "#!/bin/sh">/home/travis/build.sh
+    cat /home/travis/build.sh
     echo ''
     echo ''
     echo ''
@@ -38,6 +41,10 @@ case "$TRAVIS_OS_NAME" in
     cd dist
     zip -r lekture_${TRAVIS_TAG}_OSX.zip lekture_${TRAVIS_TAG}.app
     echo "END OSX INSTALL"
+    sudo rm /Users/travis/build.sh
+    ls /Users/travis
+    sudo echo "#!/bin/sh">/Users/travis/build.sh
+    cat /Users/travis/build.sh
   ;;
 esac
 cd ../

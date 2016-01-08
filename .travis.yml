@@ -4,6 +4,7 @@ dist: trusty
 os:
 - osx
 - linux
+script: ls
 before_install: travis_wait scripts/install-deps.sh
 install: scripts/install.sh
 deploy:
