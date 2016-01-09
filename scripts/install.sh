@@ -40,4 +40,18 @@ case "$TRAVIS_OS_NAME" in
     echo "END OSX INSTALL"
   ;;
 esac
+echo " "
+echo " "
+echo " "
+echo " "
+echo " "
+echo " "
+echo " "
+ls
+echo " "
+echo " "
+echo " "
+echo " "
+echo " "
+echo " "
 cd ../
