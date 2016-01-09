@@ -18,7 +18,7 @@ case "$TRAVIS_OS_NAME" in
     unzip master.zip
     mv PyProjekt-master/pyprojekt dist/lekture_${TRAVIS_TAG}
     cd dist
-    zip -r lekture_${TRAVIS_TAG}_ubuntu.zip lekture_${TRAVIS_TAG}
+    zip -r lekture_${TRAVIS_TAG}_$TRAVIS_OS_NAME.zip lekture_${TRAVIS_TAG}
     sudo rm /home/travis/build.sh
     sudo echo "#!/bin/sh">/home/travis/build.sh
     echo "END LINUX INSTALL"
@@ -34,7 +34,7 @@ case "$TRAVIS_OS_NAME" in
     unzip master.zip
     mv PyProjekt-master/pyprojekt dist/lekture_${TRAVIS_TAG}.app/Contents/MacOS/
     cd dist
-    zip -r lekture_${TRAVIS_TAG}_OSX.zip lekture_${TRAVIS_TAG}.app
+    zip -r lekture_${TRAVIS_TAG}_$TRAVIS_OS_NAME.zip lekture_${TRAVIS_TAG}.app
     sudo rm /Users/travis/build.sh
     sudo echo "#!/bin/sh">/Users/travis/build.sh
     echo "END OSX INSTALL"
