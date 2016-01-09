@@ -9,6 +9,8 @@ pyinstaller --windowed --icon=icon/lekture.icns -n Lekture_${TRAVIS_TAG} main.py
 case "$TRAVIS_OS_NAME" in
   linux)
     echo "START LINUX INSTALL"
+    echo "list APP -1"
+    ls dist
     echo "list APP 0"
     ls dist/lekture_${TRAVIS_TAG}/
     cp functions.py dist/lekture_${TRAVIS_TAG}/
