@@ -2,9 +2,8 @@
 # -*- coding: utf-8 -*-
 import os
 import sys
-from time import sleep
 # I need to import these modules here because of pyinstaller
-import json, socket, OSC, pjlink
+#import json, socket, OSC, pjlink
 from PyQt5.QtGui import QIcon,QKeySequence
 from PyQt5.QtCore import QModelIndex,Qt,QSignalMapper,QSettings,QPoint,QSize,QSettings,QPoint,QFileInfo,QFile
 from PyQt5.QtWidgets import QMainWindow,QGroupBox,QApplication,QMdiArea,QWidget,QAction,QListWidget,QPushButton,QMessageBox,QFileDialog,QDialog,QMenu,QToolBar
