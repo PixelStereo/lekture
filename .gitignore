@@ -4,3 +4,4 @@ dist
 *.spec
 doc/_build
 test.json
+deploy
