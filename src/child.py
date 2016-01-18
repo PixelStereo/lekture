@@ -409,7 +409,6 @@ class Projekt(QGroupBox,QModelIndex):
         newline = line2event(self,item)
         # there is new text on the last line
         if self.scenario_content.currentRow() + 1 == self.scenario_content.count():
-            print 'last line'
             # create a new event
             new_event = self.scenario_selected.new_event(content=newline)
             self.scenario_display(self.scenario_selected)
