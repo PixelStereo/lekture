@@ -319,6 +319,7 @@ class Projekt(QGroupBox,QModelIndex):
         self.scenario_out_fill()
         self.scenario_out_display(scenario)
         self.scenario_description.setText(scenario.description)
+        # scenario contains events
         if scenario.events() != []:
             for event in scenario.events():
                 line = event.content
@@ -326,10 +327,9 @@ class Projekt(QGroupBox,QModelIndex):
                 line = QListWidgetItem(line)
                 line.setFlags(Qt.ItemIsEnabled|Qt.ItemIsEditable|Qt.ItemIsSelectable|Qt.ItemIsDragEnabled)
                 self.scenario_content.addItem(line)
-        else:
-            empty = QListWidgetItem()
-            empty.setFlags(Qt.ItemIsEnabled|Qt.ItemIsEditable|Qt.ItemIsSelectable|Qt.ItemIsDragEnabled)
-            self.scenario_content.addItem(empty)
+        empty = QListWidgetItem()
+        empty.setFlags(Qt.ItemIsEnabled|Qt.ItemIsEditable|Qt.ItemIsSelectable|Qt.ItemIsDragEnabled)
+        self.scenario_content.addItem(empty)
 
     def event_delete(self):
         if self.event_selected:
@@ -405,22 +405,16 @@ class Projekt(QGroupBox,QModelIndex):
     def scenario_content_changed(self):
         # check if there is some text
         item = self.scenario_content.currentItem().text()
-        if item:
-            print 'before' , self.scenario_selected.events()[self.scenario_content.currentRow()].content
+        # format the line
+        newline = line2event(self,item)
         # there is new text on the last line
-        if item and self.scenario_content.currentRow() + 1 == self.scenario_content.count():
-            newline = line2event(self,item)
+        if self.scenario_content.currentRow() + 1 == self.scenario_content.count():
+            print 'last line'
+            # create a new event
             new_event = self.scenario_selected.new_event(content=newline)
-            empty = QListWidgetItem()
-            empty.setFlags(Qt.ItemIsEnabled|Qt.ItemIsEditable|Qt.ItemIsSelectable|Qt.ItemIsDragEnabled)
-            self.scenario_content.addItem(empty)
-            self.event_play.setDisabled(False)
-            self.event_del.setDisabled(False)
-            self.event_selected = new_event
-        elif item:
-            newline = line2event(self,item)
+            self.scenario_display(self.scenario_selected)
+        else:
             self.scenario_selected.events()[self.scenario_content.currentRow()].content = newline
-        print 'after' , self.scenario_selected.events()[self.scenario_content.currentRow()].content
 
     def eventSelectionChanged(self):
         if self.scenario_selected and self.scenario_content.currentRow() >= 0 and self.scenario_content.currentRow() < len(self.scenario_selected.events()):
