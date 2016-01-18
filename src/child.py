@@ -3,8 +3,8 @@
 import os
 import sys
 import subprocess
-from PyQt5.QtCore import Qt,QModelIndex,QFileInfo,QFile
-from PyQt5.QtWidgets import QFileDialog,QListWidgetItem,QApplication,QMessageBox,QTableWidgetItem,QSpinBox,QComboBox
+from PyQt5.QtCore import Qt,QModelIndex,QFileInfo,QFile,QPoint
+from PyQt5.QtWidgets import QFileDialog,QListWidgetItem,QApplication,QMessageBox,QTableWidgetItem,QSpinBox,QComboBox,QMenu
 from PyQt5.QtWidgets import QGroupBox,QHBoxLayout,QLabel,QLineEdit,QListWidget,QAbstractItemView,QPushButton,QGridLayout
 
 # for development of pyprojekt, use git version
