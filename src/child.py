@@ -406,18 +406,21 @@ class Projekt(QGroupBox,QModelIndex):
         # check if there is some text
         item = self.scenario_content.currentItem().text()
         if item:
+            print 'before' , self.scenario_selected.events()[self.scenario_content.currentRow()].content
+        # there is new text on the last line
+        if item and self.scenario_content.currentRow() + 1 == self.scenario_content.count():
             newline = line2event(self,item)
-            # if it's a new line (the last line), append line to content attr of Scenario class and create a new Event instance
-            if self.scenario_content.currentRow() + 1 == self.scenario_content.count():
-                new_event = self.scenario_selected.new_event(content=newline)
-                empty = QListWidgetItem()
-                empty.setFlags(Qt.ItemIsEnabled|Qt.ItemIsEditable|Qt.ItemIsSelectable|Qt.ItemIsDragEnabled)
-                self.scenario_content.addItem(empty)
-                self.event_play.setDisabled(False)
-                self.event_del.setDisabled(False)
-                self.event_selected = new_event
-            else:
-                self.scenario_selected.events()[self.scenario_content.currentRow()].content = newline
+            new_event = self.scenario_selected.new_event(content=newline)
+            empty = QListWidgetItem()
+            empty.setFlags(Qt.ItemIsEnabled|Qt.ItemIsEditable|Qt.ItemIsSelectable|Qt.ItemIsDragEnabled)
+            self.scenario_content.addItem(empty)
+            self.event_play.setDisabled(False)
+            self.event_del.setDisabled(False)
+            self.event_selected = new_event
+        elif item:
+            newline = line2event(self,item)
+            self.scenario_selected.events()[self.scenario_content.currentRow()].content = newline
+        print 'after' , self.scenario_selected.events()[self.scenario_content.currentRow()].content
 
     def eventSelectionChanged(self):
         if self.scenario_selected and self.scenario_content.currentRow() >= 0 and self.scenario_content.currentRow() < len(self.scenario_selected.events()):
