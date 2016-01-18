@@ -42,6 +42,7 @@ def createProjectAttrGroupBox(self):
 
 def createScenarioListGroupBox(self):
     self.ScenarioListGroupBox = QGroupBox("Scenario List")
+    self.ScenarioListGroupBox.setMaximumSize(350,800)
     self.scenario_list = QListWidget()
     # to get current and previous
     self.scenario_list.currentItemChanged.connect(self.scenarioSelectionChanged)
@@ -94,7 +95,7 @@ def createScenarioAttrGroupBox(self):
     # Description of the seleted scenario
     self.scenario_description_label = QLabel('description')
     self.scenario_description = QLineEdit()
-    self.scenario_description.setMinimumSize(400,20)
+    self.scenario_description.setMinimumSize(300,20)
     self.scenario_description.setDisabled(True)
     # List of the events of the selected scenario
     self.scenario_content_label = QLabel('Events')
