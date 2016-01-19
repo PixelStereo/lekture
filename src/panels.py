@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import QLabel,QLineEdit,QSpinBox,QComboBox,QTableWidget,QVBoxLayout
+from PyQt5.QtWidgets import QLabel,QLineEdit,QSpinBox,QComboBox,QTableWidget,QVBoxLayout,QTableWidgetItem
 from PyQt5.QtWidgets import QGroupBox,QHBoxLayout,QListWidget,QAbstractItemView,QPushButton,QGridLayout
 
 import os,sys
@@ -43,7 +43,16 @@ def createProjectAttrGroupBox(self):
 def createScenarioListGroupBox(self):
     self.ScenarioListGroupBox = QGroupBox("Scenario List")
     #self.ScenarioListGroupBox.setMaximumSize(350,800)
-    self.scenario_list = QListWidget()
+    self.scenario_list = QTableWidget(len(self.project.scenarios()),4)
+    self.scenario_list.setColumnWidth(0,300)
+    self.scenario_list.setColumnWidth(1,130)
+    self.scenario_list.setColumnWidth(2,130)
+    self.scenario_list.setColumnWidth(3,130)
+    header_list = ['name','wait','delay','sustain']
+    for header in header_list:
+        head = QTableWidgetItem(header)
+        self.scenario_list.setHorizontalHeaderItem(header_list.index(header),head)
+
     # to get current and previous
     self.scenario_list.currentItemChanged.connect(self.scenarioSelectionChanged)
     # enable drag and drop for internal move aka ordering
