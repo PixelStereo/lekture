@@ -3,8 +3,7 @@
 set -v
 
 cd src
-pyinstaller --windowed --icon=icon/lekture.icns -n Lekture_${TRAVIS_TAG} main.py
-
+ pyinstaller --onefile --paths ../../PyProjekt/  --windowed --icon=icon/lekture.icns -n Lekture_${TRAVIS_TAG} main.py
 
 case "$TRAVIS_OS_NAME" in
   linux)
