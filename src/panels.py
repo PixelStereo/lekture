@@ -45,9 +45,9 @@ def createScenarioListGroupBox(self):
     #self.ScenarioListGroupBox.setMaximumSize(350,800)
     self.scenario_list = QTableWidget(len(self.project.scenarios()),4)
     self.scenario_list.setColumnWidth(0,300)
-    self.scenario_list.setColumnWidth(1,130)
-    self.scenario_list.setColumnWidth(2,130)
-    self.scenario_list.setColumnWidth(3,130)
+    self.scenario_list.setColumnWidth(1,80)
+    self.scenario_list.setColumnWidth(2,80)
+    self.scenario_list.setColumnWidth(3,80)
     header_list = ['name','wait','delay','sustain']
     for header in header_list:
         head = QTableWidgetItem(header)
