@@ -25,12 +25,11 @@ You need to install PyQt5, PyOSC and PyBonjour module. The simplest way to insta
 
     brew install python
     brew install PyQt5 --with-python --without-python3
-    git clone https://github.com/PixelStereo/PyProjekt.git
 
-####Build Application
+Now you can checkout the repo
 
-    pip install pyinstaller
-    pyinstaller --windowed --icon=icon/lekture.icns lekture.py
+    git clone --recursive https://github.com/PixelStereo/lekture.git
+    
 
 ##Licence
 GPL Licence
