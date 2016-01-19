@@ -1,0 +1,6 @@
+[submodule "3rdparty/PyProjekt"]
+	path = 3rdparty/PyProjekt
+	url = https://reno-@github.com/PixelStereo/PyProjekt.git
+[submodule "3rdparty/pyliblo"]
+	path = 3rdparty/pyliblo
+	url = https://reno-@github.com/reno-/pyliblo.git

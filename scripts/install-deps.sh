@@ -11,18 +11,18 @@ case "$TRAVIS_OS_NAME" in
     export PATH="$HOME/.linuxbrew/bin:$PATH"
     export MANPATH="$HOME/.linuxbrew/share/man:$MANPATH"
     export INFOPATH="$HOME/.linuxbrew/share/info:$INFOPATH"
-    which python
     echo "END LINUX"
    ;;
   osx)
     echo "START OSX"
-    which python
     echo "END OSX"
   ;;
 esac
+git submodule init
+git submodule update
 brew install python
+brew install liblo
 brew install PyQt5 --with-python --without-python3
-sudo pip install --pre pyOSC
-sudo pip install pjlink
+sudo pip install Cython
 sudo pip install pyinstaller
 echo "install-deps END"
