@@ -8,7 +8,7 @@ from PyQt5.QtWidgets import QFileDialog,QListWidgetItem,QApplication,QMessageBox
 from PyQt5.QtWidgets import QGroupBox,QHBoxLayout,QLabel,QLineEdit,QListWidget,QAbstractItemView,QPushButton,QGridLayout
 
 # for development of pyprojekt, use git version
-projekt_path = os.path.abspath('./../../PyProjekt')
+projekt_path = os.path.abspath('./../3rdparty/PyProjekt')
 sys.path.append(projekt_path)
 
 from pyprojekt import project

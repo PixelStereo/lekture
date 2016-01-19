@@ -10,7 +10,7 @@ from PyQt5.QtWidgets import QMainWindow,QGroupBox,QApplication,QMdiArea,QWidget,
 from PyQt5.QtWidgets import QVBoxLayout,QLabel,QLineEdit,QGridLayout,QHBoxLayout,QSpinBox,QStyleFactory,QListWidgetItem,QAbstractItemView,QComboBox,QTableWidget
 
 # for development of pyprojekt, use git version
-projekt_path = os.path.abspath('./../PyProjekt')
+projekt_path = os.path.abspath('./../3rdparty/PyProjekt')
 sys.path.append(projekt_path)
 
 from child import Projekt
