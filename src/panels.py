@@ -42,7 +42,7 @@ def createProjectAttrGroupBox(self):
 
 def createScenarioListGroupBox(self):
     self.ScenarioListGroupBox = QGroupBox("Scenario List")
-    self.ScenarioListGroupBox.setMaximumSize(350,800)
+    #self.ScenarioListGroupBox.setMaximumSize(350,800)
     self.scenario_list = QListWidget()
     # to get current and previous
     self.scenario_list.currentItemChanged.connect(self.scenarioSelectionChanged)
@@ -68,13 +68,23 @@ def createScenarioListGroupBox(self):
     self.scenario_del.released.connect(self.delScenario)
 
     layout = QGridLayout()
-    layout.addWidget(self.scenario_new,1,0)
-    layout.addWidget(self.scenario_play,2,0)
-    layout.addWidget(self.scenario_list,3,0)
-    layout.addWidget(self.scenario_del,4,0)
-    layout.setRowStretch(4, 1)
-    layout.setColumnStretch(0, 1)
-    self.ScenarioListGroupBox.setLayout(layout)  
+    layout.addWidget(self.scenario_new,0,0)
+    layout.addWidget(self.scenario_play,1,0)
+    layout.addWidget(self.scenario_del,2,0)
+    layout.setRowStretch(5, 1)
+    layout.setColumnStretch(0, 5)
+    the_GroupBox = QGroupBox("Scenario commands")
+    the_GroupBox.setLayout(layout)  
+    the_GroupBox.setMinimumWidth(200)
+    the_GroupBox.setMinimumHeight(150)
+    the_GroupBox.setMaximumWidth(200)
+    the_GroupBox.setMaximumHeight(150)
+    scenario_list_layout = QGridLayout()
+    scenario_list_layout.addWidget(the_GroupBox,0,0)
+    scenario_list_layout.addWidget(self.scenario_list,0,1,5,5)
+    self.ScenarioListGroupBox.setMinimumHeight(250)
+    self.ScenarioListGroupBox.setLayout(scenario_list_layout)
+    
 
 def createScenarioAttrGroupBox(self):
     self.ScenarioAttrGroupBox = QGroupBox("Scenario Content")

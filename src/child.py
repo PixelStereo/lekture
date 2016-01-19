@@ -66,13 +66,14 @@ class Projekt(QGroupBox,QModelIndex):
         createOuputAttrGroupBox(self)
         # Integrate Both scenario_list and scenario_attr in a group
         scenario_layout = QGridLayout()
-        scenario_layout.addWidget(self.ScenarioListGroupBox, 2, 0)
-        scenario_layout.addWidget(self.ScenarioAttrGroupBox, 2, 1)
+        scenario_layout.addWidget(self.ScenarioListGroupBox, 0, 0)
+        scenario_layout.addWidget(self.ScenarioAttrGroupBox, 1, 0)
         scenario_layout.setRowStretch(2, 1)
-        scenario_layout.setColumnStretch(0, 1)
-        scenario_layout.setColumnStretch(1, 1)
+        #scenario_layout.setColumnStretch(0, 1)
+        #scenario_layout.setColumnStretch(1, 1)
         scenario_group = QGroupBox()
         scenario_group.setLayout(scenario_layout)
+        
         self.scenario_group = scenario_group
         self.outputs_group.setVisible(False)
         self.protocol_display()
@@ -80,6 +81,7 @@ class Projekt(QGroupBox,QModelIndex):
         # Create the main layout
         mainLayout = QGridLayout()
         # Integrate the layout previously created
+        self.project_Groupbox.setMaximumHeight(50)
         mainLayout.addWidget(self.project_Groupbox, 0, 0, 1, 2)
         mainLayout.addWidget(scenario_group, 1, 0)
         mainLayout.addWidget(self.outputs_group, 1, 0)
