@@ -1,0 +1,3 @@
+[submodule "PyProjekt"]
+	path = PyProjekt
+	url = https://reno-@github.com/PixelStereo/PyProjekt.git
