@@ -101,10 +101,8 @@ def createScenarioAttrGroupBox(self):
     self.scenario_output_index.setDisabled(True)
     self.scenario_output_index.setRange(1,len(self.project.outputs()))
     self.scenario_output_protocol = QComboBox()
-    self.scenario_output_protocol.addItem('OSC')
-    self.scenario_output_protocol.addItem('PJLINK')
-    self.scenario_output_protocol.addItem('MIDI')
-    self.scenario_output_protocol.addItem('ARTNET')
+    for proto in project.Output.protocols():
+        self.scenario_output_protocol.addItem(proto)
     self.scenario_output_protocol.setDisabled(True)
     # Display the selected output
     self.scenario_output_text = QLabel('')
