@@ -24,5 +24,6 @@ brew install python
 brew install liblo
 brew install PyQt5 --with-python --without-python3
 sudo pip install Cython
+sudo pip install pyliblo
 sudo pip install pyinstaller
 echo "install-deps END"

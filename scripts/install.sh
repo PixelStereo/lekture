@@ -3,7 +3,7 @@
 set -v
 
 cd src
-pyinstaller --onefile --paths ../3rdparty/PyProjekt/ --paths ../3rdparty/pyliblo/  --windowed --icon=icon/lekture.icns -n Lekture_${TRAVIS_TAG} main.py
+pyinstaller --onefile --paths ../3rdparty/PyProjekt/ --windowed --icon=icon/lekture.icns -n Lekture_${TRAVIS_TAG} main.py
 cd dist
 zip -r Lekture_${TRAVIS_TAG}_$TRAVIS_OS_NAME.zip Lekture_${TRAVIS_TAG}.app
 
