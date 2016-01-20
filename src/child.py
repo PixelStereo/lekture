@@ -68,9 +68,7 @@ class Projekt(QGroupBox,QModelIndex):
         scenario_layout = QGridLayout()
         scenario_layout.addWidget(self.ScenarioListGroupBox, 0, 0)
         scenario_layout.addWidget(self.ScenarioAttrGroupBox, 1, 0)
-        scenario_layout.setRowStretch(2, 1)
-        #scenario_layout.setColumnStretch(0, 1)
-        #scenario_layout.setColumnStretch(1, 1)
+        scenario_layout.setRowStretch(0,0)
         scenario_group = QGroupBox()
         scenario_group.setLayout(scenario_layout)
         
@@ -222,7 +220,7 @@ class Projekt(QGroupBox,QModelIndex):
             self.scenario_output_protocol.setDisabled(True)
             self.scenario_description.setDisabled(True)
             self.scenario_content.setDisabled(True)
-            self.ScenarioAttrGroupBox.setVisible(False)
+            #self.ScenarioAttrGroupBox.setVisible(False)
         if scenar:
             index = self.scenario_list.row(scenar)
             self.scenario_selected = scenarios[index]
@@ -234,7 +232,7 @@ class Projekt(QGroupBox,QModelIndex):
             self.scenario_output_protocol.setDisabled(False)
             self.scenario_description.setDisabled(False)
             self.scenario_content.setDisabled(False)
-            self.ScenarioAttrGroupBox.setVisible(True)
+            #self.ScenarioAttrGroupBox.setVisible(True)
 
     def newScenario(self):
         scenario = self.project.new_scenario()

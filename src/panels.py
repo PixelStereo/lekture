@@ -93,7 +93,7 @@ def createScenarioListGroupBox(self):
 
 def createScenarioAttrGroupBox(self):
     self.ScenarioAttrGroupBox = QGroupBox("Scenario Content")
-    self.ScenarioAttrGroupBox.setVisible(False)
+    #self.ScenarioAttrGroupBox.setVisible(False)
     # Assign an output to the seleted scenario
     self.scenario_output_label = QLabel('output')
     self.scenario_output_index = QSpinBox()
@@ -145,7 +145,7 @@ def createScenarioAttrGroupBox(self):
     layout.addWidget(self.scenario_content, 2, 1, 9, 9)
     layout.addWidget(self.event_play, 8, 0)
     layout.addWidget(self.event_del, 9, 0)
-    layout.setRowStretch(8, 1)
+    self.ScenarioAttrGroupBox.setFixedHeight(250)
     self.ScenarioAttrGroupBox.setLayout(layout)
 
 def createOuputAttrGroupBox(self):
