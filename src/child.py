@@ -251,7 +251,11 @@ class Projekt(QGroupBox,QModelIndex):
             scenar2delete = self.scenario_selected
             # and then delete the scenario object
             self.project.del_scenario(scenar2delete)
+            row = self.scenario_list.currentRow()
             self.scenario_list_refresh()
+            if self.scenario_list.rowCount() <= row:
+                row = self.scenario_list.rowCount() - 1
+            self.scenario_list.setCurrentCell(row,0)
 
     def playScenario(self):
         self.scenario_selected.play()
