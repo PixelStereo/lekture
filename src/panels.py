@@ -42,13 +42,14 @@ def createProjectAttrGroupBox(self):
 
 def createScenarioListGroupBox(self):
     self.ScenarioListGroupBox = QGroupBox("Scenario List")
+    header_list = ['name','wait','delay','sustain','out1','out2']
     #self.ScenarioListGroupBox.setMaximumSize(350,800)
-    self.scenario_list = QTableWidget(len(self.project.scenarios()),4)
-    self.scenario_list.setColumnWidth(0,300)
-    self.scenario_list.setColumnWidth(1,80)
-    self.scenario_list.setColumnWidth(2,80)
-    self.scenario_list.setColumnWidth(3,80)
-    header_list = ['name','wait','delay','sustain']
+    self.scenario_list = QTableWidget(len(self.project.scenarios()),len(header_list))
+    for i in range(len(header_list)):
+        if i == 0:
+            self.scenario_list.setColumnWidth(i,250)
+        else:
+            self.scenario_list.setColumnWidth(i,80)
     for header in header_list:
         head = QTableWidgetItem(header)
         self.scenario_list.setHorizontalHeaderItem(header_list.index(header),head)
@@ -84,9 +85,9 @@ def createScenarioListGroupBox(self):
     layout.setColumnStretch(0, 5)
     the_GroupBox = QGroupBox("Scenario commands")
     the_GroupBox.setLayout(layout)  
-    the_GroupBox.setMinimumWidth(200)
+    the_GroupBox.setMinimumWidth(140)
     the_GroupBox.setMinimumHeight(150)
-    the_GroupBox.setMaximumWidth(200)
+    the_GroupBox.setMaximumWidth(140)
     the_GroupBox.setMaximumHeight(150)
     scenario_list_layout = QGridLayout()
     scenario_list_layout.addWidget(the_GroupBox,0,0)
@@ -114,7 +115,7 @@ def createScenarioAttrGroupBox(self):
     # Description of the seleted scenario
     self.scenario_description_label = QLabel('description')
     self.scenario_description = QLineEdit()
-    self.scenario_description.setMinimumSize(300,20)
+    self.scenario_description.setMinimumSize(250,20)
     self.scenario_description.setDisabled(True)
     # List of the events of the selected scenario
     self.scenario_content_label = QLabel('Events')

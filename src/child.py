@@ -210,7 +210,7 @@ class Projekt(QGroupBox,QModelIndex):
         """appelé à chaque modif d'ordre"""
         item = self.scenario_list.currentItem()
         x = self.scenario_list.row(item)
-        QListWidget.dropEvent(self.scenario_list, event)
+        QTableWidget.dropEvent(self.scenario_list, event)
         y = self.scenario_list.row(item)
         self.project.scenarios_set(x,y)
 
@@ -245,13 +245,26 @@ class Projekt(QGroupBox,QModelIndex):
     def newScenario(self):
         scenario = self.project.new_scenario()
         item = QTableWidgetItem(scenario.name)
-        #item.setFlags(Qt.ItemIsEnabled|Qt.ItemIsEditable|Qt.ItemIsSelectable|Qt.ItemIsDragEnabled)
-        self.scenario_list.setItem(0,0,item)
+        scenarios = len(self.project.scenarios())
+        self.scenario_list.setRowCount(scenarios)
+        index = scenarios-1
+        self.scenario_list.setItem(index,0,item)
+        item.setFlags(Qt.ItemIsEnabled|Qt.ItemIsEditable|Qt.ItemIsSelectable|Qt.ItemIsDragEnabled)
         # The current scenario has not an output available, so assign the first one.
         # In lekture, we always have a default output (OSC), created when creating a project
         scenario.output = [None,None]
         scenario.output[0] = self.project.getprotocols()[0]
         scenario.output[1] = 1
+        out1_item = QTableWidgetItem(scenario.output[0])
+        out2_item = QTableWidgetItem(str(scenario.output[1]))
+        self.scenario_list.setItem(index,4,out1_item)
+        self.scenario_list.setItem(index,5,out2_item)
+        wait_item = QTableWidgetItem(str(0))
+        delay_item = QTableWidgetItem(str(0))
+        sustain_item = QTableWidgetItem(str(0))
+        self.scenario_list.setItem(index,1,wait_item)
+        self.scenario_list.setItem(index,2,delay_item)
+        self.scenario_list.setItem(index,3,sustain_item)
         # setting selection will trigger scenario_display function
         self.scenario_list.setCurrentItem(item)
 
@@ -268,10 +281,21 @@ class Projekt(QGroupBox,QModelIndex):
 
     def scenario_list_refresh(self):
         self.scenario_list.clear()
+        index = 0
         for scenario in self.project.scenarios():
-            scenario = QListWidgetItem(scenario.name)
-            scenario.setFlags(Qt.ItemIsEnabled|Qt.ItemIsEditable|Qt.ItemIsSelectable|Qt.ItemIsDragEnabled)
-            self.scenario_list.addItem(scenario)
+            name_item = QTableWidgetItem(scenario.name)
+            wait_item = QTableWidgetItem(str(0))
+            delay_item = QTableWidgetItem(str(0))
+            sustain_item = QTableWidgetItem(str(0))
+            out1_item = QTableWidgetItem(scenario.output[0])
+            out2_item = QTableWidgetItem(str(scenario.output[1]))
+            self.scenario_list.setItem(index,0,name_item)
+            self.scenario_list.setItem(index,1,wait_item)
+            self.scenario_list.setItem(index,2,delay_item)
+            self.scenario_list.setItem(index,3,sustain_item)
+            self.scenario_list.setItem(index,4,out1_item)
+            self.scenario_list.setItem(index,5,out2_item)
+            index += 1
         self.scenario_list.show()
 
     def scenario_display_clear(self):
@@ -366,8 +390,9 @@ class Projekt(QGroupBox,QModelIndex):
             self.scenario_selected.play_from_here(self.event_selected)
 
     def scenario_name_changed(self):
-        self.scenario_selected.name = self.scenario_list.currentItem().text()
-        self.scenario_list_refresh()
+        if  self.scenario_list.currentItem():
+            self.scenario_selected.name = self.scenario_list.currentItem().text()
+            self.scenario_list_refresh()
 
     def scenario_description_changed(self):
         self.scenario_selected.description = self.scenario_description.text()
