@@ -23,7 +23,7 @@ class MainWindow(QMainWindow):
         # remove close & maximize window buttons
         #self.setWindowFlags(Qt.CustomizeWindowHint|Qt.WindowMinimizeButtonHint)
         self.setMinimumSize(1000,666)
-        self.setMaximumSize(1000,666)
+        #self.setMaximumSize(1000,666)
         self.mdiArea = QMdiArea()
         self.mdiArea.setHorizontalScrollBarPolicy(Qt.ScrollBarAsNeeded)
         self.mdiArea.setVerticalScrollBarPolicy(Qt.ScrollBarAsNeeded)

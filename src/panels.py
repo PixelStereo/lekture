@@ -39,12 +39,13 @@ def createProjectAttrGroupBox(self):
     project_layout.addWidget(project_path)
     project_layout.addStretch(1)
     self.project_Groupbox.setLayout(project_layout)   
-
+        
 def createScenarioListGroupBox(self):
     self.ScenarioListGroupBox = QGroupBox("Scenario List")
-    header_list = ['name','wait','delay','sustain','out1','out2']
-    #self.ScenarioListGroupBox.setMaximumSize(350,800)
-    self.scenario_list = QTableWidget(len(self.project.scenarios()),len(header_list))
+    self.scenario_list = QTableWidget()
+    self.scenario_list.setSelectionMode(QAbstractItemView.SingleSelection)
+    header_list = ['name','wait','duration','post_wait','out1','out2']
+    self.scenario_list.setColumnCount(len(header_list))
     for i in range(len(header_list)):
         if i == 0:
             self.scenario_list.setColumnWidth(i,250)
@@ -53,19 +54,13 @@ def createScenarioListGroupBox(self):
     for header in header_list:
         head = QTableWidgetItem(header)
         self.scenario_list.setHorizontalHeaderItem(header_list.index(header),head)
-
+    self.scenario_list.setSelectionBehavior(QAbstractItemView.SelectRows)
     # to get current and previous
     self.scenario_list.currentItemChanged.connect(self.scenarioSelectionChanged)
-    # enable drag and drop for internal move aka ordering
-    self.scenario_list.setDragDropMode(QAbstractItemView.InternalMove)
-    # détournement de la méthode dropEvent du QListWidget
-    self.scenario_list.setDropIndicatorShown(True)
-    self.scenario_list.setDefaultDropAction(Qt.MoveAction)
-    self.scenario_list.dropEvent = self.scenario_list_orderChanged
     # Function to edit scenario's name when double-clicking on it
     self.scenario_list.itemDoubleClicked.connect(self.scenario_list.editItem)
     # Function to rename a scenario if its name changed
-    self.scenario_list.itemChanged.connect(self.scenario_name_changed)
+    self.scenario_list.cellChanged.connect(self.scenario_data_changed)
     # Button to create a new scenario
     #self.scenario_list.setMinimumSize(120,290)
     self.scenario_new = QPushButton(('New Scenario'))
@@ -83,21 +78,22 @@ def createScenarioListGroupBox(self):
     layout.addWidget(self.scenario_del,2,0)
     layout.setRowStretch(5, 1)
     layout.setColumnStretch(0, 5)
-    the_GroupBox = QGroupBox("Scenario commands")
-    the_GroupBox.setLayout(layout)  
-    the_GroupBox.setMinimumWidth(140)
-    the_GroupBox.setMinimumHeight(150)
-    the_GroupBox.setMaximumWidth(140)
-    the_GroupBox.setMaximumHeight(150)
-    scenario_list_layout = QGridLayout()
-    scenario_list_layout.addWidget(the_GroupBox,0,0)
-    scenario_list_layout.addWidget(self.scenario_list,0,1,5,5)
+    scenario_commands = QGroupBox("Scenario commands")
+    scenario_commands.setLayout(layout)  
+    scenario_commands.setMinimumWidth(140)
+    scenario_commands.setMinimumHeight(150)
+    scenario_commands.setMaximumWidth(140)
+    scenario_commands.setMaximumHeight(150)
+    scenarios = QGridLayout()
+    scenarios.addWidget(scenario_commands,0,0)
+    scenarios.addWidget(self.scenario_list,0,1,5,5)
     self.ScenarioListGroupBox.setMinimumHeight(250)
-    self.ScenarioListGroupBox.setLayout(scenario_list_layout)
+    self.ScenarioListGroupBox.setLayout(scenarios)
     
 
 def createScenarioAttrGroupBox(self):
     self.ScenarioAttrGroupBox = QGroupBox("Scenario Content")
+    self.ScenarioAttrGroupBox.setVisible(False)
     # Assign an output to the seleted scenario
     self.scenario_output_label = QLabel('output')
     self.scenario_output_index = QSpinBox()
