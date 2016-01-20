@@ -270,9 +270,9 @@ class Projekt(QGroupBox,QModelIndex):
             wait_item = QTableWidgetItem(unicode(scenario.wait))
             wait_item.setFlags(Qt.NoItemFlags)
             wait_item.setFlags(Qt.ItemIsEnabled|Qt.ItemIsEditable|Qt.ItemIsSelectable)
-            duration_item = QTableWidgetItem(unicode(scenario.duration))
+            duration_item = QTableWidgetItem(unicode(scenario.getduration()))
             duration_item.setFlags(Qt.NoItemFlags)
-            duration_item.setFlags(Qt.ItemIsEnabled|Qt.ItemIsEditable|Qt.ItemIsSelectable)
+            duration_item.setFlags(Qt.ItemIsEnabled|Qt.ItemIsSelectable)
             post_wait_item = QTableWidgetItem(unicode(scenario.post_wait))
             post_wait_item.setFlags(Qt.NoItemFlags)
             post_wait_item.setFlags(Qt.ItemIsEnabled|Qt.ItemIsEditable|Qt.ItemIsSelectable)
@@ -394,7 +394,7 @@ class Projekt(QGroupBox,QModelIndex):
                 if data.isdigit():
                     self.scenario_selected.duration = int(data)
                 else:
-                    self.scenario_list.currentItem().setText(str(self.scenario_selected.duration))
+                    self.scenario_list.currentItem().setText(str(self.scenario_selected.getduration()))
             elif col == 3:
                 if data.isdigit():
                     self.scenario_selected.post_wait = int(data)
@@ -455,6 +455,14 @@ class Projekt(QGroupBox,QModelIndex):
             self.scenario_display(self.scenario_selected)
         else:
             self.scenario_selected.events()[self.scenario_content.currentRow()].content = newline
+        # we need to refresh the duration item on the scenrio_table
+        #don't understant why but with this line, the name is changed too… weird
+        #item = self.scenario_list.item(self.scenario_list.currentRow(),1)
+        row = self.scenario_list.currentRow()
+        #duration = str(self.scenario_selected.getduration())
+        #item.setText(duration)
+        self.scenario_list_refresh()
+        self.scenario_list.setCurrentCell(row,0)
 
     def eventSelectionChanged(self):
         if self.scenario_selected and self.scenario_content.currentRow() >= 0 and self.scenario_content.currentRow() < len(self.scenario_selected.events()):
