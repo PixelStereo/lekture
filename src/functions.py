@@ -30,7 +30,7 @@ def line2event(self,newline):
     if type(newline) == int:
         pass
     # if we have a list as arguments, we need to keep a list
-    elif len(newline) > 1:
+    elif type(newline) == list and len(newline) > 1:
         newline = [newline[0],newline[1:]]
     return newline
 
