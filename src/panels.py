@@ -44,7 +44,7 @@ def createScenarioListGroupBox(self):
     self.ScenarioListGroupBox = QGroupBox("Scenario List")
     self.scenario_list = QTableWidget()
     self.scenario_list.setSelectionMode(QAbstractItemView.SingleSelection)
-    header_list = ['name','wait','duration','post_wait','out1','out2']
+    header_list = ['name','wait','duration','post_wait','protocol','output']
     self.scenario_list.setColumnCount(len(header_list))
     for i in range(len(header_list)):
         if i == 0:
