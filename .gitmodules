@@ -1,3 +1,3 @@
-[submodule "3rdparty/PyProjekt"]
-	path = 3rdparty/PyProjekt
-	url = https://reno-@github.com/PixelStereo/PyProjekt.git
+[submodule "3rdparty/pydular"]
+	path = 3rdparty/pydular
+	url = https://reno-@github.com/PixelStereo/pydular.git
