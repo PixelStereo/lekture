@@ -9,7 +9,8 @@ cd dist
 case "$TRAVIS_OS_NAME" in
   linux)
     echo "START LINUX INSTALL"
-    zip -r Lekture_${TRAVIS_TAG}_$TRAVIS_OS_NAME.zip Lekture_${TRAVIS_TAG}
+    ls -lisah
+    zip Lekture_${TRAVIS_TAG}_$TRAVIS_OS_NAME.zip Lekture_${TRAVIS_TAG}
     sudo rm /home/travis/build.sh
     sudo echo "#!/bin/sh">/home/travis/build.sh
     echo "END LINUX INSTALL"
