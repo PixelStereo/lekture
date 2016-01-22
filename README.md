@@ -1,13 +1,11 @@
 # lekture
 lekture is an osc sequencer
 
-this is a work in progress… don't expect a working version in the following weeks ;-)
-
 Development is done under python 2.7.11.
 I develop on OSX.X, but lekture should work on Linux and Windows too, but I didn't yet test it .
 
 ##User
-Lekture is bundled in an applicaition. Just donwload the [latest release](http://github.com/PixelStereo/lekture/releases/latest) and double-click on it to start !!
+this is a work in progress… don't expect a working version in the following weeks. But if you want to test it, , just donwload the [latest release](http://github.com/PixelStereo/lekture/releases/latest) and double-click on it to start !!
 
 ##Developper
 [![Build Status](https://travis-ci.org/PixelStereo/lekture.svg?branch=master)](https://travis-ci.org/PixelStereo/lekture)
@@ -30,7 +28,6 @@ Now you can checkout the repo
 
     git clone --recursive https://github.com/PixelStereo/lekture.git
     
-
 ##Licence
 GPL Licence
 
