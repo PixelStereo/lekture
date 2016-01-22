@@ -280,7 +280,7 @@ class Projekt(QGroupBox,QModelIndex):
             post_wait_item.setFlags(Qt.ItemIsEnabled|Qt.ItemIsEditable|Qt.ItemIsSelectable)
             out1_item = QTableWidgetItem(scenario.output[0])
             out1_item.setFlags(Qt.NoItemFlags)
-            out1_item.setFlags(Qt.ItemIsEnabled|Qt.ItemIsEditable|Qt.ItemIsSelectable)
+            out1_item.setFlags(Qt.ItemIsEnabled|Qt.ItemIsSelectable)
             out2_item = QTableWidgetItem(str(scenario.output[1]))
             out2_item.setFlags(Qt.NoItemFlags)
             out2_item.setFlags(Qt.ItemIsEnabled|Qt.ItemIsEditable|Qt.ItemIsSelectable)
