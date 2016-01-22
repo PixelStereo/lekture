@@ -23,3 +23,4 @@ case "$TRAVIS_OS_NAME" in
     echo "END OSX INSTALL"
   ;;
 esac
+ls -lisah

@@ -67,5 +67,5 @@ artifacts:
   - path: dist\*
 
 #on_success:
-#  - TODO: upload the content of dist/*.whl to a public wheelhouse
+#  - to do: upload the content of dist/*.whl to a public wheelhouse
 #

@@ -280,7 +280,7 @@ class Projekt(QGroupBox,QModelIndex):
             post_wait_item.setFlags(Qt.ItemIsEnabled|Qt.ItemIsEditable|Qt.ItemIsSelectable)
             out1_item = QTableWidgetItem(scenario.output[0])
             out1_item.setFlags(Qt.NoItemFlags)
-            out1_item.setFlags(Qt.ItemIsEnabled|Qt.ItemIsEditable|Qt.ItemIsSelectable)
+            out1_item.setFlags(Qt.ItemIsEnabled|Qt.ItemIsSelectable)
             out2_item = QTableWidgetItem(str(scenario.output[1]))
             out2_item.setFlags(Qt.NoItemFlags)
             out2_item.setFlags(Qt.ItemIsEnabled|Qt.ItemIsEditable|Qt.ItemIsSelectable)
@@ -387,28 +387,19 @@ class Projekt(QGroupBox,QModelIndex):
             data = self.scenario_list.currentItem().text()
             if col == 0:
                 self.scenario_selected.name = data
-            elif col == 1:
-                if data.isdigit():
-                    self.scenario_selected.wait = int(data)
-                else:
-                    self.scenario_list.currentItem().setText(str(self.scenario_selected.wait))
-            elif col == 2:
-                if data.isdigit():
-                    self.scenario_selected.duration = int(data)
-                else:
-                    self.scenario_list.currentItem().setText(str(self.scenario_selected.getduration()))
-            elif col == 3:
-                if data.isdigit():
-                    self.scenario_selected.post_wait = int(data)
-                else:
-                    self.scenario_list.currentItem().setText(str(self.scenario_selected.post_wait))
+            elif col == 1 and data.isdigit():
+                self.scenario_selected.wait = int(data)
+            elif col == 2 and data.isdigit():
+                self.scenario_selected.duration = int(data)
+            elif col == 3 and data.isdigit():
+                self.scenario_selected.post_wait = int(data)
             elif col == 4:
                 self.scenario_selected.output[0] = data
-            elif col == 5:
-                if data.isdigit():
-                    self.scenario_selected.output[1] = int(data)
-                else:
-                    self.scenario_list.currentItem().setText(str(self.scenario_selected.output[1]))
+            elif col == 5 and data.isdigit():
+                self.scenario_selected.output[1] = int(data)
+            else:
+                # undo is the simplest way to do, but it's not yet implemented
+                self.scenario_list_refresh()
 
     def scenario_description_changed(self):
         self.scenario_selected.description = self.scenario_description.text()
