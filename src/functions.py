@@ -2,11 +2,11 @@
 # -*- coding: utf-8 -*-
 
 import os, sys
-# for development of pyprojekt, use git version
-projekt_path = os.path.abspath('./../../PyProjekt')
-sys.path.append(projekt_path)
+# for development of pydular, use git version
+pydular_path = os.path.abspath('./../../pydular')
+sys.path.append(pydular_path)
 
-from pyprojekt import functions
+from pydular import functions
 
 def event2line(line):
     if isinstance(line,unicode):

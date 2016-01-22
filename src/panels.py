@@ -6,11 +6,11 @@ from PyQt5.QtWidgets import QLabel,QLineEdit,QSpinBox,QComboBox,QTableWidget,QVB
 from PyQt5.QtWidgets import QGroupBox,QHBoxLayout,QListWidget,QAbstractItemView,QPushButton,QGridLayout
 
 import os,sys
-# for development of pyprojekt, use git version
-projekt_path = os.path.abspath('./../../PyProjekt')
-sys.path.append(projekt_path)
+# for development of pydular, use git version
+pydular_path = os.path.abspath('./../../pydular')
+sys.path.append(pydular_path)
 
-from pyprojekt import project
+from pydular import project
  
 def createProjectAttrGroupBox(self):
     self.project_Groupbox = QGroupBox()

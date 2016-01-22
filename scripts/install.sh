@@ -3,7 +3,7 @@
 set -v
 
 cd src
-pyinstaller --onefile --paths ../3rdparty/PyProjekt/ --windowed --icon=icon/lekture.icns -n Lekture_${TRAVIS_TAG} main.py
+../scripts/build.sh ${TRAVIS_TAG}
 cd dist
 
 case "$TRAVIS_OS_NAME" in

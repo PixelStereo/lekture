@@ -7,11 +7,11 @@ from PyQt5.QtCore import Qt,QModelIndex,QFileInfo,QFile,QPoint
 from PyQt5.QtWidgets import QFileDialog,QListWidgetItem,QApplication,QMessageBox,QTableWidgetItem,QSpinBox,QComboBox,QMenu
 from PyQt5.QtWidgets import QGroupBox,QHBoxLayout,QLabel,QLineEdit,QListWidget,QAbstractItemView,QPushButton,QGridLayout,QTableWidget
 
-# for development of pyprojekt, use git version
-projekt_path = os.path.abspath('./../3rdparty/PyProjekt')
-sys.path.append(projekt_path)
+# for development of pydular, use git version
+pydular_path = os.path.abspath('./../3rdparty/pydular')
+sys.path.append(pydular_path)
 
-from pyprojekt import project
+from pydular import project
 from panels import createProjectAttrGroupBox, createScenarioListGroupBox, createScenarioAttrGroupBox, createOuputAttrGroupBox
 from functions import event2line, line2event
 
