@@ -1,17 +1,16 @@
-language: c
+language: erlang
 sudo: required
 dist: trusty
 os:
 - osx
 - linux
-script: ls
 before_install: travis_wait scripts/install-deps.sh
 install: scripts/install.sh
 deploy:
   provider: releases
   skip_cleanup: true
   api_key:
-    secure: dyVfZtqZgaxFa9HicMKWZYHW6VUSBBwZ3SvJnM+oMyVq6zwo8hnX2UAaaMRtVwcyi0zzVXTC3vAyRCfW+LEYeFkyJnZhrEfS8oDsHRrvsR1x8BXQK4EIQg6FKxqA914g6SKPwKO1QNtWOZlw5VIOCfxcUriTAMbbMI5Wkx2qxinLVRhFdtbS1wN4lO4srnUGhhYw9YcKlbkHHHKL7RmUhdW2idjhRCG2A8xs2zboyEXF1UFzcxhCh7IgFWyeRNSObTzi+WOfW227jy5mX7OxWtcgJh8twyDMjl1+y7U3poreYXvX5evTI/t5iFJtS7ucKqQXfNaYbij2JP9wVrBRccI/FrXmBWIZLNvXYuyWB/cjl7y4N5CMR8Tj9fLUAPIiZH7+VOggjliOEunaY72GzWyMjkRn7qL8Um75ppofz2X1V1QVn0/XdQSiYL1lARUae7fIjSw9cM1lNpHeTAU/yPauAweGqfyzmBtF2t2EJU8F7M0W6kkzAuqfdveGt7GvDgWH1cgQOU3SsAQvvlsY8n+/5PIEgcTBgU5sBuF+SNN+8lWx5Bo944uClGQ+fRIWvAqEIfkfhmNh4NAlHfsidT408pOPFscr8oKwjMxtBhl6UWXFoFiIwyFrYePOmhRPx2F3cIEX4NL8fG4s2aO/gjwvrTEgBgb4q6e+mSw3XnU=
+    secure: "${SECURE_KEY}"
   file:
   - "src/dist/Lekture_${TRAVIS_TAG}_${TRAVIS_OS_NAME}.zip"
   on:

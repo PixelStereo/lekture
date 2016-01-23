@@ -24,3 +24,5 @@ case "$TRAVIS_OS_NAME" in
   ;;
 esac
 ls -lisah
+cd ../src
+python3 main.py
