@@ -21,5 +21,5 @@ case "$TRAVIS_OS_NAME" in
 esac
 
 
-cd ../src
+cd ../
 python3 main.py
