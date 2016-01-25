@@ -9,8 +9,7 @@ sys.path.append(pydular_path)
 from pydular import functions
 
 def event2line(line):
-    if isinstance(line,unicode):
-        line = functions.unicode2string_list(line)
+    line = functions.unicode2string_list(line)
     if isinstance(line,int):
         line = str(line)
     else:
@@ -19,8 +18,10 @@ def event2line(line):
     return line
 
 def line2event(self,newline):
-    if isinstance(newline, unicode):
-        newline = newline.encode('utf-8')
+    #newline = functions.fromUnicode(newline)
+    #newline = newline.encode('utf-8')
+    newline = str(newline)
+    print (type(newline))
     newline = newline.split(' ')
     newline = unicode2_list(newline)
     if isinstance(newline,float):
