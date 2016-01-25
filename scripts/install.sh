@@ -2,6 +2,11 @@
 
 set -v
 
+brew install PyQt5 --with-python --with-python3
+sudo pip install Cython
+sudo pip install pyliblo
+sudo pip install pyinstaller
+
 cd src
 ../scripts/build.sh ${TRAVIS_TAG}
 cd dist

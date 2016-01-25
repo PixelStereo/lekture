@@ -23,8 +23,4 @@ git submodule update
 brew install python
 brew install python3
 brew install liblo
-brew install PyQt5 --with-python --with-python3
-sudo pip install Cython
-sudo pip install pyliblo
-sudo pip install pyinstaller
 echo "install-deps END"
