@@ -19,7 +19,6 @@ class MainWindow(QMainWindow):
     """This create the main window of the application"""
     def __init__(self):
         super(MainWindow, self).__init__()
-
         # remove close & maximize window buttons
         #self.setWindowFlags(Qt.CustomizeWindowHint|Qt.WindowMinimizeButtonHint)
         self.setMinimumSize(1000,666)
@@ -282,6 +281,9 @@ class MainWindow(QMainWindow):
 
 
 if __name__ == "__main__":
+    import sys
+    reload(sys)
+    sys.setdefaultencoding('utf8')
     app = QApplication(sys.argv)
     mainWin = MainWindow()
     mainWin.show()

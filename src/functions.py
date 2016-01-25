@@ -9,7 +9,7 @@ sys.path.append(pydular_path)
 from pydular import functions
 
 def event2line(line):
-    line = functions.unicode2string_list(line)
+    #line = functions.unicode2string_list(line)
     if isinstance(line,int):
         line = str(line)
     else:
@@ -18,12 +18,15 @@ def event2line(line):
     return line
 
 def line2event(self,newline):
-    #newline = functions.fromUnicode(newline)
-    #newline = newline.encode('utf-8')
+    newline = functions.fromUnicode(newline)
+    newline = newline.encode('utf-8')
     newline = str(newline)
-    print (type(newline))
-    newline = newline.split(' ')
-    newline = unicode2_list(newline)
+    if ' ' in newline:
+        print 0,newline
+        newline = newline.split(' ')
+        print 1,newline
+        #newline = unicode2_list(newline)
+        print 2,newline
     if isinstance(newline,float):
         newline = int(newline)
         self.scenario_content.currentItem().setText(str(newline))
@@ -46,4 +49,5 @@ def unicode2_list(data):
             for item in data:
                 item = functions.checkType(item)
                 rv.append(item)
-    return rv
+        return rv
+    return data
