@@ -5,7 +5,9 @@ os:
 - osx
 - linux
 before_install: travis_wait scripts/install-deps.sh
-install: scripts/install.sh
+install: 
+  - pip install -r ../3rdparty/pydular/requirements.txt
+  - pyinstaller --onefile --paths ../3rdparty/pydular/ --windowed --icon=icon/lekture.icns -n Lekture_$1 main.py
 script: ls
 deploy:
   provider: releases
