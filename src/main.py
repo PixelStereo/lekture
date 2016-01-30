@@ -1,19 +1,27 @@
 #! /usr/bin/env python
 # -*- coding: utf-8 -*-
+
+"""Main window handles :
+
+main window (of course !)
+Menus and all documents-related functions
+such as new / open / save / save as…
+"""
+
+
 import os
 import sys
-# I need to import these modules here because of pyinstaller
-#import json, socket, OSC, pjlink
-from PyQt5.QtGui import QIcon,QKeySequence
-from PyQt5.QtCore import QModelIndex,Qt,QSignalMapper,QSettings,QPoint,QSize,QSettings,QPoint,QFileInfo,QFile
-from PyQt5.QtWidgets import QMainWindow,QGroupBox,QApplication,QMdiArea,QWidget,QAction,QListWidget,QPushButton,QMessageBox,QFileDialog,QDialog,QMenu,QToolBar
-from PyQt5.QtWidgets import QVBoxLayout,QLabel,QLineEdit,QGridLayout,QHBoxLayout,QSpinBox,QStyleFactory,QListWidgetItem,QAbstractItemView,QComboBox,QTableWidget
-
 # for development of pydular, use git version
 pydular_path = os.path.abspath('./../3rdparty/pydular')
 sys.path.append(pydular_path)
 
 from child import Projekt
+
+from PyQt5.QtGui import QKeySequence
+from PyQt5.QtCore import Qt, QSignalMapper, QPoint, QSize, QSettings, QFileInfo
+from PyQt5.QtWidgets import QMainWindow, QToolBar, QApplication, QAction, \
+                            QMdiArea, QMessageBox, QFileDialog, QWidget
+
 
 class MainWindow(QMainWindow):
     """This create the main window of the application"""
@@ -21,7 +29,7 @@ class MainWindow(QMainWindow):
         super(MainWindow, self).__init__()
         # remove close & maximize window buttons
         #self.setWindowFlags(Qt.CustomizeWindowHint|Qt.WindowMinimizeButtonHint)
-        self.setMinimumSize(1000,666)
+        self.setMinimumSize(1000, 666)
         #self.setMaximumSize(1000,666)
         self.mdiArea = QMdiArea()
         self.mdiArea.setHorizontalScrollBarPolicy(Qt.ScrollBarAsNeeded)
@@ -33,7 +41,7 @@ class MainWindow(QMainWindow):
 
         self.windowMapper = QSignalMapper(self)
         self.windowMapper.mapped[QWidget].connect(self.setActiveSubWindow)
-        
+
         self.child = None
 
         self.createActions()
@@ -43,7 +51,7 @@ class MainWindow(QMainWindow):
         self.readSettings()
         self.setWindowTitle("LEKTURE")
 
-        mytoolbar = QToolBar() 
+        mytoolbar = QToolBar()
         #self.toolbar = self.addToolBar()
         mytoolbar.addAction(self.newAct)
         mytoolbar.addAction(self.openAct)
@@ -55,9 +63,10 @@ class MainWindow(QMainWindow):
         self.scenarioAct.setVisible(False)
         mytoolbar.setMovable(False)
         mytoolbar.setFixedWidth(60)
-        self.addToolBar( Qt.LeftToolBarArea , mytoolbar )
+        self.addToolBar(Qt.LeftToolBarArea, mytoolbar)
 
     def closeEvent(self, scenario):
+        """method called when the main window wants to be closed"""
         self.mdiArea.closeAllSubWindows()
         if self.mdiArea.currentSubWindow():
             scenario.ignore()
@@ -66,12 +75,14 @@ class MainWindow(QMainWindow):
             scenario.accept()
 
     def newFile(self):
+        """creates a new project"""
         child = self.createProjekt()
         child.newFile()
         child.show()
         self.child = child
 
     def open(self):
+        """open a project"""
         fileName, _ = QFileDialog.getOpenFileName(self)
         if fileName:
             existing = self.findProjekt(fileName)
@@ -87,23 +98,29 @@ class MainWindow(QMainWindow):
                 child.close()
 
     def save(self):
+        """called when user save a project"""
         if self.activeProjekt() and self.activeProjekt().save():
             self.statusBar().showMessage("File saved", 2000)
 
     def saveAs(self):
+        """called when user save AS a project"""
         if self.activeProjekt() and self.activeProjekt().saveAs():
             self.statusBar().showMessage("File saved", 2000)
 
     def openFolder(self):
+        """called when user calls 'reveal in finder' function"""
         if self.activeProjekt() and self.activeProjekt().openFolder():
             self.statusBar().showMessage("File revealed in Finder", 2000)
 
     def about(self):
+        """called when user wants to know a bit more on the app"""
         QMessageBox.about(self, "About MDI",
-                "<b>Lekture</b> is an OSC sequencer "
-                "This release is an alpha version. Don't use it in production !!")
+                          "<b>Lekture</b> is an OSC sequencer"
+                          "This release is an alpha version."
+                          "Don't use it in production !!")
 
     def updateMenus(self):
+        """update menus"""
         hasProjekt = (self.activeProjekt() is not None)
         self.saveAct.setEnabled(hasProjekt)
         self.saveAsAct.setEnabled(hasProjekt)
@@ -117,6 +134,7 @@ class MainWindow(QMainWindow):
         self.separatorAct.setVisible(hasProjekt)
 
     def updateWindowMenu(self):
+        """unpates menus on the window toolbar"""
         self.windowMenu.clear()
         self.windowMenu.addAction(self.closeAct)
         self.windowMenu.addAction(self.closeAllAct)
@@ -142,69 +160,73 @@ class MainWindow(QMainWindow):
             self.windowMapper.setMapping(action, window)
 
     def createProjekt(self):
+        """create a new project"""
         child = Projekt()
         self.mdiArea.addSubWindow(child)
         self.child = child
         return child
 
     def createActions(self):
+        """create all actions"""
         self.newAct = QAction("&New", self,
-                shortcut=QKeySequence.New, statusTip="Create a new file",
-                triggered=self.newFile)
+                              shortcut=QKeySequence.New, statusTip="Create a new file",
+                              triggered=self.newFile)
 
         self.openAct = QAction("&Open...", self,
-                shortcut=QKeySequence.Open, statusTip="Open an existing file",
-                triggered=self.open)
+                               shortcut=QKeySequence.Open, statusTip="Open an existing file",
+                               triggered=self.open)
 
         self.saveAct = QAction("&Save", self,
-                shortcut=QKeySequence.Save,
-                statusTip="Save the document to disk", triggered=self.save)
+                               shortcut=QKeySequence.Save,
+                               statusTip="Save the document to disk", triggered=self.save)
 
         self.saveAsAct = QAction("Save &As...", self,
-                shortcut=QKeySequence.SaveAs,
-                statusTip="Save the document under a new name",
-                triggered=self.saveAs)
+                                 shortcut=QKeySequence.SaveAs,
+                                 statusTip="Save the document under a new name",
+                                 triggered=self.saveAs)
 
-        self.openFolderAct = QAction("Open Project Folder" ,self,
-                statusTip="Reveal Project in Finder",triggered=self.openFolder)
+        self.openFolderAct = QAction("Open Project Folder", self,
+                                     statusTip="Reveal Project in Finder",
+                                     triggered=self.openFolder)
 
         self.exitAct = QAction("E&xit", self, shortcut=QKeySequence.Quit,
-                statusTip="Exit the application",
-                triggered=QApplication.instance().closeAllWindows)
+                               statusTip="Exit the application",
+                               triggered=QApplication.instance().closeAllWindows)
 
         self.closeAct = QAction("Cl&ose", self,
-                statusTip="Close the active window",
-                triggered=self.mdiArea.closeActiveSubWindow)
+                                statusTip="Close the active window",
+                                triggered=self.mdiArea.closeActiveSubWindow)
 
         self.outputsAct = QAction("Outputs", self,
-                statusTip="Open the outputs panel",
-                triggered=self.openOutputsPanel)
+                                  statusTip="Open the outputs panel",
+                                  triggered=self.openOutputsPanel)
 
         self.scenarioAct = QAction("Scenario", self,
-                statusTip="Open the scenario panel",
-                triggered=self.openScenarioPanel)
+                                   statusTip="Open the scenario panel",
+                                   triggered=self.openScenarioPanel)
 
         self.closeAllAct = QAction("Close &All", self,
-                statusTip="Close all the windows",
-                triggered=self.mdiArea.closeAllSubWindows)
+                                   statusTip="Close all the windows",
+                                   triggered=self.mdiArea.closeAllSubWindows)
 
         self.nextAct = QAction("Ne&xt", self, shortcut=QKeySequence.NextChild,
-                statusTip="Move the focus to the next window",
-                triggered=self.mdiArea.activateNextSubWindow)
+                               statusTip="Move the focus to the next window",
+                               triggered=self.mdiArea.activateNextSubWindow)
 
         self.previousAct = QAction("Pre&vious", self,
-                shortcut=QKeySequence.PreviousChild,
-                statusTip="Move the focus to the previous window",
-                triggered=self.mdiArea.activatePreviousSubWindow)
+                                   shortcut=QKeySequence.PreviousChild,
+                                   statusTip="Move the focus to the previous window",
+                                   triggered=self.mdiArea.activatePreviousSubWindow)
 
         self.separatorAct = QAction(self)
         self.separatorAct.setSeparator(True)
 
         self.aboutAct = QAction("&About", self,
-                statusTip="Show the application's About box",
-                triggered=self.about)
+                                statusTip="Show the application's About box",
+                                triggered=self.about)
 
     def createMenus(self):
+        """create all menus"""
         self.fileMenu = self.menuBar().addMenu("&File")
         self.fileMenu.addAction(self.newAct)
         self.fileMenu.addAction(self.openAct)
@@ -228,9 +250,11 @@ class MainWindow(QMainWindow):
         self.helpMenu.addAction(self.aboutAct)
 
     def createStatusBar(self):
+        """create the status bar"""
         self.statusBar().showMessage("Ready")
 
     def readSettings(self):
+        """read the settings"""
         settings = QSettings('Pixel Stereo', 'lekture')
         pos = settings.value('pos', QPoint(200, 200))
         size = settings.value('size', QSize(1000, 650))
@@ -238,11 +262,13 @@ class MainWindow(QMainWindow):
         self.resize(size)
 
     def writeSettings(self):
+        """write settings"""
         settings = QSettings('Pixel Stereo', 'lekture')
         settings.setValue('pos', self.pos())
         settings.setValue('size', self.size())
 
     def activeProjekt(self):
+        """return the active project object"""
         activeSubWindow = self.mdiArea.activeSubWindow()
         if activeSubWindow:
             return activeSubWindow.widget()
@@ -250,6 +276,7 @@ class MainWindow(QMainWindow):
             return None
 
     def findProjekt(self, fileName):
+        """return the project"""
         canonicalFilePath = QFileInfo(fileName).canonicalFilePath()
 
         for window in self.mdiArea.subWindowList():
@@ -258,10 +285,12 @@ class MainWindow(QMainWindow):
         return None
 
     def setActiveSubWindow(self, window):
+        """set the active sub window"""
         if window:
             self.mdiArea.setActiveSubWindow(window)
 
     def openOutputsPanel(self):
+        """switch to the outputs editor"""
         if self.child:
             project = self.activeProjekt()
             project.scenario_group.setVisible(False)
@@ -270,6 +299,7 @@ class MainWindow(QMainWindow):
             self.outputsAct.setVisible(False)
 
     def openScenarioPanel(self):
+        """switch to the scenario editors"""
         if self.child:
             project = self.activeProjekt()
             project.scenario_output_index_range()
@@ -281,9 +311,11 @@ class MainWindow(QMainWindow):
 
 
 if __name__ == "__main__":
-    import sys
-    reload(sys)
-    sys.setdefaultencoding('utf8')
+    try:
+        reload(sys)
+        sys.setdefaultencoding('utf8')
+    except NameError:
+        pass
     app = QApplication(sys.argv)
     mainWin = MainWindow()
     mainWin.show()
