@@ -22,11 +22,11 @@ def line2event(self,newline):
     newline = newline.encode('utf-8')
     newline = str(newline)
     if ' ' in newline:
-        print 0,newline
+        print (0,newline)
         newline = newline.split(' ')
-        print 1,newline
+        print (1,newline)
         #newline = unicode2_list(newline)
-        print 2,newline
+        print (2,newline)
     if isinstance(newline,float):
         newline = int(newline)
         self.scenario_content.currentItem().setText(str(newline))
