@@ -6,7 +6,6 @@
 from pydular import project
 from panels import createProjectAttrGroupBox, createScenarioListGroupBox, \
                    createScenarioAttrGroupBox, createOuputAttrGroupBox
-from functions import event2line, line2event
 
 import sys
 import subprocess
@@ -364,7 +363,6 @@ class Projekt(QGroupBox, QModelIndex):
         if scenario.events() != []:
             for event in scenario.events():
                 line = event.content
-                line = event2line(line)
                 line = QListWidgetItem(line)
                 line.setFlags(Qt.ItemIsEnabled|Qt.ItemIsEditable|\
                               Qt.ItemIsSelectable|Qt.ItemIsDragEnabled)
@@ -474,7 +472,7 @@ class Projekt(QGroupBox, QModelIndex):
         # check if there is some text
         item = self.scenario_content.currentItem().text()
         # format the line
-        newline = line2event(self, item)
+        newline = item
         # there is new text on the last line
         if self.scenario_content.currentRow() + 1 == self.scenario_content.count():
             # create a new event

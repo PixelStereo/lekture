@@ -311,6 +311,7 @@ class MainWindow(QMainWindow):
 
 
 if __name__ == "__main__":
+    # this is for python2 only
     try:
         reload(sys)
         sys.setdefaultencoding('utf8')
