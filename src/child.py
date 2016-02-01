@@ -4,6 +4,7 @@
 """Child module hosts a project-related class"""
 
 from pydular import project
+from pydular.functions import checkType
 from panels import createProjectAttrGroupBox, createScenarioListGroupBox, \
                    createScenarioAttrGroupBox, createOuputAttrGroupBox
 
@@ -442,7 +443,7 @@ class Projekt(QGroupBox, QModelIndex):
                 self.scenario_out_text_display()
 
     def scenario_output_protocol_changed(self):
-        """protogol for output the selected scenario has changed"""
+        """protocol for output the selected scenario has changed"""
         # We set a lock when fillin the menu
         if not self.out_locked:
             protocol = self.scenario_output_protocol.currentText()
@@ -551,4 +552,6 @@ class Projekt(QGroupBox, QModelIndex):
             out = outs[row]
             attr = self.protocol_table.horizontalHeaderItem(col).text()
             value = self.protocol_table.currentItem().text()
+            # just to be sure that an int won't be encoded as a symbol
+            value = checkType(value)
             setattr(out, attr, value)
