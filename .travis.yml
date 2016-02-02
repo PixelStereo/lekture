@@ -5,7 +5,7 @@ os:
 - osx
 - linux
 before_install: travis_wait scripts/install-deps.sh
-install: scripts/install.sh
+install: travis_wait scripts/install.sh
 script: ls
 deploy:
   provider: releases
