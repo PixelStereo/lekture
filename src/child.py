@@ -160,7 +160,7 @@ class Projekt(QGroupBox, QModelIndex):
                 subprocess.check_call(['xdg-open', '--', path])
             return True
         else:
-            False
+            return False
 
     def project_display(self):
         """display a project"""
