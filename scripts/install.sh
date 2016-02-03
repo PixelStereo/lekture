@@ -4,6 +4,9 @@ set -v
 
 case "$TRAVIS_OS_NAME" in
   linux)
+    export PATH="$HOME/.linuxbrew/bin:$PATH"
+    export MANPATH="$HOME/.linuxbrew/share/man:$MANPATH"
+    export INFOPATH="$HOME/.linuxbrew/share/info:$INFOPATH"
     brew install PyQt5 --with-python --with-python3
    ;;
   osx)
