@@ -21,6 +21,7 @@ case "$TRAVIS_OS_NAME" in
 esac
 echo "START install-deps"
 brew install python
+brew link --overwrite python
 brew install python3
 brew install liblo
 sudo pip install Cython
