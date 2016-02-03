@@ -2,7 +2,14 @@
 
 set -v
 
-brew install PyQt5 --with-python --with-python3
+case "$TRAVIS_OS_NAME" in
+  linux)
+    brew install PyQt5 --with-python --with-python3
+   ;;
+  osx)
+    brew install PyQt5 --with-python --without-python3
+  ;;
+esac
 
 cd src
 ../scripts/build.sh ${TRAVIS_TAG}
