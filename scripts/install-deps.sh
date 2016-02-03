@@ -15,12 +15,20 @@ case "$TRAVIS_OS_NAME" in
    ;;
   osx)
     echo "START OSX"
+    echo "nothing to do… brew is already installed on osx"
     echo "END OSX"
   ;;
 esac
-git submodule init
-git submodule update
+echo "START install-deps"
 brew install python
 brew install python3
 brew install liblo
-echo "install-deps END"
+sudo pip install Cython
+sudo pip3 install Cython
+sudo pip install pyliblo
+sudo pip3 install pyliblo
+sudo pip install pyinstaller
+sudo pip3 install pyinstaller
+sudo pip install -r 3rdparty/pydular/requirements.txt
+sudo pip3 install -r 3rdparty/pydular/requirements.txt
+echo "END install-deps"
