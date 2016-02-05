@@ -113,6 +113,7 @@ class Projekt(QGroupBox, QModelIndex):
         #self.outputs_refresh()
         self.scenario_list_refresh()
         self.project_display()
+        self.protocol_display()
         QApplication.restoreOverrideCursor()
         self.setCurrentFile(fileName)
         #self.document().contentsChanged.connect(self.documentWasModified)
