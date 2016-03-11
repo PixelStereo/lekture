@@ -1,6 +1,8 @@
 # lekture
 Inter-media OSC sequencer
 
+<img width="10%" src="./src/icon/Play_blauw.png" alt="About screen" title="About screen"</img>
+
 ##User
 this is a work in progress… don't expect a working version in the following weeks. But if you want to test it, just donwload the [latest release](http://github.com/PixelStereo/lekture/releases/latest) and double-click on it to start !!
 
