@@ -7,8 +7,9 @@ main script
 
 import sys
 from window import MainWindow
+from PyQt5.QtCore import QFileInfo
+from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QApplication
-
 
 if __name__ == "__main__":
     # this is for python2 only
@@ -18,6 +19,9 @@ if __name__ == "__main__":
     except NameError:
         pass
     app = QApplication(sys.argv)
+    root = QFileInfo(__file__).absolutePath()
+    path = root+'/icon/Play_blauw.png'
+    app.setWindowIcon(QIcon(path))
     mainWin = MainWindow()
     mainWin.show()
     sys.exit(app.exec_())
