@@ -1,7 +1,11 @@
 #! /usr/bin/env python
 # -*- coding: utf-8 -*-
 
-"""Child module hosts a project-related class"""
+"""
+Child module hosts a project-related class
+A Projekt class is created for each sub-window / project.
+A Projekt handles scenario and outputs
+"""
 
 from pydular import project
 from pydular.functions import checkType
@@ -16,7 +20,9 @@ from PyQt5.QtWidgets import QFileDialog, QListWidgetItem, QApplication, QMenu, \
 
 
 class Document(object):
-    """docstring for Document"""
+    """
+    Implements a modified flag to not forget saving before quit
+    """
     def __init__(self, arg):
         super(Document, self).__init__()
         self.arg = arg
@@ -33,10 +39,16 @@ class Document(object):
 
 
 class Projekt(QGroupBox, QModelIndex):
-    """This is the projekt class"""
+    """
+    Implements pydular project class in a dedicated sub-window
+    """
+    # used to create sub-windows
     sequenceNumber = 1
 
     def __init__(self):
+        """
+        Init creates the layout for a projekt
+        """
         super(Projekt, self).__init__()
 
         self.setAttribute(Qt.WA_DeleteOnClose)
@@ -89,7 +101,9 @@ class Projekt(QGroupBox, QModelIndex):
         self.setLayout(mainLayout)
 
     def newFile(self):
-        """create a new project"""
+        """
+        Create a new project
+        """
         self.isUntitled = True
         self.curFile = "project %d" % Projekt.sequenceNumber
         Projekt.sequenceNumber += 1
@@ -101,7 +115,9 @@ class Projekt(QGroupBox, QModelIndex):
         #self.document().contentsChanged.connect(self.documentWasModified)
 
     def loadFile(self, fileName):
-        """open an existing project file"""
+        """
+        Open an existing project file
+        """
         file = QFile(fileName)
         if not file.open(QFile.ReadOnly | QFile.Text):
             QMessageBox.warning(self, "MDI",
@@ -120,14 +136,18 @@ class Projekt(QGroupBox, QModelIndex):
         return True
 
     def save(self):
-        """save a project"""
+        """
+        Save a project
+        """
         if self.isUntitled:
             return self.saveAs()
         else:
             return self.saveFile(self.curFile)
 
     def saveAs(self):
-        """save as a project"""
+        """
+        Save as a project
+        """
         fileName, _ = QFileDialog.getSaveFileName(self, "Save As", self.curFile)
         if not fileName:
             return False
@@ -136,7 +156,9 @@ class Projekt(QGroupBox, QModelIndex):
         return self.saveFile(fileName)
 
     def saveFile(self, fileName=None):
-        """ save project"""
+        """
+        save project (called after save and saveas method)
+        """
         QApplication.setOverrideCursor(Qt.WaitCursor)
         if fileName:
             self.project.write(fileName)
@@ -150,7 +172,9 @@ class Projekt(QGroupBox, QModelIndex):
         return True
 
     def openFolder(self):
-        """ open project directory"""
+        """
+        Reveal project directory in Explorer (tested on OSX only)
+        """
         if self.project.path:
             path = self.project.path
             if sys.platform == 'darwin':
@@ -164,32 +188,44 @@ class Projekt(QGroupBox, QModelIndex):
             return False
 
     def project_display(self):
-        """display a project"""
+        """
+        Display project's Attributes
+        """
         self.project_author.setText(self.project.author)
         self.project_version.setText(self.project.version)
         self.project_path.setText(self.project.path)
 
     def userFriendlyCurrentFile(self):
-        """ return user friendly current file name (without path"""
+        """
+        Return user friendly current file name (without path)
+        """
         return self.strippedName(self.curFile)
 
     def currentFile(self):
-        """ return current file object"""
+        """
+        Return current file object
+        """
         return self.curFile
 
     def closeEvent(self, event):
-        """call when project is about to be closed"""
+        """
+        Call when project is about to be closed
+        """
         if self.maybeSave():
             event.accept()
         else:
             event.ignore()
 
     def documentWasModified(self):
-        """called when a modification happened on the document"""
+        """
+        Called when a modification happened on the document
+        """
         self.setWindowModified(self.document().isModified())
 
     def maybeSave(self):
-        """return the modified state of the project"""
+        """
+        Return the modified state of the project
+        """
         if self.document.isModified():
             ret = QMessageBox.warning(self, "MDI",
                                       "'%s' has been modified.\nDo you want to save your "
@@ -205,7 +241,9 @@ class Projekt(QGroupBox, QModelIndex):
         return True
 
     def setCurrentFile(self, fileName):
-        """set a current file"""
+        """
+        Set a current file
+        """
         self.curFile = QFileInfo(fileName).canonicalFilePath()
         self.isUntitled = False
         #self.document().setModified(False)
@@ -213,11 +251,15 @@ class Projekt(QGroupBox, QModelIndex):
         self.setWindowTitle(self.userFriendlyCurrentFile() + "[*]")
 
     def strippedName(self, fullFileName):
-        """return the stripped name of the project (without the path)"""
+        """
+        Return the stripped name of the project (without the path)
+        """
         return QFileInfo(fullFileName). baseName()
 
     def scenarioSelectionChanged(self, current, previous):
-        """set scenario_selected variable when scenario selection changed"""
+        """
+        Set scenario_selected variable when scenario selection changed
+        """
         scenarios = self.project.scenarios()
         if current:
             scenar = current
@@ -248,7 +290,9 @@ class Projekt(QGroupBox, QModelIndex):
             #self.ScenarioAttrGroupBox.setVisible(True)
 
     def newScenario(self):
-        """create a new scenario"""
+        """
+        Create a new scenario
+        """
         scenario = self.project.new_scenario()
         # The current scenario has not an output available, so assign the first one.
         # In lekture, we always have a default output (OSC), created when creating a project
@@ -261,7 +305,9 @@ class Projekt(QGroupBox, QModelIndex):
         self.scenario_list.setFocus()
 
     def delScenario(self):
-        """delete the selected scenario"""
+        """
+        Delete the selected scenario
+        """
         if self.scenario_selected:
             scenar2delete = self.scenario_selected
             # and then delete the scenario object
@@ -273,11 +319,15 @@ class Projekt(QGroupBox, QModelIndex):
             self.scenario_list.setCurrentCell(row, 0)
 
     def playScenario(self):
-        """play the selected scenario"""
+        """
+        Play the selected scenario
+        """
         self.scenario_selected.play()
 
     def scenario_list_refresh(self):
-        """refresh scenario table view"""
+        """
+        Refresh scenario table view
+        """
         self.scenario_list.clearContents()
         scenarios = len(self.project.scenarios())
         self.scenario_list.setRowCount(scenarios)
@@ -309,7 +359,9 @@ class Projekt(QGroupBox, QModelIndex):
             self.scenario_list.setItem(index, 5, out2_item)
 
     def scenario_display_clear(self):
-        """clear the scenario table view"""
+        """
+        clear the scenario table view
+        """
         self.scenario_content.clear()
         self.scenario_output_index.clear()
         self.scenario_output_protocol.clear()
@@ -317,7 +369,9 @@ class Projekt(QGroupBox, QModelIndex):
         self.scenario_description.clear()
 
     def scenario_out_fill(self):
-        """fill in scenario output (in event part) """
+        """
+        Fill in scenario output (in event part)
+        """
         scenario = self.scenario_selected
         self.out_locked = True
         self.scenario_output_protocol.clear()
@@ -334,7 +388,9 @@ class Projekt(QGroupBox, QModelIndex):
         self.out_locked = False
 
     def scenario_out_display(self, scenario):
-        """display outputs for scenario"""
+        """
+        Display outputs for scenario
+        """
         self.out_locked = True
         out = scenario.getoutput()
         self.scenario_output_index.setValue(scenario.output[1])
@@ -344,7 +400,9 @@ class Projekt(QGroupBox, QModelIndex):
         self.out_locked = False
 
     def scenario_out_text_display(self):
-        """display a readable output description"""
+        """
+        Display a readable output description
+        """
         scenario = self.scenario_selected
         out = scenario.getoutput()
         if out:
@@ -356,7 +414,9 @@ class Projekt(QGroupBox, QModelIndex):
             self.scenario_output_text.setText('No output')
 
     def scenario_display(self, scenario):
-        """This function is called when scenario_selected changed"""
+        """
+        This function is called when scenario_selected changed
+        """
         self.scenario_display_clear()
         self.scenario_out_fill()
         self.scenario_out_display(scenario)
@@ -375,7 +435,9 @@ class Projekt(QGroupBox, QModelIndex):
         self.scenario_content.addItem(empty)
 
     def event_delete(self):
-        """delete the selected event"""
+        """
+        Delete the selected event
+        """
         if self.event_selected:
             # check if it's not the last line
             cot = self.scenario_content.currentItem()
@@ -391,7 +453,9 @@ class Projekt(QGroupBox, QModelIndex):
                 #self.event_selected = None
 
     def event_right_click(self, QPos):
-        """called when user right-click on an event"""
+        """
+        Called when user right-click on an event
+        """
         self.listMenu = QMenu()
         play = self.listMenu.addAction("Play Event")
         play_from_here = self.listMenu.addAction("Play From Here")
@@ -402,17 +466,23 @@ class Projekt(QGroupBox, QModelIndex):
         self.listMenu.show()
 
     def event_play_func(self):
-        """play the selected event"""
+        """
+        Play the selected event
+        """
         if self.event_selected and type(self.event_selected.content) != int:
             self.event_selected.play()
 
     def event_play_from_here_func(self):
-        """play from the selected event"""
+        """
+        Play from the selected event
+        """
         if self.event_selected:
             self.scenario_selected.play_from_here(self.event_selected)
 
     def scenario_data_changed(self, row, col):
-        """scenario is edited"""
+        """
+        Scenario is edited
+        """
         if  self.scenario_list.currentItem():
             data = self.scenario_list.currentItem().text()
             if col == 0:
@@ -432,11 +502,15 @@ class Projekt(QGroupBox, QModelIndex):
                 self.scenario_list_refresh()
 
     def scenario_description_changed(self):
-        """description of the scenario changed"""
+        """
+        Description of the scenario changed
+        """
         self.scenario_selected.description = self.scenario_description.text()
 
     def scenario_output_index_changed(self):
-        """output index of the scenario changed"""
+        """
+        Output index of the scenario changed
+        """
         # We set a lock when fillin the menu
         if not self.out_locked:
             if self.scenario_selected:
@@ -444,7 +518,9 @@ class Projekt(QGroupBox, QModelIndex):
                 self.scenario_out_text_display()
 
     def scenario_output_protocol_changed(self):
-        """protocol for output the selected scenario has changed"""
+        """
+        Protocol for output the selected scenario has changed
+        """
         # We set a lock when fillin the menu
         if not self.out_locked:
             protocol = self.scenario_output_protocol.currentText()
@@ -457,7 +533,9 @@ class Projekt(QGroupBox, QModelIndex):
                 self.scenario_output_index_range()
 
     def scenario_output_index_range(self):
-        """update range to existing outputs of this protocol"""
+        """
+        Update range to existing outputs of this protocol
+        """
         if self.scenario_selected:
             length = len(self.project.outputs(self.scenario_selected.output[0]))
         else:
@@ -470,7 +548,9 @@ class Projekt(QGroupBox, QModelIndex):
             self.scenario_output_index.setDisabled(True)
 
     def scenario_content_changed(self):
-        """edit the content (events) of the selected scenario"""
+        """
+        Edit the content (events) of the selected scenario
+        """
         # check if there is some text
         item = self.scenario_content.currentItem().text()
         # format the line
@@ -492,7 +572,9 @@ class Projekt(QGroupBox, QModelIndex):
         self.scenario_list.setCurrentCell(row, 0)
 
     def eventSelectionChanged(self):
-        """selected event changed"""
+        """
+        Selected event has been changed
+        """
         if self.scenario_selected and self.scenario_content.currentRow() >= 0 \
             and self.scenario_content.currentRow() < len(self.scenario_selected.events()):
             item = self.scenario_content.currentRow()
@@ -509,21 +591,29 @@ class Projekt(QGroupBox, QModelIndex):
             self.event_play.setDisabled(True)
 
     def project_author_changed(self):
-        """project author changed"""
+        """
+        Project author has been changed
+        """
         self.project.author = self.project_author.text()
 
     def project_version_changed(self):
-        """project version changed"""
+        """
+        Project version has been changed
+        """
         self.project.version = self.project_version.text()
 
     def new_output_func(self):
-        """create a new output"""
+        """
+        Create a new output for the current protocol
+        """
         protocol = self.protocol.currentText()
         self.project.new_output(protocol)
         self.protocol_display()
 
     def protocol_display(self):
-        """display the current protocol"""
+        """
+        Display outputs for the current protocol
+        """
         self.protocol_table.clear()
         # we know there is at least one protocol in lekture, OSC is create when creating a project
         protocol = self.protocol.currentText()
@@ -546,7 +636,9 @@ class Projekt(QGroupBox, QModelIndex):
             row = row + 1
 
     def dataChanged(self, row, col):
-        """output is edited"""
+        """
+        An output has been edited
+        """
         if self.protocol_table.currentItem():
             protocol = self.protocol.currentText()
             outs = self.project.outputs(protocol)
