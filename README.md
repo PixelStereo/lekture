@@ -5,6 +5,7 @@ Inter-media OSC sequencer
 
 ##User
 this is a work in progress… don't expect a working version in the following weeks. But if you want to test it, just donwload the [latest release](http://github.com/PixelStereo/lekture/releases/latest) and double-click on it to start !!
+OSX version should work on OS X.6 and later
 
 ##Developper
 Development is done under python 2.7.11 on OSX. I did not test but lekture should work on Linux and Windows too.    
