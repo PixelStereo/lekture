@@ -4,14 +4,13 @@ set -v
 
 case "$TRAVIS_OS_NAME" in
   linux)
-    export PATH="$HOME/.linuxbrew/bin:$PATH"
-    export MANPATH="$HOME/.linuxbrew/share/man:$MANPATH"
-    export INFOPATH="$HOME/.linuxbrew/share/info:$INFOPATH"
-    brew install PyQt5 --with-python --without-python3
-   ;;
-  osx)
+    sudo apt-get update
+    sudo apt-get -y install python3-pyqt5
+  ;;
+    osx)
     brew install PyQt5 --with-python --without-python3
   ;;
+
 esac
 
 cd src
@@ -27,6 +26,4 @@ case "$TRAVIS_OS_NAME" in
   ;;
 esac
 
-
 cd ../
-#python3 main.py
