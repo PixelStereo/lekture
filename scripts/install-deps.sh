@@ -5,19 +5,20 @@ set -v
 case "$TRAVIS_OS_NAME" in
   linux)
     echo "START LINUX"
-    sudo apt-get install -y liblo
+    sudo apt-get -y install python3 python3-setuptools libpython3.4-dev 
+    sudo easy_install3 pip
+    sudo apt-get -y install liblo7
     echo "END LINUX"
   ;;
   osx)
     echo "START OSX"
-    brew install python
-    brew link --overwrite python
+    brew install python3
+    brew link --overwrite python3
     brew install liblo
     echo "END OSX"
   ;;
 esac
 
-sudo pip install Cython
-sudo pip install pyliblo
-sudo pip install pyinstaller
-sudo pip install -r 3rdparty/pydular/requirements.txt
+sudo pip3 install Cython
+sudo pip3 install pyliblo
+sudo pip3 install pyinstaller
