@@ -13,7 +13,7 @@ before_install: scripts/install-deps.sh
 
 install: travis_wait scripts/install.sh
 
-script: ls
+script: source scripts/split_repo_slug.sh
 
 deploy:
   provider: releases
