@@ -1,22 +1,30 @@
-language: python
+language: c
 sudo: required
 dist: trusty
-python:
-  - 3.4
+
+virtualenv:
+  system_site_packages: true
+
 os:
 - osx
 - linux
+
 before_install: scripts/install-deps.sh
-install: travis_wait scripts/install.sh
-script: ls
+
+install: 
+  - travis_wait scripts/install.sh
+  - source scripts/split_repo_slug.sh
+
+script: echo "Less is More"
+
 deploy:
   provider: releases
   skip_cleanup: true
   api_key:
     secure: "${SECURE_KEY}"
   file:
-  - "src/dist/Lekture_${TRAVIS_TAG}_${TRAVIS_OS_NAME}.zip"
+  - "src/dist/${REPO}_${TRAVIS_TAG}_${TRAVIS_OS_NAME}.zip"
   on:
     tags: true
     all_branches: true
-    repo: PixelStereo/lekture
+    repo: ${TRAVIS_REPO_SLUG}
