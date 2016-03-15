@@ -559,9 +559,8 @@ class Projekt(QGroupBox, QModelIndex):
         Edit the content (events) of the selected scenario
         """
         # check if there is some text
-        item = self.scenario_content.currentItem().text()
-        # format the line
-        newline = item
+        newline = self.scenario_content.currentItem().text()
+        newline = newline.split(' ')
         # there is new text on the last line
         if self.scenario_content.currentRow() + 1 == self.scenario_content.count():
             # create a new event
