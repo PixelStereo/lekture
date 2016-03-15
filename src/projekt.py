@@ -425,6 +425,13 @@ class Projekt(QGroupBox, QModelIndex):
         if scenario.events() != []:
             for event in scenario.events():
                 line = event.content
+                if isinstance(line, list):
+                    the_string = ''
+                    for item in line:
+                        the_string = the_string + str(item) + ' '
+                    line = the_string
+                elif isinstance(line, int):
+                    line = str(line)
                 line = QListWidgetItem(line)
                 line.setFlags(Qt.ItemIsEnabled|Qt.ItemIsEditable|\
                               Qt.ItemIsSelectable|Qt.ItemIsDragEnabled)
