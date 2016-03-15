@@ -12,15 +12,8 @@ cd $CURRENT
 NAME=${1:-$DEFAULTVALUE}
 echo "app will be build with the name :" $NAME
 
-# linux use pip, and osx use pip3
-case "$TRAVIS_OS_NAME" in
-  linux)
-    sudo pip install -r ../3rdparty/pydular/requirements.txt
-  ;;
-    osx)
-    sudo pip3 install -r ../3rdparty/pydular/requirements.txt
-  ;;
+# install pydular dependancies
+sudo pip3 install -r ../3rdparty/pydular/requirements.txt
 
-esac
-
+# build the binary
 pyinstaller --onefile --paths ../3rdparty/pydular/ --windowed --icon=icon/icon.icns -n $NAME main.py
