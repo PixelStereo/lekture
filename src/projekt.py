@@ -609,6 +609,16 @@ class Projekt(QGroupBox, QModelIndex):
         """
         self.project.version = self.project_version.text()
 
+    def project_autoplay_changed(self, state):
+        """
+        Project autoplay has been toggled
+        """
+        if state > 0:
+            self.project.autoplay = True
+        else:
+            self.project.autoplay = False
+
+
     def new_output_func(self):
         """
         Create a new output for the current protocol

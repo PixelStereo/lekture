@@ -2,8 +2,8 @@
 # -*- coding: utf-8 -*-
 
 from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import QLabel,QLineEdit,QSpinBox,QComboBox,QTableWidget,QVBoxLayout,QTableWidgetItem
-from PyQt5.QtWidgets import QGroupBox,QHBoxLayout,QListWidget,QAbstractItemView,QPushButton,QGridLayout
+from PyQt5.QtWidgets import QLabel, QLineEdit, QSpinBox, QComboBox, QTableWidget, QVBoxLayout, QTableWidgetItem
+from PyQt5.QtWidgets import QGroupBox, QHBoxLayout, QListWidget, QAbstractItemView, QPushButton, QGridLayout, QCheckBox
 
 import os,sys
 # for development of pydular, use git version
@@ -11,7 +11,7 @@ pydular_path = os.path.abspath('./../../pydular')
 sys.path.append(pydular_path)
 
 from pydular import project
- 
+
 def createProjectAttrGroupBox(self):
     self.project_Groupbox = QGroupBox()
     project_layout = QHBoxLayout()
@@ -22,14 +22,18 @@ def createProjectAttrGroupBox(self):
     project_version = QLineEdit(self.project.version)
     project_path_label = QLabel('path')
     project_path = QLabel(self.project.path)
+    project_autoplay_label = QLabel('autoplay')
+    project_autoplay = QCheckBox(self.project.autoplay)
     project_path.setMinimumWidth(400)
 
     self.project_author = project_author
     self.project_version = project_version
     self.project_path = project_path
+    self.project_autoplay = project_autoplay
 
     self.project_author.textEdited.connect(self.project_author_changed)
     self.project_version.textEdited.connect(self.project_version_changed)
+    self.project_autoplay.stateChanged.connect(self.project_autoplay_changed)
 
     project_layout.addWidget(project_author_label)
     project_layout.addWidget(project_author)
@@ -37,9 +41,11 @@ def createProjectAttrGroupBox(self):
     project_layout.addWidget(project_version)
     project_layout.addWidget(project_path_label)
     project_layout.addWidget(project_path)
+    project_layout.addWidget(project_autoplay_label)
+    project_layout.addWidget(project_autoplay)
     project_layout.addStretch(1)
-    self.project_Groupbox.setLayout(project_layout)   
-        
+    self.project_Groupbox.setLayout(project_layout)
+
 def createScenarioListGroupBox(self):
     self.ScenarioListGroupBox = QGroupBox("Scenario List")
     self.scenario_list = QTableWidget()
@@ -79,7 +85,7 @@ def createScenarioListGroupBox(self):
     layout.setRowStretch(5, 1)
     layout.setColumnStretch(0, 5)
     scenario_commands = QGroupBox("Scenario commands")
-    scenario_commands.setLayout(layout)  
+    scenario_commands.setLayout(layout)
     scenario_commands.setMinimumWidth(140)
     scenario_commands.setMinimumHeight(150)
     scenario_commands.setMaximumWidth(140)
@@ -89,7 +95,7 @@ def createScenarioListGroupBox(self):
     scenarios.addWidget(self.scenario_list,0,1,5,5)
     self.ScenarioListGroupBox.setMinimumHeight(250)
     self.ScenarioListGroupBox.setLayout(scenarios)
-    
+
 
 def createScenarioAttrGroupBox(self):
     self.ScenarioAttrGroupBox = QGroupBox("Scenario Content")
@@ -173,5 +179,3 @@ def createOuputAttrGroupBox(self):
     output_layout.addWidget(self.protocol)
     output_layout.addWidget(self.protocol_table )
     self.outputs_group.setLayout(output_layout)
-
-    
