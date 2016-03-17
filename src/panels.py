@@ -23,17 +23,24 @@ def createProjectAttrGroupBox(self):
     project_path_label = QLabel('path')
     project_path = QLabel(self.project.path)
     project_autoplay_label = QLabel('autoplay')
-    project_autoplay = QCheckBox(self.project.autoplay)
+    project_autoplay = QCheckBox()
+    project_loop_label = QLabel('loop')
+    project_loop = QCheckBox()
+    project_play = QPushButton('Play')
     project_path.setMinimumWidth(400)
 
     self.project_author = project_author
     self.project_version = project_version
     self.project_path = project_path
     self.project_autoplay = project_autoplay
+    self.project_loop = project_loop
+    self.project_play = project_play
 
     self.project_author.textEdited.connect(self.project_author_changed)
     self.project_version.textEdited.connect(self.project_version_changed)
     self.project_autoplay.stateChanged.connect(self.project_autoplay_changed)
+    self.project_loop.stateChanged.connect(self.project_loop_changed)
+    self.project_play.released.connect(self.project_play_action)
 
     project_layout.addWidget(project_author_label)
     project_layout.addWidget(project_author)
@@ -41,8 +48,11 @@ def createProjectAttrGroupBox(self):
     project_layout.addWidget(project_version)
     project_layout.addWidget(project_path_label)
     project_layout.addWidget(project_path)
+    project_layout.addWidget(project_play)
     project_layout.addWidget(project_autoplay_label)
     project_layout.addWidget(project_autoplay)
+    project_layout.addWidget(project_loop_label)
+    project_layout.addWidget(project_loop)
     project_layout.addStretch(1)
     self.project_Groupbox.setLayout(project_layout)
 

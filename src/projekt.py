@@ -194,6 +194,8 @@ class Projekt(QGroupBox, QModelIndex):
         self.project_author.setText(self.project.author)
         self.project_version.setText(self.project.version)
         self.project_path.setText(self.project.path)
+        self.project_loop.setChecked(self.project.loop)
+        self.project_autoplay.setChecked(self.project.autoplay)
 
     def userFriendlyCurrentFile(self):
         """
@@ -617,6 +619,20 @@ class Projekt(QGroupBox, QModelIndex):
         else:
             self.project.autoplay = False
 
+    def project_loop_changed(self, state):
+        """
+        Project loop has been toggled
+        """
+        if state > 0:
+            self.project.loop = True
+        else:
+            self.project.loop = False
+
+    def project_play_action(self):
+        """
+        Play the project, button has been released
+        """
+        self.project.play()
 
     def new_output_func(self):
         """
