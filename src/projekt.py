@@ -262,7 +262,7 @@ class Projekt(QGroupBox, QModelIndex):
         """
         Set scenario_selected variable when scenario selection changed
         """
-        scenarios = self.project.scenarios()
+        scenarios = self.project.scenarios
         if current:
             scenar = current
         elif previous and self.scenario_list.currentRow() >= 0:
@@ -302,7 +302,7 @@ class Projekt(QGroupBox, QModelIndex):
         scenario.output[0] = self.project.getprotocols()[0]
         scenario.output[1] = 1
         self.scenario_list_refresh()
-        last = len(self.project.scenarios())-1
+        last = len(self.project.scenarios)-1
         self.scenario_list.setCurrentCell(last, 0)
         self.scenario_list.setFocus()
 
@@ -331,10 +331,10 @@ class Projekt(QGroupBox, QModelIndex):
         Refresh scenario table view
         """
         self.scenario_list.clearContents()
-        scenarios = len(self.project.scenarios())
+        scenarios = len(self.project.scenarios)
         self.scenario_list.setRowCount(scenarios)
-        for scenario in self.project.scenarios():
-            index = self.project.scenarios().index(scenario)
+        for scenario in self.project.scenarios:
+            index = self.project.scenarios.index(scenario)
             name_item = QTableWidgetItem(scenario.name)
             name_item.setFlags(Qt.NoItemFlags)
             name_item.setFlags(Qt.ItemIsEnabled|Qt.ItemIsEditable|Qt.ItemIsSelectable)
