@@ -11,9 +11,9 @@ such as new / open / save / save as…
 
 import os
 import sys
-# for development of pydular, use git version
-pydular_path = os.path.abspath('./../3rdparty/pydular')
-sys.path.append(pydular_path)
+
+pylekture_path = os.path.abspath('./../3rdparty/pylekture')
+sys.path.append(pylekture_path)
 
 from projekt import Projekt
 

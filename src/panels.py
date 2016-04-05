@@ -5,12 +5,7 @@ from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QLabel, QLineEdit, QSpinBox, QComboBox, QTableWidget, QVBoxLayout, QTableWidgetItem
 from PyQt5.QtWidgets import QGroupBox, QHBoxLayout, QListWidget, QAbstractItemView, QPushButton, QGridLayout, QCheckBox
 
-import os,sys
-# for development of pydular, use git version
-pydular_path = os.path.abspath('./../../pydular')
-sys.path.append(pydular_path)
-
-from pydular import project
+from pylekture import project
 
 def createProjectAttrGroupBox(self):
     self.project_Groupbox = QGroupBox()

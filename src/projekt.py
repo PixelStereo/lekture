@@ -7,7 +7,7 @@ A Projekt class is created for each sub-window / project.
 A Projekt handles scenario and outputs
 """
 
-from pydular import project
+from pylekture import project
 from pydular.functions import checkType
 from panels import createProjectAttrGroupBox, createScenarioListGroupBox, \
                    createScenarioAttrGroupBox, createOuputAttrGroupBox
