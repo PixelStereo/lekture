@@ -4,10 +4,11 @@
 
 import os
 import sys
-# for development of pydular, use git version
-pydular_path = os.path.abspath('./../3rdparty/pydular')
-sys.path.append(pydular_path)
-# for development of pydular, use git version
+# for development of pybush, use git version
+pybush_path = os.path.abspath('./../3rdparty/pybush')
+sys.path.append(pybush_path)
+
+# for development of pybush, use git version
 lekture_path = os.path.abspath('./../src')
 sys.path.append(lekture_path)
 

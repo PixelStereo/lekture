@@ -8,7 +8,7 @@ A Projekt handles scenario and outputs
 """
 
 from pylekture import project
-from pydular.functions import checkType
+from pylekture.functions import checkType
 from panels import createProjectAttrGroupBox, createScenarioListGroupBox, \
                    createScenarioAttrGroupBox, createOuputAttrGroupBox
 
@@ -40,7 +40,7 @@ class Document(object):
 
 class Projekt(QGroupBox, QModelIndex):
     """
-    Implements pydular project class in a dedicated sub-window
+    Implements pylekture project class in a dedicated sub-window
     """
     # used to create sub-windows
     sequenceNumber = 1

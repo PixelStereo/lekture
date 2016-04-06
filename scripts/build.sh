@@ -12,7 +12,7 @@ cd $CURRENT
 NAME=${1:-$DEFAULTVALUE}
 echo "app will be build with the name :" $NAME
 
-# install pydular dependancies
+# install pylekture dependancies
 sudo pip3 install -r ../3rdparty/pylekture/requirements.txt
 
 # build the binary
