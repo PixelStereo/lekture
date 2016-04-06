@@ -13,7 +13,7 @@ NAME=${1:-$DEFAULTVALUE}
 echo "app will be build with the name :" $NAME
 
 # install pydular dependancies
-sudo pip3 install -r ../3rdparty/pydular/requirements.txt
+sudo pip3 install -r ../3rdparty/pylekture/requirements.txt
 
 # build the binary
-pyinstaller --onefile --paths ../3rdparty/pydular/ --windowed --icon=icon/icon.icns -n $NAME main.py
+pyinstaller --onefile --paths ../3rdparty/pylekture/ --windowed --icon=icon/icon.icns -n $NAME main.py
