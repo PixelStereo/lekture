@@ -191,7 +191,6 @@ class Projekt(QGroupBox, QModelIndex):
         """
         Display project's Attributes
         """
-        self.project_author.setText(self.project.author)
         self.project_version.setText(self.project.version)
         self.project_path.setText(self.project.path)
         self.project_loop.setChecked(self.project.loop)
@@ -597,12 +596,6 @@ class Projekt(QGroupBox, QModelIndex):
             self.event_selected = None
             self.event_del.setDisabled(True)
             self.event_play.setDisabled(True)
-
-    def project_author_changed(self):
-        """
-        Project author has been changed
-        """
-        self.project.author = self.project_author.text()
 
     def project_version_changed(self):
         """
