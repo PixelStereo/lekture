@@ -4,15 +4,15 @@
 
 import os
 import sys
-# for development of pybush, use git version
-pybush_path = os.path.abspath('./../3rdparty/pybush')
-sys.path.append(pybush_path)
+# for development of pylekture, use git version
+pylekture_path = os.path.abspath('./../3rdparty/pylekture')
+sys.path.append(pylekture_path)
 
-# for development of pybush, use git version
+# for development of pylekture, use git version
 lekture_path = os.path.abspath('./../src')
 sys.path.append(lekture_path)
 
-import main
+import projekt, window
 
 import sys
 import unittest
@@ -22,9 +22,9 @@ from PyQt5 import Qt
 from PyQt5.Qt import QTest
 app = QApplication(sys.argv)
 
-app = main.MainWindow()
+app = window.MainWindow()
 #print app.newFile()
-main.Projekt()
+projekt.Projekt()
 #print(window.project.version, window.project.author)
 #scenar = proj.new_scenario()
 #print scenar.output()
