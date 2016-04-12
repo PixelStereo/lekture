@@ -14,6 +14,7 @@ import sys
 
 pylekture_path = os.path.abspath('./../3rdparty/pylekture')
 sys.path.append(pylekture_path)
+import pylekture
 
 from projekt import Projekt
 
@@ -114,10 +115,8 @@ class MainWindow(QMainWindow):
 
     def about(self):
         """called when user wants to know a bit more on the app"""
-        QMessageBox.about(self, "About MDI",
-                          "<b>Lekture</b> is an OSC sequencer"
-                          "This release is an alpha version."
-                          "Don't use it in production !!")
+        QMessageBox.about(self, "About Lekture",
+                          "pylekture build " + str(pylekture.__version__))
 
     def updateMenus(self):
         """update menus"""
