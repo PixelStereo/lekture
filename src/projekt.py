@@ -120,7 +120,7 @@ class Projekt(QGroupBox, QModelIndex):
         """
         file = QFile(fileName)
         if not file.open(QFile.ReadOnly | QFile.Text):
-            QMessageBox.warning(self, "MDI",
+            QMessageBox.warning(self, "Lekture Error 123",
                                 "Cannot read file %s:\n%s." % (fileName, file.errorString()))
             return False
         QApplication.setOverrideCursor(Qt.WaitCursor)
@@ -151,8 +151,6 @@ class Projekt(QGroupBox, QModelIndex):
         fileName, _ = QFileDialog.getSaveFileName(self, "Save As", self.curFile)
         if not fileName:
             return False
-        else:
-            fileName = fileName + '.json'
         return self.saveFile(fileName)
 
     def saveFile(self, fileName=None):
