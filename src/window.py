@@ -1,10 +1,10 @@
 #! /usr/bin/env python
 # -*- coding: utf-8 -*-
 
-"""Main window handles :
-
-main window (of course !)
-Menus and all documents-related functions
+"""
+Main window handles :
+- main window
+- Menus and all documents-related functions
 such as new / open / save / save as…
 """
 
@@ -301,8 +301,8 @@ class MainWindow(QMainWindow):
         """switch to the scenario editors"""
         if self.child:
             project = self.activeProjekt()
-            project.scenario_output_index_range()
-            project.scenario_out_fill()
+            for scenario in project.project.scenarios:
+                project.scenario_output_refresh(scenario)
             project.outputs_group.setVisible(False)
             project.scenario_group.setVisible(True)
             self.scenarioAct.setVisible(False)

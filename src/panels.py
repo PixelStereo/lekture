@@ -6,6 +6,7 @@ from PyQt5.QtWidgets import QLabel, QLineEdit, QSpinBox, QComboBox, QTableWidget
 from PyQt5.QtWidgets import QGroupBox, QHBoxLayout, QListWidget, QAbstractItemView, QPushButton, QGridLayout, QCheckBox
 
 from pylekture import project
+from pylekture.constants import protocols
 
 def createProjectAttrGroupBox(self):
     self.project_Groupbox = QGroupBox()
@@ -99,14 +100,9 @@ def createScenarioAttrGroupBox(self):
     #self.ScenarioAttrGroupBox.setVisible(False)
     # Assign an output to the seleted scenario
     self.scenario_output_label = QLabel('output')
-    self.scenario_output_index = QSpinBox()
-    self.scenario_output_index.setMinimumSize(50,20)
-    self.scenario_output_index.setDisabled(True)
-    self.scenario_output_index.setRange(1,len(self.project.outputs()))
-    self.scenario_output_protocol = QComboBox()
-    for proto in project.Output.protocols():
-        self.scenario_output_protocol.addItem(proto)
-    self.scenario_output_protocol.setDisabled(True)
+    self.scenario_output = QComboBox()
+    self.scenario_output.setMinimumSize(50,20)
+    self.scenario_output.setDisabled(True)
     # Display the selected output
     self.scenario_output_text = QLabel('')
     # Description of the seleted scenario
@@ -129,8 +125,7 @@ def createScenarioAttrGroupBox(self):
     self.event_del.setMaximumWidth(100)
     self.event_del.setDisabled(True)
 
-    self.scenario_output_index.valueChanged.connect(self.scenario_output_index_changed)
-    self.scenario_output_protocol.currentTextChanged.connect(self.scenario_output_protocol_changed)
+    self.scenario_output.currentIndexChanged.connect(self.scenario_output_changed)
     self.scenario_description.textEdited.connect(self.scenario_description_changed)
     self.scenario_content.itemChanged.connect(self.scenario_content_changed)
     self.event_play.released.connect(self.event_play_func)
@@ -141,9 +136,8 @@ def createScenarioAttrGroupBox(self):
     layout.addWidget(self.scenario_description_label, 0, 0)
     layout.addWidget(self.scenario_description, 0, 1, 1, 9)
     layout.addWidget(self.scenario_output_label,1 , 0)
-    layout.addWidget(self.scenario_output_protocol, 1, 1)
-    layout.addWidget(self.scenario_output_index, 1, 2)
-    layout.addWidget(self.scenario_output_text,1,3)
+    layout.addWidget(self.scenario_output, 1, 1)
+    layout.addWidget(self.scenario_output_text,1,2)
     layout.addWidget(self.scenario_content_label,2 ,0 )
     layout.addWidget(self.scenario_content, 2, 1, 9, 9)
     layout.addWidget(self.event_play, 8, 0)
@@ -155,12 +149,12 @@ def createOuputAttrGroupBox(self):
     self.outputs_group = QGroupBox("Outputs")
     # creare a menu to chosse which protocol to display
     self.protocol = QComboBox()
-    for protocol in project.Output.protocols():
+    for protocol in protocols:
         self.protocol.addItem(protocol)
     # create a button for creating a new output
     self.output_new = QPushButton('New Output')
     # create the table to display outputs for each protocols
-    protocol_table = QTableWidget(len(self.project.outputs(protocol='OSC')),3)
+    protocol_table = QTableWidget(len(self.project.outputs),3)
     protocol_table.setColumnWidth(0,130)
     protocol_table.setColumnWidth(1,130)
     protocol_table.setColumnWidth(2,130)
@@ -174,5 +168,5 @@ def createOuputAttrGroupBox(self):
     output_layout = QVBoxLayout()
     output_layout.addWidget(self.output_new)
     output_layout.addWidget(self.protocol)
-    output_layout.addWidget(self.protocol_table )
+    output_layout.addWidget(self.protocol_table)
     self.outputs_group.setLayout(output_layout)

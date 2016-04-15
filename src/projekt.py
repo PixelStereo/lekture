@@ -8,7 +8,7 @@ A Projekt handles scenario and outputs
 """
 
 from pylekture import project
-from pylekture.functions import checkType
+from pylekture.functions import checkType, prop_list
 from panels import createProjectAttrGroupBox, createScenarioListGroupBox, \
                    createScenarioAttrGroupBox, createOuputAttrGroupBox
 
@@ -16,7 +16,8 @@ import sys
 import subprocess
 from PyQt5.QtCore import Qt, QModelIndex, QFileInfo, QFile, QPoint
 from PyQt5.QtWidgets import QFileDialog, QListWidgetItem, QApplication, QMenu, \
-                            QMessageBox, QTableWidgetItem, QGroupBox, QGridLayout
+                            QMessageBox, QTableWidgetItem, QGroupBox, QGridLayout, \
+                            QComboBox
 
 
 class Document(object):
@@ -112,7 +113,7 @@ class Projekt(QGroupBox, QModelIndex):
         self.project.name = self.curFile
         if not self.project.path:
             self.project_path.setText('Project has not been saved')
-        #self.document().contentsChanged.connect(self.documentWasModified)
+        #self.document().commandsChanged.connect(self.documentWasModified)
 
     def loadFile(self, fileName):
         """
@@ -120,19 +121,24 @@ class Projekt(QGroupBox, QModelIndex):
         """
         file = QFile(fileName)
         if not file.open(QFile.ReadOnly | QFile.Text):
+            flag = True
+        QApplication.setOverrideCursor(Qt.WaitCursor)
+        # read a project and create scenario
+        if self.project.read(fileName):
+            #self.outputs_refresh()
+            self.scenario_list_refresh()
+            self.project_display()
+            self.protocol_display()
+            QApplication.restoreOverrideCursor()
+            self.setCurrentFile(fileName)
+            flag = False
+        else:
+            flag = True
+        if flag:
             QMessageBox.warning(self, "Lekture Error 123",
                                 "Cannot read file %s:\n%s." % (fileName, file.errorString()))
             return False
-        QApplication.setOverrideCursor(Qt.WaitCursor)
-        # read a project and create scenario
-        self.project.read(fileName)
-        #self.outputs_refresh()
-        self.scenario_list_refresh()
-        self.project_display()
-        self.protocol_display()
-        QApplication.restoreOverrideCursor()
-        self.setCurrentFile(fileName)
-        #self.document().contentsChanged.connect(self.documentWasModified)
+        #self.document().commandsChanged.connect(self.documentWasModified)
         return True
 
     def save(self):
@@ -270,20 +276,17 @@ class Projekt(QGroupBox, QModelIndex):
             self.scenario_display_clear()
             self.scenario_del.setDisabled(True)
             self.scenario_play.setDisabled(True)
-            self.scenario_output_index.setDisabled(True)
-            self.scenario_output_protocol.setDisabled(True)
+            self.scenario_output.setDisabled(True)
             self.scenario_description.setDisabled(True)
             self.scenario_content.setDisabled(True)
             #self.ScenarioAttrGroupBox.setVisible(False)
         if scenar:
             index = self.scenario_list.row(scenar)
             self.scenario_selected = scenarios[index]
-            self.scenario_output_index_range()
             self.scenario_display(self.scenario_selected)
             self.scenario_del.setDisabled(False)
             self.scenario_play.setDisabled(False)
-            self.scenario_output_index.setDisabled(False)
-            self.scenario_output_protocol.setDisabled(False)
+            self.scenario_output.setDisabled(False)
             self.scenario_description.setDisabled(False)
             self.scenario_content.setDisabled(False)
             #self.ScenarioAttrGroupBox.setVisible(True)
@@ -295,9 +298,7 @@ class Projekt(QGroupBox, QModelIndex):
         scenario = self.project.new_scenario()
         # The current scenario has not an output available, so assign the first one.
         # In lekture, we always have a default output (OSC), created when creating a project
-        scenario.output = [None, None]
-        scenario.output[0] = self.project.getprotocols()[0]
-        scenario.output[1] = 1
+        scenario.output = self.project.outputs[-1]
         self.scenario_list_refresh()
         last = len(self.project.scenarios)-1
         self.scenario_list.setCurrentCell(last, 0)
@@ -344,57 +345,34 @@ class Projekt(QGroupBox, QModelIndex):
             post_wait_item = QTableWidgetItem(str(scenario.post_wait))
             post_wait_item.setFlags(Qt.NoItemFlags)
             post_wait_item.setFlags(Qt.ItemIsEnabled|Qt.ItemIsEditable|Qt.ItemIsSelectable)
-            out1_item = QTableWidgetItem(scenario.output[0])
-            out1_item.setFlags(Qt.NoItemFlags)
-            out1_item.setFlags(Qt.ItemIsEnabled|Qt.ItemIsSelectable)
-            out2_item = QTableWidgetItem(str(scenario.output[1]))
-            out2_item.setFlags(Qt.NoItemFlags)
-            out2_item.setFlags(Qt.ItemIsEnabled|Qt.ItemIsEditable|Qt.ItemIsSelectable)
+            self.output_item = QComboBox()
+            out_index = self.scenario_output_refresh(scenario)
+            self.scenario_output.setCurrentIndex(out_index)
             self.scenario_list.setItem(index, 0, name_item)
             self.scenario_list.setItem(index, 1, wait_item)
             self.scenario_list.setItem(index, 2, duration_item)
             self.scenario_list.setItem(index, 3, post_wait_item)
-            self.scenario_list.setItem(index, 4, out1_item)
-            self.scenario_list.setItem(index, 5, out2_item)
+            self.scenario_list.setCellWidget(index, 4, self.output_item)
 
     def scenario_display_clear(self):
         """
         clear the scenario table view
         """
         self.scenario_content.clear()
-        self.scenario_output_index.clear()
-        self.scenario_output_protocol.clear()
+        self.scenario_output.clear()
         self.scenario_output_text.clear()
         self.scenario_description.clear()
-
-    def scenario_out_fill(self):
-        """
-        Fill in scenario output (in event part)
-        """
-        scenario = self.scenario_selected
-        self.out_locked = True
-        self.scenario_output_protocol.clear()
-        protocols = []
-        for protocol in self.project.getprotocols():
-            # we want to have protocol only once in the menu
-            if not protocol in protocols:
-                protocols.append(protocol)
-        for protocol in protocols:
-            self.scenario_output_protocol.addItem(protocol)
-        if scenario:
-            prot = self.scenario_output_protocol.findText(scenario.output[0])
-            self.scenario_output_protocol.setCurrentIndex(prot)
-        self.out_locked = False
 
     def scenario_out_display(self, scenario):
         """
         Display outputs for scenario
         """
         self.out_locked = True
-        out = scenario.getoutput()
-        self.scenario_output_index.setValue(scenario.output[1])
-        prot = self.scenario_output_protocol.findText(scenario.output[0])
-        self.scenario_output_protocol.setCurrentIndex(prot)
+        out = scenario.output
+        for output in self.project.outputs:
+            if out == output:
+                index = self.project.outputs.index(output)
+        self.scenario_output.setItemText(index, str(scenario.output))
         self.scenario_out_text_display()
         self.out_locked = False
 
@@ -403,12 +381,12 @@ class Projekt(QGroupBox, QModelIndex):
         Display a readable output description
         """
         scenario = self.scenario_selected
-        out = scenario.getoutput()
+        out = scenario.output
         if out:
-            if scenario.output[0] == 'OSC' or scenario.output[0] == 'PJLINK':
+            if scenario.output.protocol == 'OSC' or scenario.output.protocol == 'PJLINK':
                 self.scenario_output_text.setText(out.ip+':'+str(out.udp)+' ('+out.name+')')
             else:
-                self.scenario_output_text.setText(scenario.output[0]+' protocol is not working')
+                self.scenario_output_text.setText(scenario.output.protocol+' protocol is not working')
         else:
             self.scenario_output_text.setText('No output')
 
@@ -417,13 +395,12 @@ class Projekt(QGroupBox, QModelIndex):
         This function is called when scenario_selected changed
         """
         self.scenario_display_clear()
-        self.scenario_out_fill()
         self.scenario_out_display(scenario)
         self.scenario_description.setText(scenario.description)
         # scenario contains events
-        if scenario.events() != []:
-            for event in scenario.events():
-                line = event.content
+        if scenario.events != []:
+            for event in scenario.events:
+                line = event.command
                 if isinstance(line, list):
                     the_string = ''
                     for item in line:
@@ -447,7 +424,7 @@ class Projekt(QGroupBox, QModelIndex):
         if self.event_selected:
             # check if it's not the last line
             cot = self.scenario_content.currentItem()
-            if self.scenario_content.row(cot) != len(self.scenario_selected.events()):
+            if self.scenario_content.row(cot) != len(self.scenario_selected.events):
                 event2delete = self.event_selected
                 self.scenario_content.takeItem(self.scenario_content.row(cot))
                 self.scenario_selected.del_event(event2delete)
@@ -475,7 +452,7 @@ class Projekt(QGroupBox, QModelIndex):
         """
         Play the selected event
         """
-        if self.event_selected and type(self.event_selected.content) != int:
+        if self.event_selected and type(self.event_selected.command) != int:
             self.event_selected.play()
 
     def event_play_from_here_func(self):
@@ -500,9 +477,7 @@ class Projekt(QGroupBox, QModelIndex):
             elif col == 3 and data.isdigit():
                 self.scenario_selected.post_wait = int(data)
             elif col == 4:
-                self.scenario_selected.output[0] = data
-            elif col == 5 and data.isdigit():
-                self.scenario_selected.output[1] = int(data)
+                self.scenario_selected.output = data
             else:
                 # undo is the simplest way to do, but it's not yet implemented
                 self.scenario_list_refresh()
@@ -513,45 +488,31 @@ class Projekt(QGroupBox, QModelIndex):
         """
         self.scenario_selected.description = self.scenario_description.text()
 
-    def scenario_output_index_changed(self):
+    def scenario_output_refresh(self, scenario):
+        """
+        Refresh the scenario list for a given scenario
+
+        :param scenario: The scenario to refresh
+        """
+        self.output_item.clear()
+        out_index = 0
+        for output in self.project.outputs:
+            self.output_item.addItem(output.name)
+            if output == scenario.output:
+                out_index = self.project.outputs.index(output)
+        return out_index
+
+
+
+    def scenario_output_changed(self):
         """
         Output index of the scenario changed
         """
         # We set a lock when fillin the menu
         if not self.out_locked:
             if self.scenario_selected:
-                self.scenario_selected.output[1] = self.scenario_output_index.value()
+                self.scenario_selected.output = self.scenario_output.currentText()
                 self.scenario_out_text_display()
-
-    def scenario_output_protocol_changed(self):
-        """
-        Protocol for output the selected scenario has changed
-        """
-        # We set a lock when fillin the menu
-        if not self.out_locked:
-            protocol = self.scenario_output_protocol.currentText()
-            protocol = protocol.encode('utf-8')
-            if protocol:
-                # When protocol change, we set the output_index to 1
-                self.scenario_output_index.setValue(1)
-                # change to the new value inputed by user
-                self.scenario_selected.output = [protocol, 1]
-                self.scenario_output_index_range()
-
-    def scenario_output_index_range(self):
-        """
-        Update range to existing outputs of this protocol
-        """
-        if self.scenario_selected:
-            length = len(self.project.outputs(self.scenario_selected.output[0]))
-        else:
-            length = None
-        if length:
-            self.scenario_output_index.setRange(1, length)
-            self.scenario_output_index.setDisabled(False)
-        else:
-            self.scenario_output_index.setRange(0, 0)
-            self.scenario_output_index.setDisabled(True)
 
     def scenario_content_changed(self):
         """
@@ -566,7 +527,7 @@ class Projekt(QGroupBox, QModelIndex):
             new_event = self.scenario_selected.new_event(content=newline)
             self.scenario_display(self.scenario_selected)
         else:
-            self.scenario_selected.events()[self.scenario_content.currentRow()].content = newline
+            self.scenario_selected.events[self.scenario_content.currentRow()].command = newline
         # we need to refresh the duration item on the scenrio_table
         #don't understant why but with this line, the name is changed too… weird
         #item = self.scenario_list.item(self.scenario_list.currentRow(),1)
@@ -581,12 +542,12 @@ class Projekt(QGroupBox, QModelIndex):
         Selected event has been changed
         """
         if self.scenario_selected and self.scenario_content.currentRow() >= 0 \
-            and self.scenario_content.currentRow() < len(self.scenario_selected.events()):
+            and self.scenario_content.currentRow() < len(self.scenario_selected.events):
             item = self.scenario_content.currentRow()
-            item = self.scenario_selected.events()[item]
+            item = self.scenario_selected.events[item]
             self.event_selected = item
             self.event_del.setDisabled(False)
-            if type(self.event_selected.content) != int:
+            if type(self.event_selected.command) != int:
                 self.event_play.setDisabled(False)
             else:
                 self.event_play.setDisabled(True)
@@ -640,14 +601,11 @@ class Projekt(QGroupBox, QModelIndex):
         self.protocol_table.clear()
         # we know there is at least one protocol in lekture, OSC is create when creating a project
         protocol = self.protocol.currentText()
-        self.protocol_table.setRowCount(len(self.project.outputs(protocol)))
+        self.protocol_table.setRowCount(len(self.project.outputs))
         row = 0
-        for out in self.project.outputs(protocol):
+        for out in self.project.outputs:
             col = 0
-            attrs = out.vars_()
-            for attr in attrs:
-                if attr.startswith('_'):
-                    attrs.remove(attr)
+            attrs = prop_list(out)
             attrs.sort()
             self.protocol_table.setColumnCount(len(attrs))
             for attr in attrs:
@@ -664,7 +622,7 @@ class Projekt(QGroupBox, QModelIndex):
         """
         if self.protocol_table.currentItem():
             protocol = self.protocol.currentText()
-            outs = self.project.outputs(protocol)
+            outs = self.project.outputs
             out = outs[row]
             attr = self.protocol_table.horizontalHeaderItem(col).text()
             value = self.protocol_table.currentItem().text()
