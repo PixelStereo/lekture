@@ -524,7 +524,7 @@ class Projekt(QGroupBox, QModelIndex):
         # there is new text on the last line
         if self.scenario_content.currentRow() + 1 == self.scenario_content.count():
             # create a new event
-            new_event = self.scenario_selected.new_event(command=newline)
+            new_event = self.scenario_selected.new_event('OSC', command=newline)
             self.scenario_display(self.scenario_selected)
         else:
             self.scenario_selected.events[self.scenario_content.currentRow()].command = newline

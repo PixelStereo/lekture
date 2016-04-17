@@ -25,7 +25,8 @@ if __name__ == "__main__":
         pass
     app = QApplication(sys.argv)
     try:
-        app.setStyleSheet(qdarkstyle.load_stylesheet_pyqt5())
+        #app.setStyleSheet(qdarkstyle.load_stylesheet_pyqt5())
+        pass
     except Exception as error:
         print('failed ' + str(error))
     root = QFileInfo(__file__).absolutePath()
