@@ -301,8 +301,6 @@ class MainWindow(QMainWindow):
         """switch to the scenario editors"""
         if self.child:
             project = self.activeProjekt()
-            for scenario in project.project.scenarios:
-                project.scenario_output_refresh(scenario)
             project.outputs_group.setVisible(False)
             project.scenario_group.setVisible(True)
             self.scenarioAct.setVisible(False)

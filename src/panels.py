@@ -20,7 +20,7 @@ def createProjectAttrGroupBox(self):
     project_loop_label = QLabel('loop')
     project_loop = QCheckBox()
     project_play = QPushButton('Play')
-    project_path.setMinimumWidth(400)
+    #project_path.setMinimumWidth(400)
 
     self.project_version = project_version
     self.project_path = project_path
@@ -48,13 +48,14 @@ def createScenarioListGroupBox(self):
     self.ScenarioListGroupBox = QGroupBox("Scenario List")
     self.scenario_list = QTableWidget()
     self.scenario_list.setSelectionMode(QAbstractItemView.SingleSelection)
-    header_list = ['name','wait','duration','post_wait','protocol','output']
+    header_list = ['name', 'wait','duration','post_wait','output']
+    self.scenario_list_header = header_list
     self.scenario_list.setColumnCount(len(header_list))
     for i in range(len(header_list)):
-        if i == 0:
-            self.scenario_list.setColumnWidth(i,250)
+        if header_list[i] == 'name' or header_list[i] == 'description' or header_list[i] == 'output':
+            self.scenario_list.setColumnWidth(i,140)
         else:
-            self.scenario_list.setColumnWidth(i,80)
+            self.scenario_list.setColumnWidth(i,60)
     for header in header_list:
         head = QTableWidgetItem(header)
         self.scenario_list.setHorizontalHeaderItem(header_list.index(header),head)
@@ -65,8 +66,9 @@ def createScenarioListGroupBox(self):
     self.scenario_list.itemDoubleClicked.connect(self.scenario_list.editItem)
     # Function to rename a scenario if its name changed
     self.scenario_list.cellChanged.connect(self.scenario_data_changed)
+    # Function to trigger when output menu is changed
+    self.scenario_list.cellChanged.connect(self.scenario_data_changed)
     # Button to create a new scenario
-    #self.scenario_list.setMinimumSize(120,290)
     self.scenario_new = QPushButton(('New Scenario'))
     self.scenario_new.released.connect(self.newScenario)
     self.scenario_play = QPushButton(('Play Scenario'))
@@ -76,22 +78,11 @@ def createScenarioListGroupBox(self):
     self.scenario_del.setDisabled(True)
     self.scenario_del.released.connect(self.delScenario)
 
-    layout = QGridLayout()
-    layout.addWidget(self.scenario_new,0,0)
-    layout.addWidget(self.scenario_play,1,0)
-    layout.addWidget(self.scenario_del,2,0)
-    layout.setRowStretch(5, 1)
-    layout.setColumnStretch(0, 5)
-    scenario_commands = QGroupBox("Scenario commands")
-    scenario_commands.setLayout(layout)
-    scenario_commands.setMinimumWidth(140)
-    scenario_commands.setMinimumHeight(150)
-    scenario_commands.setMaximumWidth(140)
-    scenario_commands.setMaximumHeight(150)
     scenarios = QGridLayout()
-    scenarios.addWidget(scenario_commands,0,0)
-    scenarios.addWidget(self.scenario_list,0,1,5,5)
-    self.ScenarioListGroupBox.setMinimumHeight(250)
+    scenarios.addWidget(self.scenario_new, 0, 0)
+    scenarios.addWidget(self.scenario_play, 0, 1)
+    scenarios.addWidget(self.scenario_del, 0, 2)
+    scenarios.addWidget(self.scenario_list, 1, 0, 5, 5)
     self.ScenarioListGroupBox.setLayout(scenarios)
 
 
@@ -170,3 +161,42 @@ def createOuputAttrGroupBox(self):
     output_layout.addWidget(self.protocol)
     output_layout.addWidget(self.protocol_table)
     self.outputs_group.setLayout(output_layout)
+
+def createEventsBinGroupBox(self):
+    self.EventsBinGroupBox = QGroupBox("Events Bin")
+    self.events_bin = QTableWidget()
+    self.events_bin.setSelectionMode(QAbstractItemView.SingleSelection)
+    header_list = ['name','wait','duration','post_wait','output']
+    self.events_bin.setColumnCount(len(header_list))
+    for i in range(len(header_list)):
+        if header_list[i] == 'name' or header_list[i] == 'description' or header_list[i] == 'output':
+            self.events_bin.setColumnWidth(i,140)
+        else:
+            self.events_bin.setColumnWidth(i,55)
+    for header in header_list:
+        head = QTableWidgetItem(header)
+        self.events_bin.setHorizontalHeaderItem(header_list.index(header),head)
+    self.events_bin.setSelectionBehavior(QAbstractItemView.SelectRows)
+    # to get current and previous
+    self.events_bin.currentItemChanged.connect(self.eventSelectionChanged)
+    # Function to edit scenario's name when double-clicking on it
+    self.events_bin.itemDoubleClicked.connect(self.events_bin.editItem)
+    # Function to rename a scenario if its name changed
+    self.events_bin.cellChanged.connect(self.event_data_changed)
+    # Button to create a new scenario
+    self.event_new = QPushButton(('New'))
+    self.event_new.released.connect(self.new_event)
+    self.event_play = QPushButton(('Play'))
+    self.event_play.setDisabled(True)
+    self.event_play.released.connect(self.play_event)
+    self.event_del = QPushButton(('Delete'))
+    self.event_del.setDisabled(True)
+    self.event_del.released.connect(self.event_delete)
+
+    events = QGridLayout()
+    events.addWidget(self.event_new,0,0)
+    events.addWidget(self.event_play,0,1)
+    events.addWidget(self.event_del,0,2)
+    events.addWidget(self.events_bin,1,0,5,5)
+    self.EventsBinGroupBox.setLayout(events)
+

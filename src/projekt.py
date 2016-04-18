@@ -10,7 +10,7 @@ A Projekt handles scenario and outputs
 from pylekture import project
 from pylekture.functions import checkType, prop_list
 from panels import createProjectAttrGroupBox, createScenarioListGroupBox, \
-                   createScenarioAttrGroupBox, createOuputAttrGroupBox
+                   createScenarioAttrGroupBox, createOuputAttrGroupBox, createEventsBinGroupBox
 
 import sys
 import subprocess
@@ -70,19 +70,25 @@ class Projekt(QGroupBox, QModelIndex):
         # this lock is used when fillin out_protocol QComboBox
         self.out_locked = False
 
+        self.create_panels()
+
+    def create_panels(self):
         # Create Project Attributes layout
         createProjectAttrGroupBox(self)
         # Create Scenario List layout
         createScenarioListGroupBox(self)
         # Create Scenario Attributes layout
         createScenarioAttrGroupBox(self)
+        # Create Events Bin
+        createEventsBinGroupBox(self)
         # Create Outputs layout
         createOuputAttrGroupBox(self)
         # Integrate Both scenario_list and scenario_attr in a group
         scenario_layout = QGridLayout()
         scenario_layout.addWidget(self.ScenarioListGroupBox, 0, 0)
+        scenario_layout.addWidget(self.EventsBinGroupBox, 0, 1)
         scenario_layout.addWidget(self.ScenarioAttrGroupBox, 1, 0)
-        scenario_layout.setRowStretch(0, 0)
+        #scenario_layout.setRowStretch(10, 10)
         scenario_group = QGroupBox()
         scenario_group.setLayout(scenario_layout)
 
@@ -95,11 +101,14 @@ class Projekt(QGroupBox, QModelIndex):
         # Integrate the layout previously created
         self.project_Groupbox.setMaximumHeight(50)
         mainLayout.addWidget(self.project_Groupbox, 0, 0, 1, 2)
-        mainLayout.addWidget(scenario_group, 1, 0)
+        mainLayout.addWidget(scenario_group, 1, 0, 10, 2)
         mainLayout.addWidget(self.outputs_group, 1, 0)
         self.mainLayout = mainLayout
         # Integrate main layout to the main window
         self.setLayout(mainLayout)
+
+
+        #self.scenario_list.setMinimumWidth(650)
 
     def newFile(self):
         """
@@ -126,7 +135,7 @@ class Projekt(QGroupBox, QModelIndex):
         # read a project and create scenario
         if self.project.read(fileName):
             #self.outputs_refresh()
-            self.scenario_list_refresh()
+            self.table_list_refresh('scenario')
             self.project_display()
             self.protocol_display()
             QApplication.restoreOverrideCursor()
@@ -299,7 +308,7 @@ class Projekt(QGroupBox, QModelIndex):
         # The current scenario has not an output available, so assign the first one.
         # In lekture, we always have a default output (OSC), created when creating a project
         scenario.output = self.project.outputs[-1]
-        self.scenario_list_refresh()
+        self.table_list_refresh('scenario')
         last = len(self.project.scenarios)-1
         self.scenario_list.setCurrentCell(last, 0)
         self.scenario_list.setFocus()
@@ -313,7 +322,7 @@ class Projekt(QGroupBox, QModelIndex):
             # and then delete the scenario object
             self.project.del_scenario(scenar2delete)
             row = self.scenario_list.currentRow()
-            self.scenario_list_refresh()
+            self.table_list_refresh('scenario')
             if self.scenario_list.rowCount() <= row:
                 row = self.scenario_list.rowCount() - 1
             self.scenario_list.setCurrentCell(row, 0)
@@ -324,35 +333,47 @@ class Projekt(QGroupBox, QModelIndex):
         """
         self.scenario_selected.play()
 
-    def scenario_list_refresh(self):
+    def play_event(self):
+        """
+        Play the selected event
+        """
+        self.event_selected.play()
+
+    def table_list_refresh(self, ttype='scenario'):
         """
         Refresh scenario table view
         """
-        self.scenario_list.clearContents()
-        scenarios = len(self.project.scenarios)
-        self.scenario_list.setRowCount(scenarios)
-        for scenario in self.project.scenarios:
-            index = self.project.scenarios.index(scenario)
-            name_item = QTableWidgetItem(scenario.name)
-            name_item.setFlags(Qt.NoItemFlags)
-            name_item.setFlags(Qt.ItemIsEnabled|Qt.ItemIsEditable|Qt.ItemIsSelectable)
-            wait_item = QTableWidgetItem(str(scenario.wait))
-            wait_item.setFlags(Qt.NoItemFlags)
-            wait_item.setFlags(Qt.ItemIsEnabled|Qt.ItemIsEditable|Qt.ItemIsSelectable)
-            duration_item = QTableWidgetItem(str(scenario.getduration()))
-            duration_item.setFlags(Qt.NoItemFlags)
-            duration_item.setFlags(Qt.ItemIsEnabled|Qt.ItemIsSelectable)
-            post_wait_item = QTableWidgetItem(str(scenario.post_wait))
-            post_wait_item.setFlags(Qt.NoItemFlags)
-            post_wait_item.setFlags(Qt.ItemIsEnabled|Qt.ItemIsEditable|Qt.ItemIsSelectable)
-            self.output_item = QComboBox()
-            out_index = self.scenario_output_refresh(scenario)
-            self.scenario_output.setCurrentIndex(out_index)
-            self.scenario_list.setItem(index, 0, name_item)
-            self.scenario_list.setItem(index, 1, wait_item)
-            self.scenario_list.setItem(index, 2, duration_item)
-            self.scenario_list.setItem(index, 3, post_wait_item)
-            self.scenario_list.setCellWidget(index, 4, self.output_item)
+        if ttype == 'scenario':
+            self.scenario_list.clearContents()
+            items = self.project.scenarios
+            widget_table = self.scenario_list
+            header = self.scenario_list_header
+        elif ttype == 'event':
+            self.events_bin.clearContents()
+            items = self.project.events
+            widget_table = self.events_bin
+            header = self.events_bin_header
+        widget_table.setRowCount(len(items))
+        for item in items:
+            for column in header:
+                index = items.index(item)
+                if column == 'output':
+                    value = getattr(item, column)
+                    menu = QComboBox()
+                    output = self.output_list_refresh(item, menu)
+                    widget_table.setCellWidget(index, header.index(column), menu)
+                else:
+                    if column == 'duration':
+                        value = item.getduration()
+                        widg = QTableWidgetItem(str(value))
+                        widg.setFlags(Qt.NoItemFlags)
+                        widg.setFlags(Qt.ItemIsEnabled|Qt.ItemIsSelectable)
+                    else:
+                        value = getattr(item, column)
+                        widg = QTableWidgetItem(str(value))
+                        widg.setFlags(Qt.NoItemFlags)
+                        widg.setFlags(Qt.ItemIsEnabled|Qt.ItemIsEditable|Qt.ItemIsSelectable)
+                    widget_table.setItem(index, header.index(column), widg)
 
     def scenario_display_clear(self):
         """
@@ -383,10 +404,10 @@ class Projekt(QGroupBox, QModelIndex):
         scenario = self.scenario_selected
         out = scenario.output
         if out:
-            if scenario.output.protocol == 'OSC' or scenario.output.protocol == 'PJLINK':
+            if scenario.output.service == 'OutputUdp':
                 self.scenario_output_text.setText(out.ip+':'+str(out.udp)+' ('+out.name+')')
             else:
-                self.scenario_output_text.setText(scenario.output.protocol+' protocol is not working')
+                self.scenario_output_text.setText(scenario.output.service + ' protocol is not working')
         else:
             self.scenario_output_text.setText('No output')
 
@@ -397,10 +418,18 @@ class Projekt(QGroupBox, QModelIndex):
         self.scenario_display_clear()
         self.scenario_out_display(scenario)
         self.scenario_description.setText(scenario.description)
-        # scenario contains events
         if scenario.events != []:
+            # scenario contains events
             for event in scenario.events:
-                line = event.command
+                if event.service == 'Osc':
+                    if event.arguments != None:
+                        line = [event.address, event.arguments]
+                    else:
+                        line = event.address
+                elif event.service == 'Wait':
+                    line = event.duration
+                elif event.service == 'MidiNote':
+                    line = [event.channel, event.note, event.velocity]
                 if isinstance(line, list):
                     the_string = ''
                     for item in line:
@@ -468,19 +497,44 @@ class Projekt(QGroupBox, QModelIndex):
         """
         if  self.scenario_list.currentItem():
             data = self.scenario_list.currentItem().text()
-            if col == 0:
+            print(self.scenario_list_header[col])
+            if self.scenario_list_header[col] == 'name':
                 self.scenario_selected.name = data
-            elif col == 1 and data.isdigit():
+            elif self.scenario_list_header[col] == 'description':
+                self.scenario_selected.description = data
+            elif self.scenario_list_header[col] == 'wait':
                 self.scenario_selected.wait = int(data)
-            elif col == 2 and data.isdigit():
-                self.scenario_selected.duration = int(data)
-            elif col == 3 and data.isdigit():
+                self.table_refresh('scenario')
+            elif self.scenario_list_header[col] == 'post_wait':
                 self.scenario_selected.post_wait = int(data)
-            elif col == 4:
+                self.table_list_refresh('scenario')
+            elif self.scenario_list_header[col] == 'output':
                 self.scenario_selected.output = data
             else:
                 # undo is the simplest way to do, but it's not yet implemented
-                self.scenario_list_refresh()
+                self.table_list_refresh('scenario')
+
+    def event_data_changed(self, row, col):
+        """
+        Event is edited in the Event Bin
+        """
+        if  self.events_bin.currentItem():
+            data = self.events_bin.currentItem().text()
+            if self.scenario_list_header[col] == 'name':
+                self.scenario_selected.name = data
+            elif self.scenario_list_header[col] == 'description':
+                self.scenario_selected.description = data
+            elif self.scenario_list_header[col] == 'wait':
+                self.scenario_selected.wait = int(data)
+                self.table_list_refresh('event')
+            elif self.scenario_list_header[col] == 'post_wait':
+                self.scenario_selected.post_wait = int(data)
+                self.table_list_refresh('event')
+            elif self.scenario_list_header[col] == 'output':
+                self.scenario_selected.output = data
+            else:
+                # undo is the simplest way to do, but it's not yet implemented
+                self.table_list_refresh('event')
 
     def scenario_description_changed(self):
         """
@@ -488,21 +542,24 @@ class Projekt(QGroupBox, QModelIndex):
         """
         self.scenario_selected.description = self.scenario_description.text()
 
-    def scenario_output_refresh(self, scenario):
+    def output_list_refresh(self, item, menu):
         """
-        Refresh the scenario list for a given scenario
+        Refresh the output list for a given project / scenario / event
+        And returns 
 
-        :param scenario: The scenario to refresh
+        :param item: The scenario or event item we want to know the output
+        :type item: a valid Scenario or Instance object
+        :param menu: The name of the QComboBox object
+        :type menu: a valid QComboBox object
+        :returns: (int) The index of the current output
         """
-        self.output_item.clear()
-        out_index = 0
+        menu.clear()
+        index = 0
         for output in self.project.outputs:
-            self.output_item.addItem(output.name)
-            if output == scenario.output:
-                out_index = self.project.outputs.index(output)
-        return out_index
-
-
+            menu.addItem(output.name)
+            if output == item.output:
+                index = self.project.outputs.index(output)
+        return index
 
     def scenario_output_changed(self):
         """
@@ -519,23 +576,61 @@ class Projekt(QGroupBox, QModelIndex):
         Edit the content (events) of the selected scenario
         """
         # check if there is some text
-        newline = self.scenario_content.currentItem().text()
-        newline = newline.split(' ')
-        # there is new text on the last line
-        if self.scenario_content.currentRow() + 1 == self.scenario_content.count():
-            # create a new event
-            new_event = self.scenario_selected.new_event('OSC', command=newline)
-            self.scenario_display(self.scenario_selected)
-        else:
-            self.scenario_selected.events[self.scenario_content.currentRow()].command = newline
+        if self.scenario_content.currentItem():
+            newline = self.scenario_content.currentItem().text()
+            newline = newline.split(' ')
+            # there is new text on the last line
+            if self.scenario_content.currentRow() + 1 == self.scenario_content.count():
+                # create a new event
+                new_event = self.new_event(newline)
+                self.scenario_selected.add_event(new_event)
+                self.scenario_display(self.scenario_selected)
+            else:
+                self.scenario_selected.events[self.scenario_content.currentRow()].command = newline
         # we need to refresh the duration item on the scenrio_table
         #don't understant why but with this line, the name is changed too… weird
         #item = self.scenario_list.item(self.scenario_list.currentRow(),1)
         row = self.scenario_list.currentRow()
         #duration = str(self.scenario_selected.getduration())
         #item.setText(duration)
-        self.scenario_list_refresh()
+        self.table_list_refresh('scenario')
         self.scenario_list.setCurrentCell(row, 0)
+
+    def new_event(self, command=None):
+        print self.project
+        new_event = self.project.new_event('Osc', command=command)
+        self.events_bin_refresh()
+        return new_event
+
+    def events_bin_refresh(self):
+        """
+        Refresh scenario table view
+        """
+        self.events_bin.clearContents()
+        events = len(self.project.events)
+        self.events_bin.setRowCount(events)
+        for event in self.project.events:
+            index = self.project.events.index(event)
+            name_item = QTableWidgetItem(event.name)
+            name_item.setFlags(Qt.NoItemFlags)
+            name_item.setFlags(Qt.ItemIsEnabled|Qt.ItemIsEditable|Qt.ItemIsSelectable)
+            wait_item = QTableWidgetItem(str(event.wait))
+            wait_item.setFlags(Qt.NoItemFlags)
+            wait_item.setFlags(Qt.ItemIsEnabled|Qt.ItemIsEditable|Qt.ItemIsSelectable)
+            duration_item = QTableWidgetItem(str(event.getduration()))
+            duration_item.setFlags(Qt.NoItemFlags)
+            duration_item.setFlags(Qt.ItemIsEnabled|Qt.ItemIsSelectable)
+            post_wait_item = QTableWidgetItem(str(event.post_wait))
+            post_wait_item.setFlags(Qt.NoItemFlags)
+            post_wait_item.setFlags(Qt.ItemIsEnabled|Qt.ItemIsEditable|Qt.ItemIsSelectable)
+            self.events_bin_output = QComboBox()
+            output = self.output_list_refresh(event, self.events_bin_output)
+            #self.event_output.setCurrentIndex(output)
+            self.events_bin.setItem(index, 0, name_item)
+            self.events_bin.setItem(index, 1, wait_item)
+            self.events_bin.setItem(index, 2, duration_item)
+            self.events_bin.setItem(index, 3, post_wait_item)
+            self.events_bin.setCellWidget(index, 4, self.events_bin_output)
 
     def eventSelectionChanged(self):
         """
@@ -547,7 +642,7 @@ class Projekt(QGroupBox, QModelIndex):
             item = self.scenario_selected.events[item]
             self.event_selected = item
             self.event_del.setDisabled(False)
-            if type(self.event_selected.command) != int:
+            if self.event_selected.service != 'Wait':
                 self.event_play.setDisabled(False)
             else:
                 self.event_play.setDisabled(True)
