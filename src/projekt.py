@@ -255,7 +255,7 @@ class Projekt(QGroupBox, QModelIndex):
             self.scenario_output.setDisabled(True)
             self.scenario_description.setDisabled(True)
             self.scenario_content.setDisabled(True)
-            #self.ScenarioAttrGroupBox.setVisible(False)
+            #self.scenario_events_group.setVisible(False)
         if scenar:
             index = self.scenario_list.row(scenar)
             self.scenario_selected = scenarios[index]
@@ -265,7 +265,7 @@ class Projekt(QGroupBox, QModelIndex):
             self.scenario_output.setDisabled(False)
             self.scenario_description.setDisabled(False)
             self.scenario_content.setDisabled(False)
-            #self.ScenarioAttrGroupBox.setVisible(True)
+            #self.scenario_events_group.setVisible(True)
 
     def new_scenario(self):
         """
@@ -302,7 +302,7 @@ class Projekt(QGroupBox, QModelIndex):
 
     def table_list_refresh(self, ttype='scenario'):
         """
-        Refresh scenario table view
+        Refresh scenario/events table view
         """
         if ttype == 'scenario':
             widget_table = self.scenario_list
@@ -331,6 +331,11 @@ class Projekt(QGroupBox, QModelIndex):
                         widg = QTableWidgetItem(str(value))
                         widg.setFlags(Qt.NoItemFlags)
                         widg.setFlags(Qt.ItemIsEnabled|Qt.ItemIsSelectable)
+                    elif column == 'command':
+                        value = self.line_to_command(item.command)
+                        widg = QTableWidgetItem(str(value))
+                        widg.setFlags(Qt.NoItemFlags)
+                        widg.setFlags(Qt.ItemIsEnabled|Qt.ItemIsEditable|Qt.ItemIsSelectable)
                     else:
                         value = getattr(item, column)
                         widg = QTableWidgetItem(str(value))
@@ -374,6 +379,17 @@ class Projekt(QGroupBox, QModelIndex):
         else:
             self.scenario_output_text.setText('No output')
 
+    def line_to_command(self, line):
+        if isinstance(line, list):
+            the_string = ''
+            for item in line:
+                the_string = the_string + str(item) + ' '
+                line = the_string
+        elif isinstance(line, int):
+            line = str(line)
+        return line
+
+
     def scenario_display(self, scenario):
         """
         This function is called when scenario_selected changed
@@ -385,13 +401,7 @@ class Projekt(QGroupBox, QModelIndex):
             # scenario contains events
             for event in scenario.events:
                 line = event.command
-                if isinstance(line, list):
-                    the_string = ''
-                    for item in line:
-                        the_string = the_string + str(item) + ' '
-                    line = the_string
-                elif isinstance(line, int):
-                    line = str(line)
+                line = self.line_to_command(line)
                 line = QListWidgetItem(line)
                 line.setFlags(Qt.ItemIsEnabled|Qt.ItemIsEditable|\
                               Qt.ItemIsSelectable|Qt.ItemIsDragEnabled)
@@ -433,7 +443,6 @@ class Projekt(QGroupBox, QModelIndex):
             # remove it from the model
             self.project.del_event(event2delete)
 
-
     def event_right_click(self, QPos):
         """
         Called when user right-click on an event
@@ -467,7 +476,7 @@ class Projekt(QGroupBox, QModelIndex):
         """
         Play the selected event from the events list of the project
         """
-        if self.event_list_selected and type(self.event_list_selected.command) != int:
+        if self.event_list_selected and isinstance(self.event_list_selected.command, int) == False:
             return self.event_list_selected.play()
         else:
             return False
@@ -501,18 +510,21 @@ class Projekt(QGroupBox, QModelIndex):
         """
         if  self.events_list_table.currentItem():
             data = self.events_list_table.currentItem().text()
-            if self.scenario_list_header[col] == 'name':
-                self.scenario_selected.name = data
-            elif self.scenario_list_header[col] == 'description':
-                self.scenario_selected.description = data
-            elif self.scenario_list_header[col] == 'wait':
-                self.scenario_selected.wait = int(data)
+            if self.events_list_header[col] == 'name':
+                self.event_list_selected.name = data
+            elif self.events_list_header[col] == 'description':
+                self.event_list_selected.description = data
+            elif self.events_list_header[col] == 'command':
+                data = data.split(' ')
+                self.event_list_selected.command = data
+            elif self.events_list_header[col] == 'wait':
+                self.event_list_selected.wait = int(data)
                 self.table_list_refresh('event')
-            elif self.scenario_list_header[col] == 'post_wait':
-                self.scenario_selected.post_wait = int(data)
+            elif self.events_list_header[col] == 'post_wait':
+                self.event_list_selected.post_wait = int(data)
                 self.table_list_refresh('event')
-            elif self.scenario_list_header[col] == 'output':
-                self.scenario_selected.output = data
+            elif self.events_list_header[col] == 'output':
+                self.event_list_selected.output = data
             else:
                 # undo is the simplest way to do, but it's not yet implemented
                 self.table_list_refresh('event')
@@ -559,17 +571,18 @@ class Projekt(QGroupBox, QModelIndex):
         # check if there is some text
         if self.scenario_content.currentItem():
             newline = self.scenario_content.currentItem().text()
-            newline = newline.split(' ')
-            # there is new text on the last line
-            if self.scenario_content.currentRow() + 1 == self.scenario_content.count():
-                # create a new event
-                new_event = self.new_event('Osc', newline)
-                # add the event to the scenario
-                self.scenario_selected.add_event(new_event)
-                # display the current scenario (refresh)
-                self.scenario_display(self.scenario_selected)
-            else:
-                self.scenario_selected.events[self.scenario_content.currentRow()].command = newline
+            if newline != '':
+                newline = newline.split(' ')
+                # there is new text on the last line
+                if self.scenario_content.currentRow() + 1 == self.scenario_content.count():
+                    # create a new event
+                    new_event = self.new_event('Osc', newline)
+                    # add the event to the scenario
+                    self.scenario_selected.add_event(new_event)
+                    # display the current scenario (refresh)
+                    self.scenario_display(self.scenario_selected)
+                else:
+                    self.scenario_selected.events[self.scenario_content.currentRow()].command = newline
         # we need to refresh the duration item on the scenrio_table
         #don't understant why but with this line, the name is changed too… weird
         #item = self.scenario_list.item(self.scenario_list.currentRow(),1)
@@ -580,42 +593,13 @@ class Projekt(QGroupBox, QModelIndex):
         self.scenario_list.setCurrentCell(row, 0)
 
     def new_event(self, protocol='Osc', command=None):
-        new_event = self.project.new_event('Osc', command=command)
-        self.events_list_refresh()
+        new_event = self.project.new_event(protocol, command=command)
+        self.table_list_refresh('event')
         return new_event
 
     def new_event_list(self, protocol='Osc', command=None):
+        protocol = self.event_list_service.currentText()
         return self.new_event(protocol, command)
-
-    def events_list_refresh(self):
-        """
-        Refresh scenario table view
-        """
-        self.events_list_table.clearContents()
-        events = len(self.project.events)
-        self.events_list_table.setRowCount(events)
-        for event in self.project.events:
-            index = self.project.events.index(event)
-            name_item = QTableWidgetItem(event.name)
-            name_item.setFlags(Qt.NoItemFlags)
-            name_item.setFlags(Qt.ItemIsEnabled|Qt.ItemIsEditable|Qt.ItemIsSelectable)
-            wait_item = QTableWidgetItem(str(event.wait))
-            wait_item.setFlags(Qt.NoItemFlags)
-            wait_item.setFlags(Qt.ItemIsEnabled|Qt.ItemIsEditable|Qt.ItemIsSelectable)
-            duration_item = QTableWidgetItem(str(event.getduration()))
-            duration_item.setFlags(Qt.NoItemFlags)
-            duration_item.setFlags(Qt.ItemIsEnabled|Qt.ItemIsSelectable)
-            post_wait_item = QTableWidgetItem(str(event.post_wait))
-            post_wait_item.setFlags(Qt.NoItemFlags)
-            post_wait_item.setFlags(Qt.ItemIsEnabled|Qt.ItemIsEditable|Qt.ItemIsSelectable)
-            self.events_list_output = QComboBox()
-            output = self.output_list_refresh(event, self.events_list_output)
-            #self.event_output.setCurrentIndex(output)
-            self.events_list_table.setItem(index, 0, name_item)
-            self.events_list_table.setItem(index, 1, wait_item)
-            self.events_list_table.setItem(index, 2, duration_item)
-            self.events_list_table.setItem(index, 3, post_wait_item)
-            self.events_list_table.setCellWidget(index, 4, self.events_list_output)
 
     def eventSelectionChanged(self):
         """
