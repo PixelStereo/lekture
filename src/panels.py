@@ -16,7 +16,7 @@ def create_panels(self):
     # Create Scenario Attributes layout
     self.scenario_events_group = create_scenario_events_group(self)
     # Create Events Bin
-    self.events_list_group = createEventsBinGroupBox(self)
+    self.events_list_group = create_events_list_group(self)
     # Create Outputs layout
     createOuputAttrGroupBox(self)
 
@@ -71,7 +71,7 @@ def createScenarioListGroupBox(self):
     ScenarioListGroupBox = QGroupBox("Scenario List")
     self.scenario_list = QTableWidget()
     self.scenario_list.setSelectionMode(QAbstractItemView.SingleSelection)
-    header_list = ['name', 'wait','duration','post_wait','output']
+    header_list = ['name', 'wait','duration','post_wait', 'loop', 'output']
     self.scenario_list_header = header_list
     self.scenario_list.setColumnCount(len(header_list))
     for i in range(len(header_list)):
@@ -112,7 +112,7 @@ def createScenarioListGroupBox(self):
 
 
 def create_scenario_events_group(self):
-    scenario_events_group = QGroupBox("Scenario Content")
+    scenario_events_group = QGroupBox("Selected Scenario")
     # Assign an output to the seleted scenario
     self.scenario_output_label = QLabel('output')
     # Display the selected output
@@ -180,7 +180,7 @@ def createOuputAttrGroupBox(self):
     output_layout.addWidget(self.protocol_table, 1, 0, 5, 5)
     self.outputs_group.setLayout(output_layout)
 
-def createEventsBinGroupBox(self):
+def create_events_list_group(self):
     EventsBinGroupBox = QGroupBox("Events Bin")
     self.events_list_table = QTableWidget()
     self.events_list_table.setSelectionMode(QAbstractItemView.SingleSelection)

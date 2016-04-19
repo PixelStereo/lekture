@@ -421,10 +421,11 @@ class Projekt(QGroupBox, QModelIndex):
         if self.event_list_selected:
             cot = self.events_list_table.currentItem()
             event2delete = self.event_list_selected
-            # remove it from the view
-            self.events_list_table.removeRow(self.events_list_table.row(cot))
             # remove it from the model
-            self.project.del_event(event2delete)
+            if self.project.del_event(event2delete):
+                # if the model answer ok to delete the event continue...
+                # ...and remove it from the view
+                self.events_list_table.removeRow(self.events_list_table.row(cot))
 
     def event_right_click(self, QPos):
         """
