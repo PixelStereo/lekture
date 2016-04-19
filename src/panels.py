@@ -10,35 +10,31 @@ from pylekture.constants import protocols
 
 def createProjectAttrGroupBox(self):
     project_Groupbox = QGroupBox()
-    project_layout = QHBoxLayout()
-    project_version_label = QLabel('version')
-    project_version = QLabel(self.project.version)
-    project_path_label = QLabel('path')
+    project_layout = QGridLayout()
+    #project_version_label = QLabel('version')
+    #project_version = QLabel(self.project.version)
     project_path = QLabel(self.project.path)
-    project_autoplay_label = QLabel('autoplay')
-    project_autoplay = QCheckBox()
-    project_loop_label = QLabel('loop')
-    project_loop = QCheckBox()
+    project_autoplay = QPushButton('autoplay')
+    project_autoplay.setCheckable(True)
+    project_loop = QPushButton('loop')
+    project_loop.setCheckable(True)
     project_play = QPushButton('Play')
-    self.project_version = project_version
+    #self.project_version = project_version
     self.project_path = project_path
     self.project_autoplay = project_autoplay
     self.project_loop = project_loop
     self.project_play = project_play
 
-    self.project_autoplay.stateChanged.connect(self.project_autoplay_changed)
-    self.project_loop.stateChanged.connect(self.project_loop_changed)
+    self.project_autoplay.toggled.connect(self.project_autoplay_changed)
+    self.project_loop.toggled.connect(self.project_loop_changed)
     self.project_play.released.connect(self.project_play_action)
 
-    project_layout.addWidget(project_version_label)
-    project_layout.addWidget(project_version)
-    project_layout.addWidget(project_path_label)
-    project_layout.addWidget(project_path)
-    project_layout.addWidget(project_play)
-    project_layout.addWidget(project_autoplay_label)
-    project_layout.addWidget(project_autoplay)
-    project_layout.addWidget(project_loop_label)
-    project_layout.addWidget(project_loop)
+    #project_layout.addWidget(project_version_label)
+    #project_layout.addWidget(project_version)
+    project_layout.addWidget(project_path, 0, 0)
+    project_layout.addWidget(project_play, 1, 0)
+    project_layout.addWidget(project_autoplay, 1, 2)
+    project_layout.addWidget(project_loop, 1, 3)
     #project_layout.addStretch(1)
     project_Groupbox.setLayout(project_layout)
     return project_Groupbox
