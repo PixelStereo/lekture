@@ -9,7 +9,7 @@ from pylekture import project
 from pylekture.constants import protocols
 
 def createProjectAttrGroupBox(self):
-    self.project_Groupbox = QGroupBox()
+    project_Groupbox = QGroupBox()
     project_layout = QHBoxLayout()
     project_version_label = QLabel('version')
     project_version = QLabel(self.project.version)
@@ -20,8 +20,6 @@ def createProjectAttrGroupBox(self):
     project_loop_label = QLabel('loop')
     project_loop = QCheckBox()
     project_play = QPushButton('Play')
-    #project_path.setMinimumWidth(400)
-
     self.project_version = project_version
     self.project_path = project_path
     self.project_autoplay = project_autoplay
@@ -42,7 +40,8 @@ def createProjectAttrGroupBox(self):
     project_layout.addWidget(project_loop_label)
     project_layout.addWidget(project_loop)
     #project_layout.addStretch(1)
-    self.project_Groupbox.setLayout(project_layout)
+    project_Groupbox.setLayout(project_layout)
+    return project_Groupbox
 
 def createScenarioListGroupBox(self):
     self.ScenarioListGroupBox = QGroupBox("Scenario List")
@@ -69,12 +68,12 @@ def createScenarioListGroupBox(self):
     # Function to trigger when output menu is changed
     self.scenario_list.cellChanged.connect(self.scenario_data_changed)
     # Button to create a new scenario
-    self.scenario_new = QPushButton(('New Scenario'))
-    self.scenario_new.released.connect(self.newScenario)
-    self.scenario_play = QPushButton(('Play Scenario'))
+    self.scenario_new = QPushButton(('New'))
+    self.scenario_new.released.connect(self.new_scenario)
+    self.scenario_play = QPushButton(('Play'))
     self.scenario_play.setDisabled(True)
     self.scenario_play.released.connect(self.playScenario)
-    self.scenario_del = QPushButton(('Delete Scenario'))
+    self.scenario_del = QPushButton(('Delete'))
     self.scenario_del.setDisabled(True)
     self.scenario_del.released.connect(self.delScenario)
 
@@ -108,11 +107,11 @@ def createScenarioAttrGroupBox(self):
     self.scenario_content.customContextMenuRequested.connect(self.event_right_click)
     self.scenario_content.setDisabled(True)
     # Button to play the selected event
-    self.event_play = QPushButton('play event')
+    self.event_play = QPushButton('play')
     self.event_play.setMaximumWidth(100)
     self.event_play.setDisabled(True)
     # Button to delete the selected event
-    self.event_del = QPushButton('delete event')
+    self.event_del = QPushButton('delete')
     self.event_del.setMaximumWidth(100)
     self.event_del.setDisabled(True)
 
@@ -133,7 +132,6 @@ def createScenarioAttrGroupBox(self):
     layout.addWidget(self.scenario_content, 2, 1, 9, 9)
     layout.addWidget(self.event_play, 8, 0)
     layout.addWidget(self.event_del, 9, 0)
-    self.ScenarioAttrGroupBox.setFixedHeight(250)
     self.ScenarioAttrGroupBox.setLayout(layout)
 
 def createOuputAttrGroupBox(self):
@@ -143,7 +141,7 @@ def createOuputAttrGroupBox(self):
     for protocol in protocols:
         self.protocol.addItem(protocol)
     # create a button for creating a new output
-    self.output_new = QPushButton('New Output')
+    self.output_new = QPushButton('New')
     # create the table to display outputs for each protocols
     protocol_table = QTableWidget(len(self.project.outputs),3)
     protocol_table.setColumnWidth(0,130)
@@ -156,47 +154,48 @@ def createOuputAttrGroupBox(self):
     self.output_new.released.connect(self.new_output_func)
     # display protocol
     self.protocol.currentIndexChanged.connect(self.protocol_display)
-    output_layout = QVBoxLayout()
-    output_layout.addWidget(self.output_new)
-    output_layout.addWidget(self.protocol)
-    output_layout.addWidget(self.protocol_table)
+    output_layout = QGridLayout()
+    output_layout.addWidget(self.output_new, 0, 0, 1, 1)
+    output_layout.addWidget(self.protocol, 0, 1, 1, 4)
+    output_layout.addWidget(self.protocol_table, 1, 0, 5, 5)
     self.outputs_group.setLayout(output_layout)
 
 def createEventsBinGroupBox(self):
-    self.EventsBinGroupBox = QGroupBox("Events Bin")
-    self.events_bin = QTableWidget()
-    self.events_bin.setSelectionMode(QAbstractItemView.SingleSelection)
+    EventsBinGroupBox = QGroupBox("Events Bin")
+    self.events_list_table = QTableWidget()
+    self.events_list_table.setSelectionMode(QAbstractItemView.SingleSelection)
     header_list = ['name','wait','duration','post_wait','output']
-    self.events_bin.setColumnCount(len(header_list))
+    self.events_list_table.setColumnCount(len(header_list))
     for i in range(len(header_list)):
         if header_list[i] == 'name' or header_list[i] == 'description' or header_list[i] == 'output':
-            self.events_bin.setColumnWidth(i,140)
+            self.events_list_table.setColumnWidth(i,140)
         else:
-            self.events_bin.setColumnWidth(i,55)
+            self.events_list_table.setColumnWidth(i,55)
     for header in header_list:
         head = QTableWidgetItem(header)
-        self.events_bin.setHorizontalHeaderItem(header_list.index(header),head)
-    self.events_bin.setSelectionBehavior(QAbstractItemView.SelectRows)
+        self.events_list_table.setHorizontalHeaderItem(header_list.index(header),head)
+    self.events_list_table.setSelectionBehavior(QAbstractItemView.SelectRows)
     # to get current and previous
-    self.events_bin.currentItemChanged.connect(self.eventSelectionChanged)
+    self.events_list_table.currentItemChanged.connect(self.event_list_selection_changed)
     # Function to edit scenario's name when double-clicking on it
-    self.events_bin.itemDoubleClicked.connect(self.events_bin.editItem)
+    self.events_list_table.itemDoubleClicked.connect(self.events_list_table.editItem)
     # Function to rename a scenario if its name changed
-    self.events_bin.cellChanged.connect(self.event_data_changed)
+    self.events_list_table.cellChanged.connect(self.event_data_changed)
     # Button to create a new scenario
-    self.event_new = QPushButton(('New'))
-    self.event_new.released.connect(self.new_event)
-    self.event_play = QPushButton(('Play'))
-    self.event_play.setDisabled(True)
-    self.event_play.released.connect(self.play_event)
-    self.event_del = QPushButton(('Delete'))
-    self.event_del.setDisabled(True)
-    self.event_del.released.connect(self.event_delete)
+    self.event_list_new = QPushButton(('New'))
+    self.event_list_new.released.connect(self.new_event_list)
+    self.event_list_play = QPushButton(('Play'))
+    self.event_list_play.setDisabled(True)
+    self.event_list_play.released.connect(self.play_event_list)
+    self.event_list_del = QPushButton(('Delete'))
+    self.event_list_del.setDisabled(True)
+    self.event_list_del.released.connect(self.delete_event_list)
 
     events = QGridLayout()
-    events.addWidget(self.event_new,0,0)
-    events.addWidget(self.event_play,0,1)
-    events.addWidget(self.event_del,0,2)
-    events.addWidget(self.events_bin,1,0,5,5)
-    self.EventsBinGroupBox.setLayout(events)
+    events.addWidget(self.event_list_new,0,0)
+    events.addWidget(self.event_list_play,0,1)
+    events.addWidget(self.event_list_del,0,2)
+    events.addWidget(self.events_list_table,1,0,5,5)
+    EventsBinGroupBox.setLayout(events)
+    return EventsBinGroupBox
 
