@@ -102,11 +102,15 @@ class MainWindow(QMainWindow):
         """called when user save a project"""
         if self.activeProjekt() and self.activeProjekt().save():
             self.statusBar().showMessage("File saved", 2000)
+        else:
+            self.statusBar().showMessage("Error when trying to save the file")
 
     def saveAs(self):
         """called when user save AS a project"""
         if self.activeProjekt() and self.activeProjekt().saveAs():
             self.statusBar().showMessage("File saved", 2000)
+        else:
+            self.statusBar().showMessage("Error when trying to save the file")
 
     def openFolder(self):
         """called when user calls 'reveal in finder' function"""

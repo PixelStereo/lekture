@@ -8,6 +8,34 @@ from PyQt5.QtWidgets import QGroupBox, QHBoxLayout, QListWidget, QAbstractItemVi
 from pylekture import project
 from pylekture.constants import protocols
 
+def create_panels(self):
+    # Create Project Attributes layout
+    self.project_Groupbox = createProjectAttrGroupBox(self)
+    # Create Scenario List layout
+    createScenarioListGroupBox(self)
+    # Create Scenario Attributes layout
+    createScenarioAttrGroupBox(self)
+    # Create Events Bin
+    self.events_list_group = createEventsBinGroupBox(self)
+    # Create Outputs layout
+    createOuputAttrGroupBox(self)
+
+    self.outputs_group.setVisible(False)
+    self.protocol_display()
+
+    # Create the main layout
+    mainLayout = QGridLayout()
+    # Integrate the layout previously created
+    #self.project_Groupbox.setMaximumHeight(50)
+    mainLayout.addWidget(self.project_Groupbox, 0, 0, 1, 1)
+    mainLayout.addWidget(self.ScenarioListGroupBox, 1, 0, 1, 1)
+    mainLayout.addWidget(self.events_list_group, 0, 1, 3, 1)
+    mainLayout.addWidget(self.ScenarioAttrGroupBox, 2, 0, 1, 1)
+    mainLayout.addWidget(self.outputs_group, 2, 0)
+
+    # Integrate main layout to the main window
+    self.setLayout(mainLayout)
+
 def createProjectAttrGroupBox(self):
     project_Groupbox = QGroupBox()
     project_layout = QGridLayout()
@@ -31,10 +59,10 @@ def createProjectAttrGroupBox(self):
 
     #project_layout.addWidget(project_version_label)
     #project_layout.addWidget(project_version)
-    project_layout.addWidget(project_path, 0, 0)
-    project_layout.addWidget(project_play, 1, 0)
-    project_layout.addWidget(project_autoplay, 1, 2)
-    project_layout.addWidget(project_loop, 1, 3)
+    project_layout.addWidget(project_path, 0, 0, 1, 3)
+    project_layout.addWidget(project_play, 1, 0, 1, 1)
+    project_layout.addWidget(project_autoplay, 1, 2, 1, 1)
+    project_layout.addWidget(project_loop, 1, 3, 1, 1)
     #project_layout.addStretch(1)
     project_Groupbox.setLayout(project_layout)
     return project_Groupbox

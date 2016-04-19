@@ -9,8 +9,7 @@ A Projekt handles scenario and outputs
 
 from pylekture import project
 from pylekture.functions import checkType, prop_list
-from panels import createProjectAttrGroupBox, createScenarioListGroupBox, \
-                   createScenarioAttrGroupBox, createOuputAttrGroupBox, createEventsBinGroupBox
+from panels import create_panels
 
 import sys
 import subprocess
@@ -59,9 +58,11 @@ class Projekt(QGroupBox, QModelIndex):
         self.document = Document('unknown')
         # Create a new project
         self.project = project.new_project()
+        if not self.project:
+            print('ERROR 123 - pylekture cannot create a project')
+            sys.exit(1)
         # Create a new output
         the_out = self.project.new_output('OSC')
-
         # initialize selection (this might be done with models later)
         self.scenario_selected = None
         # the event in the scenario content
@@ -70,39 +71,10 @@ class Projekt(QGroupBox, QModelIndex):
         self.event_list_selected = None
         # the output
         self.output_selected = None
-
         # this lock is used when fillin out_protocol QComboBox
         self.out_locked = False
-
-        self.create_panels()
-
-    def create_panels(self):
-        # Create Project Attributes layout
-        self.project_Groupbox = createProjectAttrGroupBox(self)
-        # Create Scenario List layout
-        createScenarioListGroupBox(self)
-        # Create Scenario Attributes layout
-        createScenarioAttrGroupBox(self)
-        # Create Events Bin
-        self.events_list_group = createEventsBinGroupBox(self)
-        # Create Outputs layout
-        createOuputAttrGroupBox(self)
-
-        self.outputs_group.setVisible(False)
-        self.protocol_display()
-
-        # Create the main layout
-        mainLayout = QGridLayout()
-        # Integrate the layout previously created
-        #self.project_Groupbox.setMaximumHeight(50)
-        mainLayout.addWidget(self.project_Groupbox, 0, 0, 1, 1)
-        mainLayout.addWidget(self.ScenarioListGroupBox, 1, 0, 1, 1)
-        mainLayout.addWidget(self.events_list_group, 0, 1, 3, 1)
-        mainLayout.addWidget(self.ScenarioAttrGroupBox, 2, 0, 1, 1)
-        mainLayout.addWidget(self.outputs_group, 2, 0)
-
-        # Integrate main layout to the main window
-        self.setLayout(mainLayout)
+        # create all panels
+        create_panels(self)
 
     def newFile(self):
         """
@@ -169,15 +141,15 @@ class Projekt(QGroupBox, QModelIndex):
         """
         QApplication.setOverrideCursor(Qt.WaitCursor)
         if fileName:
-            self.project.write(fileName)
+            answer = self.project.write(fileName)
             self.project_path.setText(fileName)
             self.project.path = fileName
         else:
-            self.project.write()
+            answer = self.project.write()
             self.project_path.setText(self.project.path)
         QApplication.restoreOverrideCursor()
         self.setCurrentFile(fileName)
-        return True
+        return answer
 
     def openFolder(self):
         """
