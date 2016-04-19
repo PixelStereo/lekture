@@ -252,7 +252,6 @@ class Projekt(QGroupBox, QModelIndex):
             self.scenario_display_clear()
             self.scenario_del.setDisabled(True)
             self.scenario_play.setDisabled(True)
-            self.scenario_output.setDisabled(True)
             self.scenario_description.setDisabled(True)
             self.scenario_content.setDisabled(True)
             #self.scenario_events_group.setVisible(False)
@@ -262,7 +261,6 @@ class Projekt(QGroupBox, QModelIndex):
             self.scenario_display(self.scenario_selected)
             self.scenario_del.setDisabled(False)
             self.scenario_play.setDisabled(False)
-            self.scenario_output.setDisabled(False)
             self.scenario_description.setDisabled(False)
             self.scenario_content.setDisabled(False)
             #self.scenario_events_group.setVisible(True)
@@ -348,28 +346,13 @@ class Projekt(QGroupBox, QModelIndex):
         clear the scenario table view
         """
         self.scenario_content.clear()
-        self.scenario_output.clear()
         self.scenario_output_text.clear()
         self.scenario_description.clear()
 
     def scenario_out_display(self, scenario):
         """
-        Display outputs for scenario
-        """
-        self.out_locked = True
-        out = scenario.output
-        for output in self.project.outputs:
-            if out == output:
-                index = self.project.outputs.index(output)
-        self.scenario_output.setItemText(index, str(scenario.output))
-        self.scenario_out_text_display()
-        self.out_locked = False
-
-    def scenario_out_text_display(self):
-        """
         Display a readable output description
         """
-        scenario = self.scenario_selected
         out = scenario.output
         if out:
             if scenario.output.service == 'OutputUdp':
@@ -519,15 +502,14 @@ class Projekt(QGroupBox, QModelIndex):
                 self.event_list_selected.command = data
             elif self.events_list_header[col] == 'wait':
                 self.event_list_selected.wait = int(data)
-                self.table_list_refresh('event')
+            elif self.events_list_header[col] == 'loop':
+                self.event_list_selected.loop = data
             elif self.events_list_header[col] == 'post_wait':
                 self.event_list_selected.post_wait = int(data)
-                self.table_list_refresh('event')
             elif self.events_list_header[col] == 'output':
                 self.event_list_selected.output = data
-            else:
-                # undo is the simplest way to do, but it's not yet implemented
-                self.table_list_refresh('event')
+            # refresh the table to be sure that there is no an error
+            self.table_list_refresh('event')
 
     def scenario_description_changed(self):
         """
@@ -561,8 +543,7 @@ class Projekt(QGroupBox, QModelIndex):
         # We set a lock when fillin the menu
         if not self.out_locked:
             if self.scenario_selected:
-                self.scenario_selected.output = self.scenario_output.currentText()
-                self.scenario_out_text_display()
+                self.scenario_out_display(self.scenario.selected)
 
     def scenario_content_changed(self):
         """
@@ -593,13 +574,23 @@ class Projekt(QGroupBox, QModelIndex):
         self.scenario_list.setCurrentCell(row, 0)
 
     def new_event(self, protocol='Osc', command=None):
+        """
+        Create a new event
+        """
         new_event = self.project.new_event(protocol, command=command)
         self.table_list_refresh('event')
         return new_event
 
     def new_event_list(self, protocol='Osc', command=None):
+        """
+        Create a new event on the project's events bin
+        """
         protocol = self.event_list_service.currentText()
-        return self.new_event(protocol, command)
+        event = self.new_event(protocol, command)
+        event.output = self.project.outputs[-1]
+        last = len(self.project.events)-1
+        self.events_list_table.setCurrentCell(last, 0)
+        self.events_list_table.setFocus()
 
     def eventSelectionChanged(self):
         """

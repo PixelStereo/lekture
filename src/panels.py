@@ -12,9 +12,9 @@ def create_panels(self):
     # Create Project Attributes layout
     self.project_group = createProjectAttrGroupBox(self)
     # Create Scenario List layout
-    createScenarioListGroupBox(self)
+    ScenarioListGroupBox = createScenarioListGroupBox(self)
     # Create Scenario Attributes layout
-    self.scenario_events_group = createscenario_events_group(self)
+    self.scenario_events_group = create_scenario_events_group(self)
     # Create Events Bin
     self.events_list_group = createEventsBinGroupBox(self)
     # Create Outputs layout
@@ -28,7 +28,7 @@ def create_panels(self):
     # Integrate the layout previously created
     self.project_group.setMaximumHeight(80)
     mainLayout.addWidget(self.project_group, 0, 0, 1, 1)
-    mainLayout.addWidget(self.ScenarioListGroupBox, 1, 0, 1, 1)
+    mainLayout.addWidget(ScenarioListGroupBox, 1, 0, 1, 1)
     mainLayout.addWidget(self.events_list_group, 0, 1, 3, 1)
     mainLayout.addWidget(self.scenario_events_group, 2, 0, 1, 1)
     mainLayout.addWidget(self.outputs_group, 2, 0, 1, 1)
@@ -68,7 +68,7 @@ def createProjectAttrGroupBox(self):
     return project_Groupbox
 
 def createScenarioListGroupBox(self):
-    self.ScenarioListGroupBox = QGroupBox("Scenario List")
+    ScenarioListGroupBox = QGroupBox("Scenario List")
     self.scenario_list = QTableWidget()
     self.scenario_list.setSelectionMode(QAbstractItemView.SingleSelection)
     header_list = ['name', 'wait','duration','post_wait','output']
@@ -106,15 +106,15 @@ def createScenarioListGroupBox(self):
     scenarios.addWidget(self.scenario_play, 0, 1)
     scenarios.addWidget(self.scenario_del, 0, 2)
     scenarios.addWidget(self.scenario_list, 1, 0, 5, 5)
-    self.ScenarioListGroupBox.setLayout(scenarios)
+    ScenarioListGroupBox.setLayout(scenarios)
+    ScenarioListGroupBox.setMaximumWidth(500)
+    return ScenarioListGroupBox
 
 
-def createscenario_events_group(self):
+def create_scenario_events_group(self):
     scenario_events_group = QGroupBox("Scenario Content")
     # Assign an output to the seleted scenario
     self.scenario_output_label = QLabel('output')
-    self.scenario_output = QComboBox()
-    self.scenario_output.setDisabled(True)
     # Display the selected output
     self.scenario_output_text = QLabel('')
     # Description of the seleted scenario
@@ -136,7 +136,6 @@ def createscenario_events_group(self):
     self.event_del.setMaximumWidth(100)
     self.event_del.setDisabled(True)
 
-    self.scenario_output.currentIndexChanged.connect(self.scenario_output_changed)
     self.scenario_description.textEdited.connect(self.scenario_description_changed)
     self.scenario_content.itemChanged.connect(self.scenario_content_changed)
     self.event_play.released.connect(self.event_play_func)
@@ -147,8 +146,7 @@ def createscenario_events_group(self):
     layout.addWidget(self.scenario_description_label, 0, 0)
     layout.addWidget(self.scenario_description, 0, 1, 1, 9)
     layout.addWidget(self.scenario_output_label,1 , 0)
-    layout.addWidget(self.scenario_output, 1, 1)
-    layout.addWidget(self.scenario_output_text,1,2)
+    layout.addWidget(self.scenario_output_text,1,1)
     layout.addWidget(self.scenario_content_label,2 ,0 )
     layout.addWidget(self.scenario_content, 2, 1, 9, 9)
     layout.addWidget(self.event_play, 8, 0)
@@ -186,11 +184,12 @@ def createEventsBinGroupBox(self):
     EventsBinGroupBox = QGroupBox("Events Bin")
     self.events_list_table = QTableWidget()
     self.events_list_table.setSelectionMode(QAbstractItemView.SingleSelection)
-    header_list = ['name', 'command', 'wait','duration','post_wait','output']
+    #self.events_list_table.setSortingEnabled(True)
+    header_list = ['name', 'command', 'wait','duration','post_wait', 'loop', 'output']
     self.events_list_header = header_list
     self.events_list_table.setColumnCount(len(header_list))
     for i in range(len(header_list)):
-        if header_list[i] == 'name' or header_list[i] == 'description' or header_list[i] == 'output':
+        if header_list[i] == 'name' or header_list[i] == 'description' or header_list[i] == 'output' or header_list[i] == 'command':
             self.events_list_table.setColumnWidth(i,140)
         else:
             self.events_list_table.setColumnWidth(i,55)
