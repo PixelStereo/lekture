@@ -130,6 +130,7 @@ class Projekt(QGroupBox, QModelIndex):
         if self.project.read(fileName):
             #self.outputs_refresh()
             self.table_list_refresh('scenario')
+            self.table_list_refresh('event')
             self.project_display()
             self.protocol_display()
             QApplication.restoreOverrideCursor()
@@ -198,7 +199,7 @@ class Projekt(QGroupBox, QModelIndex):
         """
         Display project's Attributes
         """
-        self.project_version.setText(self.project.version)
+        #self.project_version.setText(self.project.version)
         self.project_path.setText(self.project.path)
         self.project_loop.setChecked(self.project.loop)
         self.project_autoplay.setChecked(self.project.autoplay)
@@ -332,15 +333,17 @@ class Projekt(QGroupBox, QModelIndex):
         Refresh scenario table view
         """
         if ttype == 'scenario':
-            self.scenario_list.clearContents()
-            items = self.project.scenarios
             widget_table = self.scenario_list
+            widget_table.clearContents()
+            items = self.project.scenarios
             header = self.scenario_list_header
         elif ttype == 'event':
-            self.events_list_table.clearContents()
+            widget_table = self.events_list_table
+            widget_table.clearContents()
             items = self.project.events
-            widget_table = self.events_list
             header = self.events_list_header
+        else:
+            return False
         widget_table.setRowCount(len(items))
         for item in items:
             for column in header:
@@ -454,7 +457,6 @@ class Projekt(QGroupBox, QModelIndex):
             cot = self.events_list_table.currentItem()
             event2delete = self.event_list_selected
             # remove it from the view
-            print('XXX', cot, self.events_list_table.row(cot))
             self.events_list_table.removeRow(self.events_list_table.row(cot))
             # remove it from the model
             self.project.del_event(event2delete)
@@ -680,12 +682,6 @@ class Projekt(QGroupBox, QModelIndex):
             self.event_list_selected = None
             self.event_list_del.setDisabled(True)
             self.event_list_play.setDisabled(True)
-
-    def project_version_changed(self):
-        """
-        Project version has been changed
-        """
-        self.project.version = self.project_version.text()
 
     def project_autoplay_changed(self, state):
         """

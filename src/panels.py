@@ -161,6 +161,7 @@ def createEventsBinGroupBox(self):
     self.events_list_table = QTableWidget()
     self.events_list_table.setSelectionMode(QAbstractItemView.SingleSelection)
     header_list = ['name','wait','duration','post_wait','output']
+    self.events_list_header = header_list
     self.events_list_table.setColumnCount(len(header_list))
     for i in range(len(header_list)):
         if header_list[i] == 'name' or header_list[i] == 'description' or header_list[i] == 'output':
