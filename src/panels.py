@@ -10,11 +10,11 @@ from pylekture.constants import protocols
 
 def create_panels(self):
     # Create Project Attributes layout
-    self.project_Groupbox = createProjectAttrGroupBox(self)
+    self.project_group = createProjectAttrGroupBox(self)
     # Create Scenario List layout
     createScenarioListGroupBox(self)
     # Create Scenario Attributes layout
-    createScenarioAttrGroupBox(self)
+    self.scenario_events_group = createscenario_events_group(self)
     # Create Events Bin
     self.events_list_group = createEventsBinGroupBox(self)
     # Create Outputs layout
@@ -26,12 +26,12 @@ def create_panels(self):
     # Create the main layout
     mainLayout = QGridLayout()
     # Integrate the layout previously created
-    #self.project_Groupbox.setMaximumHeight(50)
-    mainLayout.addWidget(self.project_Groupbox, 0, 0, 1, 1)
+    self.project_group.setMaximumHeight(80)
+    mainLayout.addWidget(self.project_group, 0, 0, 1, 1)
     mainLayout.addWidget(self.ScenarioListGroupBox, 1, 0, 1, 1)
     mainLayout.addWidget(self.events_list_group, 0, 1, 3, 1)
-    mainLayout.addWidget(self.ScenarioAttrGroupBox, 2, 0, 1, 1)
-    mainLayout.addWidget(self.outputs_group, 2, 0)
+    mainLayout.addWidget(self.scenario_events_group, 2, 0, 1, 1)
+    mainLayout.addWidget(self.outputs_group, 2, 0, 1, 1)
 
     # Integrate main layout to the main window
     self.setLayout(mainLayout)
@@ -109,20 +109,17 @@ def createScenarioListGroupBox(self):
     self.ScenarioListGroupBox.setLayout(scenarios)
 
 
-def createScenarioAttrGroupBox(self):
-    self.ScenarioAttrGroupBox = QGroupBox("Scenario Content")
-    #self.ScenarioAttrGroupBox.setVisible(False)
+def createscenario_events_group(self):
+    scenario_events_group = QGroupBox("Scenario Content")
     # Assign an output to the seleted scenario
     self.scenario_output_label = QLabel('output')
     self.scenario_output = QComboBox()
-    self.scenario_output.setMinimumSize(50,20)
     self.scenario_output.setDisabled(True)
     # Display the selected output
     self.scenario_output_text = QLabel('')
     # Description of the seleted scenario
     self.scenario_description_label = QLabel('description')
     self.scenario_description = QLineEdit()
-    self.scenario_description.setMinimumSize(250,20)
     self.scenario_description.setDisabled(True)
     # List of the events of the selected scenario
     self.scenario_content_label = QLabel('Events')
@@ -156,7 +153,8 @@ def createScenarioAttrGroupBox(self):
     layout.addWidget(self.scenario_content, 2, 1, 9, 9)
     layout.addWidget(self.event_play, 8, 0)
     layout.addWidget(self.event_del, 9, 0)
-    self.ScenarioAttrGroupBox.setLayout(layout)
+    scenario_events_group.setLayout(layout)
+    return scenario_events_group
 
 def createOuputAttrGroupBox(self):
     self.outputs_group = QGroupBox("Outputs")
@@ -188,7 +186,7 @@ def createEventsBinGroupBox(self):
     EventsBinGroupBox = QGroupBox("Events Bin")
     self.events_list_table = QTableWidget()
     self.events_list_table.setSelectionMode(QAbstractItemView.SingleSelection)
-    header_list = ['name','wait','duration','post_wait','output']
+    header_list = ['name', 'command', 'wait','duration','post_wait','output']
     self.events_list_header = header_list
     self.events_list_table.setColumnCount(len(header_list))
     for i in range(len(header_list)):
@@ -215,11 +213,15 @@ def createEventsBinGroupBox(self):
     self.event_list_del = QPushButton(('Delete'))
     self.event_list_del.setDisabled(True)
     self.event_list_del.released.connect(self.delete_event_list)
+    self.event_list_service = QComboBox()
+    for service in ['Osc', 'Wait', 'MidiNote' ]:
+        self.event_list_service.addItem(service)
 
     events = QGridLayout()
     events.addWidget(self.event_list_new,0,0)
     events.addWidget(self.event_list_play,0,1)
     events.addWidget(self.event_list_del,0,2)
+    events.addWidget(self.event_list_service,0,3)
     events.addWidget(self.events_list_table,1,0,5,5)
     EventsBinGroupBox.setLayout(events)
     return EventsBinGroupBox

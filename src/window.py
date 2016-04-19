@@ -296,7 +296,7 @@ class MainWindow(QMainWindow):
         """switch to the outputs editor"""
         if self.child:
             project = self.activeProjekt()
-            project.ScenarioAttrGroupBox.setVisible(False)
+            project.scenario_events_group.setVisible(False)
             project.outputs_group.setVisible(True)
             self.scenarioAct.setVisible(True)
             self.outputsAct.setVisible(False)
@@ -306,6 +306,6 @@ class MainWindow(QMainWindow):
         if self.child:
             project = self.activeProjekt()
             project.outputs_group.setVisible(False)
-            project.ScenarioAttrGroupBox.setVisible(True)
+            project.scenario_events_group.setVisible(True)
             self.scenarioAct.setVisible(False)
             self.outputsAct.setVisible(True)
