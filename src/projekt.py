@@ -13,7 +13,7 @@ from panels import create_panels
 
 import sys
 import subprocess
-from PyQt5.QtCore import Qt, QModelIndex, QFileInfo, QFile, QPoint
+from PyQt5.QtCore import Qt, QModelIndex, QFileInfo, QFile, QPoint, pyqtSlot
 from PyQt5.QtWidgets import QFileDialog, QListWidgetItem, QApplication, QMenu, \
                             QMessageBox, QTableWidgetItem, QGroupBox, QGridLayout, \
                             QComboBox
@@ -323,6 +323,11 @@ class Projekt(QGroupBox, QModelIndex):
                     menu = QComboBox()
                     output = self.output_list_refresh(item, menu)
                     widget_table.setCellWidget(index, header.index(column), menu)
+                    menu.currentIndexChanged.connect(self.scenario_list.signalMapper.map)
+                    self.scenario_list.signalMapper.setMapping(menu, menu)
+                    # we can use a ComboBox in a table without selecting the current row.
+                    # so we have to pass to the signalMapper the scenario object
+                    menu.item = item
                 else:
                     if column == 'duration':
                         value = item.getduration()
@@ -340,6 +345,13 @@ class Projekt(QGroupBox, QModelIndex):
                         widg.setFlags(Qt.NoItemFlags)
                         widg.setFlags(Qt.ItemIsEnabled|Qt.ItemIsEditable|Qt.ItemIsSelectable)
                     widget_table.setItem(index, header.index(column), widg)
+
+    @pyqtSlot(QComboBox)
+    def output_changed(self, menu):
+        """
+        output has changed from events_list table or scenario_list table
+        """
+        menu.item.output = self.project.outputs[menu.currentIndex()]
 
     def scenario_display_clear(self):
         """

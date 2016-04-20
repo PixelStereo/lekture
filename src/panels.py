@@ -1,12 +1,22 @@
 #! /usr/bin/env python,
 # -*- coding: utf-8 -*-
 
-from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import QLabel, QLineEdit, QSpinBox, QComboBox, QTableWidget, QVBoxLayout, QTableWidgetItem
+from PyQt5.QtCore import Qt, QSignalMapper, pyqtSlot
+from PyQt5.QtWidgets import QLabel, QLineEdit, QSpinBox, QComboBox, QTableWidget, QVBoxLayout, QTableWidgetItem, QWidget
 from PyQt5.QtWidgets import QGroupBox, QHBoxLayout, QListWidget, QAbstractItemView, QPushButton, QGridLayout, QCheckBox
 
 from pylekture import project
 from pylekture.constants import protocols
+
+
+class EventTable(QTableWidget):
+    """
+    Table to display Event or Scenario
+    """
+    def __init__(self):
+        super(EventTable, self).__init__()
+        self.signalMapper = QSignalMapper(self)
+
 
 def create_panels(self):
     # Create Project Attributes layout
@@ -69,7 +79,8 @@ def createProjectAttrGroupBox(self):
 
 def createScenarioListGroupBox(self):
     ScenarioListGroupBox = QGroupBox("Scenario List")
-    self.scenario_list = QTableWidget()
+    self.scenario_list = EventTable()
+    self.scenario_list.signalMapper.mapped[QWidget].connect(self.output_changed)
     self.scenario_list.setSelectionMode(QAbstractItemView.SingleSelection)
     header_list = ['name', 'wait','duration','post_wait', 'loop', 'output']
     self.scenario_list_header = header_list
