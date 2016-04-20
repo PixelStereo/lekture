@@ -371,13 +371,7 @@ class Projekt(QGroupBox, QModelIndex):
         """
         out = scenario.output
         if out:
-            if scenario.output.service == 'OutputUdp':
-                output_string = out.ip + ':' + str(out.udp) + ' ('+out.name+')'
-            elif scenario.output.service == 'OutputMidi':
-                output_string = 'port : ' + out.port + ' ('+out.name+')'
-            else:
-                output_string = scenario.output.service + ' protocol is not working'
-            self.scenario_output_text.setText(output_string)
+            self.scenario_output_text.setText(out.port + ' (' + out.name + ')')
         else:
             self.scenario_output_text.setText('No output')
 
@@ -740,7 +734,6 @@ class Projekt(QGroupBox, QModelIndex):
         """
         Set output_selected variable when output selection changed
         """
-        print(current, previous)
         outputs = self.project.outputs
         if current:
             output = current

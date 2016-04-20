@@ -142,7 +142,7 @@ def create_scenario_events_group(self):
     self.event_play.setMaximumWidth(100)
     self.event_play.setDisabled(True)
     # Button to delete the selected event
-    self.event_del = QPushButton('delete')
+    self.event_del = QPushButton('remove')
     self.event_del.setMaximumWidth(100)
     self.event_del.setDisabled(True)
 
@@ -155,12 +155,12 @@ def create_scenario_events_group(self):
     layout = QGridLayout()
     layout.addWidget(self.scenario_description_label, 0, 0)
     layout.addWidget(self.scenario_description, 0, 1, 1, 9)
-    layout.addWidget(self.scenario_output_label,1 , 0)
-    layout.addWidget(self.scenario_output_text,1,1)
-    layout.addWidget(self.scenario_content_label,2 ,0 )
-    layout.addWidget(self.scenario_content, 2, 1, 9, 9)
-    layout.addWidget(self.event_play, 8, 0)
-    layout.addWidget(self.event_del, 9, 0)
+    layout.addWidget(self.scenario_output_label, 1 , 0)
+    layout.addWidget(self.scenario_output_text, 1, 1)
+    layout.addWidget(self.event_play, 2, 0)
+    layout.addWidget(self.event_del, 2, 1)
+    layout.addWidget(self.scenario_content_label,3 ,0 )
+    layout.addWidget(self.scenario_content, 4, 0, 9, 9)
     scenario_events_group.setLayout(layout)
     return scenario_events_group
 
@@ -174,7 +174,7 @@ def createOuputAttrGroupBox(self):
     self.output_new = QPushButton('New')
     self.output_del = QPushButton('Delete')
     self.output_del.setDisabled(True)
-    output_list_header = ['name', 'description', 'service', 'port', 'ip', 'udp']
+    output_list_header = ['name', 'description', 'service', 'port']
     self.output_list_header = output_list_header
     # create the table to display outputs for each protocols
     protocol_table = QTableWidget(len(self.project.outputs),len(output_list_header))
