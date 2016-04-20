@@ -208,7 +208,7 @@ class Projekt(QGroupBox, QModelIndex):
         Return the modified state of the project
         """
         if self.document.isModified():
-            ret = QMessageBox.warning(self, "MDI",
+            ret = QMessageBox.warning(self, "your project",
                                       "'%s' has been modified.\nDo you want to save your "
                                       "changes?" % self.userFriendlyCurrentFile(),
                                       QMessageBox.Save | QMessageBox.Discard | QMessageBox.Cancel)
@@ -270,9 +270,8 @@ class Projekt(QGroupBox, QModelIndex):
         Create a new scenario
         """
         scenario = self.project.new_scenario()
-        # The current scenario has not an output available, so assign the first one.
+        # If output = None, it will use the project outputs.
         # In lekture, we always have a default output (OSC), created when creating a project
-        scenario.output = self.project.outputs[-1]
         self.table_list_refresh('scenario')
         last = len(self.project.scenarios)-1
         self.scenario_list.setCurrentCell(last, 0)
@@ -351,7 +350,12 @@ class Projekt(QGroupBox, QModelIndex):
         """
         output has changed from events_list table or scenario_list table
         """
-        menu.item.output = self.project.outputs[menu.currentIndex()]
+        if menu.currentIndex() == 0:
+            # this is the 'parent' value. 
+            menu.item._output = None
+        else:
+            index = menu.currentIndex() - 1
+            menu.item.output = self.project.outputs[index]
 
     def scenario_display_clear(self):
         """
@@ -368,9 +372,12 @@ class Projekt(QGroupBox, QModelIndex):
         out = scenario.output
         if out:
             if scenario.output.service == 'OutputUdp':
-                self.scenario_output_text.setText(out.ip+':'+str(out.udp)+' ('+out.name+')')
+                output_string = out.ip + ':' + str(out.udp) + ' ('+out.name+')'
+            elif scenario.output.service == 'OutputMidi':
+                output_string = 'port : ' + out.port + ' ('+out.name+')'
             else:
-                self.scenario_output_text.setText(scenario.output.service + ' protocol is not working')
+                output_string = scenario.output.service + ' protocol is not working'
+            self.scenario_output_text.setText(output_string)
         else:
             self.scenario_output_text.setText('No output')
 
@@ -389,8 +396,11 @@ class Projekt(QGroupBox, QModelIndex):
         """
         This function is called when scenario_selected changed
         """
+        # first, clear the scenario_display
         self.scenario_display_clear()
+        # display a nice string to explain which is the default output for the whole scenario
         self.scenario_out_display(scenario)
+        # display the description of the scenario
         self.scenario_description.setText(scenario.description)
         if scenario.events != []:
             # scenario contains events
@@ -401,6 +411,8 @@ class Projekt(QGroupBox, QModelIndex):
                 line.setFlags(Qt.ItemIsEnabled|Qt.ItemIsEditable|\
                               Qt.ItemIsSelectable|Qt.ItemIsDragEnabled)
                 self.scenario_content.addItem(line)
+        # add an empty item at the end.
+        # It will be used to create a new event, just typing into it.
         empty = QListWidgetItem()
         empty.setFlags(Qt.ItemIsEnabled|Qt.ItemIsEditable|\
                        Qt.ItemIsSelectable|Qt.ItemIsDragEnabled)
@@ -444,8 +456,8 @@ class Projekt(QGroupBox, QModelIndex):
         Called when user right-click on an event
         """
         self.listMenu = QMenu()
-        play = self.listMenu.addAction("Play Event")
-        play_from_here = self.listMenu.addAction("Play From Here")
+        play = self.listMenu.addAction("Play one")
+        play_from_here = self.listMenu.addAction("Play from here")
         play.triggered.connect(self.event_play_func)
         play_from_here.triggered.connect(self.event_play_from_here_func)
         parentPosition = self.scenario_content.mapToGlobal(QPoint(0, 0))
@@ -482,23 +494,25 @@ class Projekt(QGroupBox, QModelIndex):
         Scenario is edited
         """
         if  self.scenario_list.currentItem():
-            data = self.scenario_list.currentItem().text()
-            print(self.scenario_list_header[col])
-            if self.scenario_list_header[col] == 'name':
-                self.scenario_selected.name = data
-            elif self.scenario_list_header[col] == 'description':
-                self.scenario_selected.description = data
-            elif self.scenario_list_header[col] == 'wait':
-                self.scenario_selected.wait = int(data)
-                self.table_refresh('scenario')
-            elif self.scenario_list_header[col] == 'post_wait':
-                self.scenario_selected.post_wait = int(data)
+            try:
+                data = self.scenario_list.currentItem().text()
+                if self.scenario_list_header[col] == 'name':
+                    self.scenario_selected.name = data
+                elif self.scenario_list_header[col] == 'description':
+                    self.scenario_selected.description = data
+                elif self.scenario_list_header[col] == 'wait':
+                    self.scenario_selected.wait = int(data)
+                elif self.scenario_list_header[col] == 'loop':
+                    self.scenario_selected.loop = data
+                elif self.scenario_list_header[col] == 'post_wait':
+                    self.scenario_selected.post_wait = int(data)
+                selection = self.project.scenarios.index(self.scenario_selected)
                 self.table_list_refresh('scenario')
-            elif self.scenario_list_header[col] == 'output':
-                self.scenario_selected.output = data
-            else:
-                # undo is the simplest way to do, but it's not yet implemented
+                self.scenario_list.setCurrentCell(selection, 0)
+            except:
+                selection = self.project.scenarios.index(self.scenario_selected)
                 self.table_list_refresh('scenario')
+                self.scenario_list.setCurrentCell(selection, 0)
 
     def event_data_changed(self, row, col):
         """
@@ -519,8 +533,6 @@ class Projekt(QGroupBox, QModelIndex):
                 self.event_list_selected.loop = data
             elif self.events_list_header[col] == 'post_wait':
                 self.event_list_selected.post_wait = int(data)
-            elif self.events_list_header[col] == 'output':
-                self.event_list_selected.output = data
             # refresh the table to be sure that there is no an error
             self.table_list_refresh('event')
 
@@ -542,7 +554,8 @@ class Projekt(QGroupBox, QModelIndex):
         :returns: (int) The index of the current output
         """
         menu.clear()
-        index = 0
+        index = None
+        menu.addItem('parent')
         for output in self.project.outputs:
             menu.addItem(output.name)
             if output == item.output:
@@ -600,7 +613,6 @@ class Projekt(QGroupBox, QModelIndex):
         """
         protocol = self.event_list_service.currentText()
         event = self.new_event(protocol, command)
-        event.output = self.project.outputs[-1]
         last = len(self.project.events)-1
         self.events_list_table.setCurrentCell(last, 0)
         self.events_list_table.setFocus()
@@ -673,6 +685,8 @@ class Projekt(QGroupBox, QModelIndex):
         """
         protocol = self.protocol.currentText()
         self.project.new_output(protocol)
+        self.table_list_refresh('scenario')
+        self.table_list_refresh('event')
         self.protocol_display()
 
     def protocol_display(self):
@@ -686,18 +700,17 @@ class Projekt(QGroupBox, QModelIndex):
         row = 0
         for out in self.project.outputs:
             col = 0
-            attrs = prop_list(out)
-            attrs.sort()
-            self.protocol_table.setColumnCount(len(attrs))
-            for attr in attrs:
-                header = QTableWidgetItem(attr)
-                self.protocol_table.setHorizontalHeaderItem(col, header)
-                item = QTableWidgetItem(str(getattr(out, attr)))
-                self.protocol_table.setItem(row, col, item)
+            self.protocol_table.setColumnCount(len(self.output_list_header))
+            for attribute in self.output_list_header:
+                if attribute in prop_list(out):
+                    header = QTableWidgetItem(attribute)
+                    self.protocol_table.setHorizontalHeaderItem(col, header)
+                    item = QTableWidgetItem(str(getattr(out, attribute)))
+                    self.protocol_table.setItem(row, col, item)
                 col = col + 1
             row = row + 1
 
-    def dataChanged(self, row, col):
+    def output_table_changed(self, row, col):
         """
         An output has been edited
         """
@@ -710,3 +723,34 @@ class Projekt(QGroupBox, QModelIndex):
             # just to be sure that an int won't be encoded as a symbol
             value = checkType(value)
             setattr(out, attr, value)
+            if attr == 'name':
+                self.table_list_refresh('scenario')
+                self.table_list_refresh('event')
+
+    def del_output_func(self):
+        if self.output_selected:
+            self.project.del_output(self.output_selected)
+            row = self.protocol_table.currentRow()
+            self.protocol_display()
+            if self.protocol_table.rowCount() <= row:
+                row = self.protocol_table.rowCount() - 1
+            self.protocol_table.setCurrentCell(row, 0)
+
+    def output_selection_changed(self, current, previous):
+        """
+        Set output_selected variable when output selection changed
+        """
+        print(current, previous)
+        outputs = self.project.outputs
+        if current:
+            output = current
+        elif previous and self.protocol_table.currentRow() >= 0:
+            output = previous
+        else:
+            output = None
+            self.output_selected = None
+            self.output_del.setDisabled(True)
+        if output:
+            index = self.protocol_table.row(output)
+            self.output_selected = outputs[index]
+            self.output_del.setDisabled(False)

@@ -28,9 +28,9 @@ def create_panels(self):
     # Create Events Bin
     self.events_list_group = create_events_list_group(self)
     # Create Outputs layout
-    createOuputAttrGroupBox(self)
-
-    self.outputs_group.setVisible(False)
+    outputs_group = createOuputAttrGroupBox(self)
+    self.outputs_group = outputs_group
+    outputs_group.setVisible(False)
     self.protocol_display()
 
     # Create the main layout
@@ -41,10 +41,11 @@ def create_panels(self):
     mainLayout.addWidget(ScenarioListGroupBox, 1, 0, 1, 1)
     mainLayout.addWidget(self.events_list_group, 0, 1, 3, 1)
     mainLayout.addWidget(self.scenario_events_group, 2, 0, 1, 1)
-    mainLayout.addWidget(self.outputs_group, 2, 0, 1, 1)
+    mainLayout.addWidget(outputs_group, 2, 0, 1, 1)
 
     # Integrate main layout to the main window
     self.setLayout(mainLayout)
+    #self.setMaximumWidth(1222)
 
 def createProjectAttrGroupBox(self):
     project_Groupbox = QGroupBox()
@@ -100,8 +101,6 @@ def createScenarioListGroupBox(self):
     self.scenario_list.itemDoubleClicked.connect(self.scenario_list.editItem)
     # Function to rename a scenario if its name changed
     self.scenario_list.cellChanged.connect(self.scenario_data_changed)
-    # Function to trigger when output menu is changed
-    self.scenario_list.cellChanged.connect(self.scenario_data_changed)
     # Button to create a new scenario
     self.scenario_new = QPushButton(('New'))
     self.scenario_new.released.connect(self.new_scenario)
@@ -118,7 +117,7 @@ def createScenarioListGroupBox(self):
     scenarios.addWidget(self.scenario_del, 0, 2)
     scenarios.addWidget(self.scenario_list, 1, 0, 5, 5)
     ScenarioListGroupBox.setLayout(scenarios)
-    ScenarioListGroupBox.setMaximumWidth(500)
+    ScenarioListGroupBox.setMaximumWidth(555)
     return ScenarioListGroupBox
 
 
@@ -166,30 +165,47 @@ def create_scenario_events_group(self):
     return scenario_events_group
 
 def createOuputAttrGroupBox(self):
-    self.outputs_group = QGroupBox("Outputs")
+    outputs_group = QGroupBox("Outputs")
     # creare a menu to chosse which protocol to display
     self.protocol = QComboBox()
     for protocol in protocols:
         self.protocol.addItem(protocol)
     # create a button for creating a new output
     self.output_new = QPushButton('New')
+    self.output_del = QPushButton('Delete')
+    self.output_del.setDisabled(True)
+    output_list_header = ['name', 'description', 'service', 'port', 'ip', 'udp']
+    self.output_list_header = output_list_header
     # create the table to display outputs for each protocols
-    protocol_table = QTableWidget(len(self.project.outputs),3)
-    protocol_table.setColumnWidth(0,130)
-    protocol_table.setColumnWidth(1,130)
-    protocol_table.setColumnWidth(2,130)
-    protocol_table.setColumnWidth(3,130)
+    protocol_table = QTableWidget(len(self.project.outputs),len(output_list_header))
+    protocol_table.setSelectionBehavior(QAbstractItemView.SelectRows)
+    for i in range(len(output_list_header)):
+        if output_list_header[i] == 'name' or output_list_header[i] == 'description' or output_list_header[i] == 'output' or output_list_header[i] == 'command':
+            self.events_list_table.setColumnWidth(i,140)
+        else:
+            self.events_list_table.setColumnWidth(i,55)
+    for header in output_list_header:
+        head = QTableWidgetItem(header)
+        self.events_list_table.setHorizontalHeaderItem(output_list_header.index(header),head)
     self.protocol_table = protocol_table
-    self.protocol_table.cellChanged.connect(self.dataChanged)
+    # to get current and previous
+    protocol_table.currentItemChanged.connect(self.output_selection_changed)
+    # connect any edition in the view to the model update
+    self.protocol_table.cellChanged.connect(self.output_table_changed)
     # create a new output
     self.output_new.released.connect(self.new_output_func)
+    # delete an output
+    self.output_del.released.connect(self.del_output_func)
     # display protocol
     self.protocol.currentIndexChanged.connect(self.protocol_display)
+
     output_layout = QGridLayout()
     output_layout.addWidget(self.output_new, 0, 0, 1, 1)
-    output_layout.addWidget(self.protocol, 0, 1, 1, 4)
+    output_layout.addWidget(self.output_del, 0, 1, 1, 1)
+    output_layout.addWidget(self.protocol, 0, 2, 1, 1)
     output_layout.addWidget(self.protocol_table, 1, 0, 5, 5)
-    self.outputs_group.setLayout(output_layout)
+    outputs_group.setLayout(output_layout)
+    return outputs_group
 
 def create_events_list_group(self):
     EventsBinGroupBox = QGroupBox("Events Bin")
@@ -234,5 +250,6 @@ def create_events_list_group(self):
     events.addWidget(self.event_list_service,0,3)
     events.addWidget(self.events_list_table,1,0,5,5)
     EventsBinGroupBox.setLayout(events)
+    EventsBinGroupBox.setMaximumWidth(675)
     return EventsBinGroupBox
 
