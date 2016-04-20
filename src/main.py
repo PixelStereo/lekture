@@ -30,7 +30,7 @@ if __name__ == "__main__":
     except Exception as error:
         print('failed ' + str(error))
     root = QFileInfo(__file__).absolutePath()
-    path = root+'/icon/Play_blauw.png'
+    path = root+'/icon/icon.png'
     app.setWindowIcon(QIcon(path))
     mainWin = MainWindow()
     mainWin.show()
