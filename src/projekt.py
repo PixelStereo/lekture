@@ -574,7 +574,10 @@ class Projekt(QGroupBox, QModelIndex):
             newline = self.scenario_content.currentItem().text()
             if newline != '':
                 newline = newline.split(' ')
-                # there is new text on the last line
+                # remove space if it is the last character
+                while newline[-1] == "":
+                    newline = newline[:-1]
+                # there is new text on the last line, so we create a new event
                 if self.scenario_content.currentRow() + 1 == self.scenario_content.count():
                     # create a new event
                     new_event = self.new_event('Osc', newline)
@@ -583,6 +586,7 @@ class Projekt(QGroupBox, QModelIndex):
                     # display the current scenario (refresh)
                     self.scenario_display(self.scenario_selected)
                 else:
+                    # This is an edit of an existing event
                     self.scenario_selected.events[self.scenario_content.currentRow()].command = newline
         # we need to refresh the duration item on the scenrio_table
         #don't understant why but with this line, the name is changed too… weird
