@@ -345,7 +345,7 @@ class Projekt(QGroupBox, QModelIndex):
                         widg.setFlags(Qt.ItemIsEnabled|Qt.ItemIsEditable|Qt.ItemIsSelectable)
                     widget_table.setItem(index, header.index(column), widg)
 
-    @pyqtSlot(QComboBox)
+    #@pyqtSlot(QComboBox)
     def output_changed(self, menu):
         """
         output has changed from events_list table or scenario_list table
