@@ -119,8 +119,14 @@ class MainWindow(QMainWindow):
 
     def about(self):
         """called when user wants to know a bit more on the app"""
+        import sys
+        python_version = str(sys.version_info[0])
+        python_version_temp = sys.version_info[1:5]
+        for item in python_version_temp:
+            python_version = python_version + "." + str(item)
         QMessageBox.about(self, "About Lekture",
-                          "pylekture build " + str(pylekture.__version__))
+                            "pylekture build " + str(pylekture.__version__ + "\n" + \
+                            "python version " + str(python_version)))
 
     def updateMenus(self):
         """update menus"""
