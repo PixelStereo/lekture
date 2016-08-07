@@ -250,6 +250,6 @@ def create_events_list_group(self):
     events.addWidget(self.event_list_service,0,3)
     events.addWidget(self.events_list_table,1,0,5,5)
     EventsBinGroupBox.setLayout(events)
-    EventsBinGroupBox.setMaximumWidth(675)
+    EventsBinGroupBox.setMaximumWidth(690)
     return EventsBinGroupBox
 
