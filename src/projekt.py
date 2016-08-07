@@ -322,27 +322,32 @@ class Projekt(QGroupBox, QModelIndex):
                     menu = QComboBox()
                     output = self.output_list_refresh(item, menu)
                     widget_table.setCellWidget(index, header.index(column), menu)
+                    if ttype == 'scenario':
+                        output_index = self.project.outputs.index(self.project.scenarios[items.index(item)].output)
+                    elif ttype == 'event':
+                        output_index = self.project.outputs.index(self.project.events[items.index(item)].output)
+                    output_index = output_index + 1
+                    menu.setCurrentIndex(output_index)
                     menu.currentIndexChanged.connect(self.scenario_list.signalMapper.map)
                     self.scenario_list.signalMapper.setMapping(menu, menu)
                     # we can use a ComboBox in a table without selecting the current row.
                     # so we have to pass to the signalMapper the scenario object
                     menu.item = item
+                elif column == 'duration':
+                    value = item.getduration()
+                    widg = QTableWidgetItem(str(value))
+                    widg.setFlags(Qt.NoItemFlags)
+                    widg.setFlags(Qt.ItemIsEnabled|Qt.ItemIsSelectable)
+                elif column == 'command':
+                    value = self.line_to_command(item.command)
+                    widg = QTableWidgetItem(str(value))
+                    widg.setFlags(Qt.NoItemFlags)
+                    widg.setFlags(Qt.ItemIsEnabled|Qt.ItemIsEditable|Qt.ItemIsSelectable)
                 else:
-                    if column == 'duration':
-                        value = item.getduration()
-                        widg = QTableWidgetItem(str(value))
-                        widg.setFlags(Qt.NoItemFlags)
-                        widg.setFlags(Qt.ItemIsEnabled|Qt.ItemIsSelectable)
-                    elif column == 'command':
-                        value = self.line_to_command(item.command)
-                        widg = QTableWidgetItem(str(value))
-                        widg.setFlags(Qt.NoItemFlags)
-                        widg.setFlags(Qt.ItemIsEnabled|Qt.ItemIsEditable|Qt.ItemIsSelectable)
-                    else:
-                        value = getattr(item, column)
-                        widg = QTableWidgetItem(str(value))
-                        widg.setFlags(Qt.NoItemFlags)
-                        widg.setFlags(Qt.ItemIsEnabled|Qt.ItemIsEditable|Qt.ItemIsSelectable)
+                    value = getattr(item, column)
+                    widg = QTableWidgetItem(str(value))
+                    widg.setFlags(Qt.NoItemFlags)
+                    widg.setFlags(Qt.ItemIsEnabled|Qt.ItemIsEditable|Qt.ItemIsSelectable)
                     widget_table.setItem(index, header.index(column), widg)
 
     #@pyqtSlot(QComboBox)
