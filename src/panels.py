@@ -222,7 +222,7 @@ def create_events_list_group(self):
             self.events_list_table.setColumnWidth(i,55)
     for header in header_list:
         head = QTableWidgetItem(header)
-        self.events_list_table.setHorizontalHeaderItem(header_list.index(header),head)
+        self.events_list_table.setHorizontalHeaderItem(header_list.index(header), head)
     self.events_list_table.setSelectionBehavior(QAbstractItemView.SelectRows)
     # to get current and previous
     self.events_list_table.currentItemChanged.connect(self.event_list_selection_changed)
