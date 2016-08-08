@@ -117,7 +117,7 @@ def createScenarioListGroupBox(self):
     scenarios.addWidget(self.scenario_del, 0, 2)
     scenarios.addWidget(self.scenario_list, 1, 0, 5, 5)
     ScenarioListGroupBox.setLayout(scenarios)
-    ScenarioListGroupBox.setMaximumWidth(555)
+    ScenarioListGroupBox.setMaximumWidth(576)
     return ScenarioListGroupBox
 
 
