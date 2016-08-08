@@ -240,7 +240,7 @@ def create_events_list_group(self):
     self.event_list_del.setDisabled(True)
     self.event_list_del.released.connect(self.delete_event_list)
     self.event_list_service = QComboBox()
-    for service in ['Osc', 'Wait', 'MidiNote' ]:
+    for service in ['Osc', 'ScenarioPlay', 'Wait', 'MidiNote' ]:
         self.event_list_service.addItem(service)
 
     events = QGridLayout()

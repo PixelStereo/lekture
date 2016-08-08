@@ -410,7 +410,9 @@ class Projekt(QGroupBox, QModelIndex):
             # scenario contains events
             for event in scenario.events:
                 line = event.command
-                line = self.line_to_command(line)
+                line = self.line_to_command(event.command)
+                if event.__class__.__name__ == 'ScenarioPlay':
+                    line = "Play Scenario " + line
                 line = QListWidgetItem(line)
                 line.setFlags(Qt.ItemIsEnabled|Qt.ItemIsEditable|\
                               Qt.ItemIsSelectable|Qt.ItemIsDragEnabled)
@@ -590,7 +592,17 @@ class Projekt(QGroupBox, QModelIndex):
                 # there is new text on the last line, so we create a new event
                 if self.scenario_content.currentRow() + 1 == self.scenario_content.count():
                     # create a new event
-                    new_event = self.new_event('Osc', newline)
+                    if newline[0] == "OSC":
+                        newline = newline[1:]
+                        new_event = self.new_event('Osc', newline)
+                    elif newline[0] == "SP":
+                        newline = newline[1:]
+                        new_event = self.new_event('ScenarioPlay', newline)
+                    elif isinstance(checkType(newline[0]), float) or isinstance(checkType(newline[0]), int):
+                        print("creating event of type wait")
+                        new_event = self.new_event('Wait', checkType(newline[0]))
+                    else:
+                        new_event = self.new_event('Osc', newline)
                     # add the event to the scenario
                     self.scenario_selected.add_event(new_event)
                     # display the current scenario (refresh)
