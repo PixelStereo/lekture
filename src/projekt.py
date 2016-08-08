@@ -326,6 +326,10 @@ class Projekt(QGroupBox, QModelIndex):
                         output_index = self.project.outputs.index(self.project.scenarios[items.index(item)].output)
                     elif ttype == 'event':
                         output_index = self.project.outputs.index(self.project.events[items.index(item)].output)
+                    if output_index != 0:
+                        output_index = output_index - 1
+                    else:
+                        output_index = 0
                     menu.setCurrentIndex(output_index)
                     menu.currentIndexChanged.connect(self.scenario_list.signalMapper.map)
                     self.scenario_list.signalMapper.setMapping(menu, menu)
