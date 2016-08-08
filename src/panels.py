@@ -212,7 +212,7 @@ def create_events_list_group(self):
     self.events_list_table = QTableWidget()
     self.events_list_table.setSelectionMode(QAbstractItemView.SingleSelection)
     #self.events_list_table.setSortingEnabled(True)
-    header_list = ['name', 'command', 'wait','duration','post_wait', 'loop', 'output']
+    header_list = ['type', 'name', 'command', 'wait','duration','post_wait', 'loop', 'output']
     self.events_list_header = header_list
     self.events_list_table.setColumnCount(len(header_list))
     for i in range(len(header_list)):
