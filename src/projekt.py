@@ -337,17 +337,19 @@ class Projekt(QGroupBox, QModelIndex):
                     widg = QTableWidgetItem(str(value))
                     widg.setFlags(Qt.NoItemFlags)
                     widg.setFlags(Qt.ItemIsEnabled|Qt.ItemIsSelectable)
+                    widget_table.setItem(index, header.index(column), widg)
                 elif column == 'command':
                     value = self.line_to_command(item.command)
                     widg = QTableWidgetItem(str(value))
                     widg.setFlags(Qt.NoItemFlags)
                     widg.setFlags(Qt.ItemIsEnabled|Qt.ItemIsEditable|Qt.ItemIsSelectable)
+                    widget_table.setItem(index, header.index(column), widg)
                 else:
                     value = getattr(item, column)
                     widg = QTableWidgetItem(str(value))
                     widg.setFlags(Qt.NoItemFlags)
                     widg.setFlags(Qt.ItemIsEnabled|Qt.ItemIsEditable|Qt.ItemIsSelectable)
-                widget_table.setItem(index, header.index(column), widg)
+                    widget_table.setItem(index, header.index(column), widg)
 
     #@pyqtSlot(QComboBox)
     def output_changed(self, menu):
