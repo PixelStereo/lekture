@@ -181,12 +181,12 @@ def createOuputAttrGroupBox(self):
     protocol_table.setSelectionBehavior(QAbstractItemView.SelectRows)
     for i in range(len(output_list_header)):
         if output_list_header[i] == 'name' or output_list_header[i] == 'description' or output_list_header[i] == 'output' or output_list_header[i] == 'command':
-            self.events_list_table.setColumnWidth(i,140)
+            protocol_table.setColumnWidth(i,140)
         else:
-            self.events_list_table.setColumnWidth(i,55)
+            protocol_table.setColumnWidth(i,55)
     for header in output_list_header:
         head = QTableWidgetItem(header)
-        self.events_list_table.setHorizontalHeaderItem(output_list_header.index(header),head)
+        protocol_table.setHorizontalHeaderItem(output_list_header.index(header),head)
     self.protocol_table = protocol_table
     # to get current and previous
     protocol_table.currentItemChanged.connect(self.output_selection_changed)
