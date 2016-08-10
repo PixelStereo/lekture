@@ -348,7 +348,14 @@ class Projekt(QGroupBox, QModelIndex):
                     widg.setFlags(Qt.NoItemFlags)
                     widg.setFlags(Qt.ItemIsEnabled|Qt.ItemIsEditable|Qt.ItemIsSelectable)
                     widget_table.setItem(index, header.index(column), widg)
+                elif column == 'type':
+                    value = str(item.__class__.__name__)
+                    widg = QTableWidgetItem(str(value))
+                    widg.setFlags(Qt.NoItemFlags)
+                    widg.setFlags(Qt.ItemIsEnabled|Qt.ItemIsSelectable)
+                    widget_table.setItem(index, header.index(column), widg)
                 else:
+                    print(column)
                     value = getattr(item, column)
                     widg = QTableWidgetItem(str(value))
                     widg.setFlags(Qt.NoItemFlags)

@@ -117,7 +117,7 @@ def createScenarioListGroupBox(self):
     scenarios.addWidget(self.scenario_del, 0, 2)
     scenarios.addWidget(self.scenario_list, 1, 0, 5, 5)
     ScenarioListGroupBox.setLayout(scenarios)
-    ScenarioListGroupBox.setMaximumWidth(576)
+    #ScenarioListGroupBox.setMaximumWidth(576)
     return ScenarioListGroupBox
 
 
@@ -250,6 +250,6 @@ def create_events_list_group(self):
     events.addWidget(self.event_list_service,0,3)
     events.addWidget(self.events_list_table,1,0,5,5)
     EventsBinGroupBox.setLayout(events)
-    EventsBinGroupBox.setMaximumWidth(690)
+    #EventsBinGroupBox.setMaximumWidth(690)
     return EventsBinGroupBox
 
