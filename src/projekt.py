@@ -419,6 +419,8 @@ class Projekt(QGroupBox, QModelIndex):
                 line = self.line_to_command(event.command)
                 if event.__class__.__name__ == 'ScenarioPlay':
                     line = "Play Scenario " + line
+                if event.__class__.__name__ == 'MidiNote':
+                    line = "Play MIDI Note " + line
                 line = QListWidgetItem(line)
                 line.setFlags(Qt.ItemIsEnabled|Qt.ItemIsEditable|\
                               Qt.ItemIsSelectable|Qt.ItemIsDragEnabled)
@@ -434,7 +436,7 @@ class Projekt(QGroupBox, QModelIndex):
         """
         Delete the selected event (event in the scenario content)
         """
-        if self.event_selected:
+        if self.event_selected and self.scenario_selected:
             # check if it's not the last line
             cot = self.scenario_content.currentItem()
             if self.scenario_content.row(cot) != len(self.scenario_selected.events):
@@ -600,14 +602,21 @@ class Projekt(QGroupBox, QModelIndex):
                     # create a new event
                     if newline[0] == "OSC":
                         newline = newline[1:]
+                        print("creating event of type OSC")
                         new_event = self.new_event('Osc', newline)
                     elif newline[0] == "SP":
                         newline = newline[1:]
+                        print("creating event of type ScenarioPlay")
                         new_event = self.new_event('ScenarioPlay', newline)
                     elif isinstance(checkType(newline[0]), float) or isinstance(checkType(newline[0]), int):
-                        print("creating event of type wait")
+                        print("creating event of type WAIT")
                         new_event = self.new_event('Wait', checkType(newline[0]))
+                    elif newline[0] == "MN":
+                        newline = newline[1:]
+                        print("creating event of type MidiNote")
+                        new_event = self.new_event('MidiNote', newline)
                     else:
+                        print("creating event of type OSC")
                         new_event = self.new_event('Osc', newline)
                     # add the event to the scenario
                     self.scenario_selected.add_event(new_event)
