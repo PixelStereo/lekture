@@ -21,8 +21,21 @@ class EventTable(QTableWidget):
         self.setSelectionBehavior(QAbstractItemView.SelectRows)
         self.setDragDropOverwriteMode(False)
         # self.setSelectionMode(QAbstractItemView.SingleSelection)
-
         self.last_drop_row = None
+        self.ttype = None
+
+    @property
+    def ttype(self):
+        """
+        type scenario or events
+        """
+        return self._ttype
+    @ttype.setter
+    def ttype(self, ttype):
+        print ttype
+        if isinstance == 'scenario' or isinstance == 'events':
+            self._ttype = ttype
+            return True
 
     # Override this method to get the correct row index for insertion
     def dropMimeData(self, row, col, mimeData, action):
@@ -32,11 +45,13 @@ class EventTable(QTableWidget):
     def dropEvent(self, event):
         # The QTableWidget from which selected rows will be moved
         sender = event.source()
+        print("new drag from", sender, "to", self)
 
         # Default dropEvent method fires dropMimeData with appropriate parameters (we're interested in the row index).
         super(EventTable, self).dropEvent(event)
         # Now we know where to insert selected row(s)
         dropRow = self.last_drop_row
+        print("new line in", dropRow)
 
         selectedRows = sender.getselectedRowsFast()
 
@@ -59,7 +74,6 @@ class EventTable(QTableWidget):
         # delete selected rows
         for srow in reversed(selectedRows):
             sender.removeRow(srow)
-
         event.accept()
 
 
@@ -135,6 +149,7 @@ def createProjectAttrGroupBox(self):
 def createScenarioListGroupBox(self):
     ScenarioListGroupBox = QGroupBox("Scenario List")
     self.scenario_list = EventTable()
+    self.scenario_list.ttype = "scenario"
     self.scenario_list.signalMapper.mapped[QWidget].connect(self.output_changed)
     self.scenario_list.setSelectionMode(QAbstractItemView.SingleSelection)
     header_list = ['name', 'wait','duration','post_wait', 'loop', 'output']
@@ -264,6 +279,7 @@ def createOuputAttrGroupBox(self):
 def create_events_list_group(self):
     EventsBinGroupBox = QGroupBox("Events Bin")
     self.events_list_table = EventTable()
+    self.events_list_table.ttype = "events"
     self.events_list_table.setSelectionMode(QAbstractItemView.SingleSelection)
     #self.events_list_table.setSortingEnabled(True)
     header_list = ['type', 'name', 'command', 'wait','duration','post_wait', 'loop', 'output']
