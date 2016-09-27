@@ -4,7 +4,7 @@
 =====
 Inter-media OSC sequencer
 
-<img width="10%" src="./src/icon/Play_blauw.png" alt="About screen" title="About screen"</img>
+<img width="10%" src="./src/icon/icon.png" alt="About screen" title="About screen"</img>
 
 ##User
 this is a work in progress… don't expect a working version in the following weeks. But if you want to test it, try the [latest release](http://github.com/PixelStereo/lekture/releases/latest). There is builds for OSX and for Linux.
