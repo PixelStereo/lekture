@@ -32,7 +32,7 @@ class EventTable(QTableWidget):
         return self._ttype
     @ttype.setter
     def ttype(self, ttype):
-        print ttype
+        print("HERE-IS-HTE-DEBIUG", ttype)
         if isinstance == 'scenario' or isinstance == 'events':
             self._ttype = ttype
             return True
