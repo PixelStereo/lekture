@@ -20,6 +20,7 @@ except Exception as error:
 
 
 if __name__ == "__main__":
+    app = QApplication(sys.argv)
     try:
         #app.setStyleSheet(qdarkstyle.load_stylesheet_pyqt5())
         pass

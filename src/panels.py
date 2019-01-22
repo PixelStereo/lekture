@@ -6,7 +6,7 @@ from PyQt5.QtWidgets import QLabel, QLineEdit, QSpinBox, QComboBox, QTableWidget
 from PyQt5.QtWidgets import QGroupBox, QHBoxLayout, QListWidget, QAbstractItemView, QPushButton, QGridLayout, QCheckBox
 
 from pylekture import project
-from pylekture.constants import protocols
+#from pylekture.constants import protocols
 
 
 class EventTable(QTableWidget):
@@ -96,10 +96,11 @@ def create_panels(self):
     # Create Events Bin
     self.events_list_group = create_events_list_group(self)
     # Create Outputs layout
-    outputs_group = createOuputAttrGroupBox(self)
-    self.outputs_group = outputs_group
-    outputs_group.setVisible(False)
-    self.protocol_display()
+    # revamp
+    #outputs_group = createOuputAttrGroupBox(self)
+    #self.outputs_group = outputs_group
+    #outputs_group.setVisible(False)
+    #self.protocol_display()
 
     # Create the main layout
     mainLayout = QGridLayout()
@@ -109,7 +110,8 @@ def create_panels(self):
     mainLayout.addWidget(ScenarioListGroupBox, 1, 0, 1, 1)
     mainLayout.addWidget(self.events_list_group, 0, 1, 3, 1)
     mainLayout.addWidget(self.scenario_events_group, 2, 0, 1, 1)
-    mainLayout.addWidget(outputs_group, 2, 0, 1, 1)
+    # revamp
+    #mainLayout.addWidget(outputs_group, 2, 0, 1, 1)
 
     # Integrate main layout to the main window
     self.setLayout(mainLayout)
@@ -234,11 +236,14 @@ def create_scenario_events_group(self):
     return scenario_events_group
 
 def createOuputAttrGroupBox(self):
-    outputs_group = QGroupBox("Outputs")
+    # revamp
+    #outputs_group = QGroupBox("Outputs")
     # creare a menu to chosse which protocol to display
     self.protocol = QComboBox()
-    for protocol in protocols:
-        self.protocol.addItem(protocol)
+    # revamp
+    #for protocol in protocols:
+    #    self.protocol.addItem(protocol)
+    self.protocol.addItem('OSC')
     # create a button for creating a new output
     self.output_new = QPushButton('New')
     self.output_del = QPushButton('Delete')

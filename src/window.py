@@ -12,39 +12,33 @@ such as new / open / save / save as…
 import os
 import sys
 
-pylekture_path = os.path.abspath('./../3rdparty/pylekture')
-sys.path.append(pylekture_path)
 import pylekture
 
 from projekt import Projekt
 
 from PyQt5.QtGui import QKeySequence
 from PyQt5.QtCore import Qt, QSignalMapper, QPoint, QSize, QSettings, QFileInfo
-from PyQt5.QtWidgets import QMainWindow, QToolBar, QAction, QMdiArea, \
-                            QApplication, QMessageBox, QFileDialog, QWidget
+from PyQt5.QtWidgets import QMainWindow, QToolBar, QAction, QWidget, \
+                            QApplication, QMessageBox, QFileDialog
 
 
 class MainWindow(QMainWindow):
-    """This create the main window of the application"""
+    """
+    The main window of the application
+    """
     def __init__(self):
         super(MainWindow, self).__init__()
         # remove close & maximize window buttons
         #self.setWindowFlags(Qt.CustomizeWindowHint|Qt.WindowMinimizeButtonHint)
         self.setMinimumSize(500, 666)
         #self.setMaximumSize(1000,666)
-        self.mdiArea = QMdiArea()
-        self.mdiArea.setHorizontalScrollBarPolicy(Qt.ScrollBarAsNeeded)
-        self.mdiArea.setVerticalScrollBarPolicy(Qt.ScrollBarAsNeeded)
-        self.setCentralWidget(self.mdiArea)
+        self.project_widget = QWidget()
+        # revamp
+        #self.project_widget.setHorizontalScrollBarPolicy(Qt.ScrollBarAsNeeded)
+        #self.project_widget.setVerticalScrollBarPolicy(Qt.ScrollBarAsNeeded)
+        self.setCentralWidget(self.project_widget)
 
-        self.mdiArea.subWindowActivated.connect(self.updateMenus)
-        self.mdiArea.setViewMode(QMdiArea.TabbedView)
-
-        self.windowMapper = QSignalMapper(self)
-        self.windowMapper.mapped[QWidget].connect(self.setActiveSubWindow)
-
-        self.child = None
-
+        self.project = None
         self.createActions()
         self.createMenus()
         self.createStatusBar()
@@ -67,54 +61,50 @@ class MainWindow(QMainWindow):
         self.addToolBar(Qt.LeftToolBarArea, mytoolbar)
 
     def closeEvent(self, scenario):
-        """method called when the main window wants to be closed"""
-        self.mdiArea.closeAllSubWindows()
-        if self.mdiArea.currentSubWindow():
-            scenario.ignore()
-        else:
-            self.writeSettings()
-            scenario.accept()
+        """
+        method called when the main window wants to be closed
+        """
+        self.project_widget.close()
+        self.writeSettings()
+        scenario.accept()
 
     def newFile(self):
         """creates a new project"""
-        child = self.createProjekt()
-        child.newFile()
-        child.show()
-        self.child = child
+        project = self.createProjekt()
+        project.newFile()
+        project.show()
+        self.project = project
 
     def open(self):
         """open a project"""
         fileName, _ = QFileDialog.getOpenFileName(self)
         if fileName:
-            existing = self.findProjekt(fileName)
-            if existing:
-                self.mdiArea.setActiveSubWindow(existing)
-                return
-
-            child = self.createProjekt()
-            if child.loadFile(fileName):
+            project = self.createProjekt()
+            if project.loadFile(fileName):
                 self.statusBar().showMessage("File loaded", 2000)
-                child.show()
+                project.show()
             else:
-                child.close()
+                project.close()
 
     def save(self):
-        """called when user save a project"""
-        if self.activeProjekt() and self.activeProjekt().save():
+        """
+        called when user save a project
+        """
+        if self.project and self.project.save():
             self.statusBar().showMessage("File saved", 2000)
         else:
             self.statusBar().showMessage("Error when trying to save the file")
 
     def saveAs(self):
         """called when user save AS a project"""
-        if self.activeProjekt() and self.activeProjekt().saveAs():
+        if self.project and self.project.saveAs():
             self.statusBar().showMessage("File saved", 2000)
         else:
             self.statusBar().showMessage("Error when trying to save the file")
 
     def openFolder(self):
         """called when user calls 'reveal in finder' function"""
-        if self.activeProjekt() and self.activeProjekt().openFolder():
+        if self.project and self.project.openFolder():
             self.statusBar().showMessage("File revealed in Finder", 2000)
 
     def about(self):
@@ -130,50 +120,28 @@ class MainWindow(QMainWindow):
 
     def updateMenus(self):
         """update menus"""
-        hasProjekt = (self.activeProjekt() is not None)
+        hasProjekt = (self.project is not None)
         self.saveAct.setEnabled(hasProjekt)
         self.saveAsAct.setEnabled(hasProjekt)
         self.outputsAct.setEnabled(hasProjekt)
         self.scenarioAct.setEnabled(hasProjekt)
         self.openFolderAct.setEnabled(hasProjekt)
         self.closeAct.setEnabled(hasProjekt)
-        self.closeAllAct.setEnabled(hasProjekt)
-        self.nextAct.setEnabled(hasProjekt)
-        self.previousAct.setEnabled(hasProjekt)
         self.separatorAct.setVisible(hasProjekt)
 
     def updateWindowMenu(self):
         """unpates menus on the window toolbar"""
         self.windowMenu.clear()
         self.windowMenu.addAction(self.closeAct)
-        self.windowMenu.addAction(self.closeAllAct)
         self.windowMenu.addSeparator()
-        self.windowMenu.addAction(self.nextAct)
-        self.windowMenu.addAction(self.previousAct)
         self.windowMenu.addAction(self.separatorAct)
-
-        windows = self.mdiArea.subWindowList()
-        self.separatorAct.setVisible(len(windows) != 0)
-
-        for i, window in enumerate(windows):
-            child = window.widget()
-
-            text = "%d %s" % (i + 1, child.userFriendlyCurrentFile())
-            if i < 9:
-                text = '&' + text
-
-            action = self.windowMenu.addAction(text)
-            action.setCheckable(True)
-            action.setChecked(child is self.activeProjekt())
-            action.triggered.connect(self.windowMapper.map)
-            self.windowMapper.setMapping(action, window)
 
     def createProjekt(self):
         """create a new project"""
-        child = Projekt()
-        self.mdiArea.addSubWindow(child)
-        self.child = child
-        return child
+        project = Projekt()
+        self.project_widget(project)
+        self.project = project
+        return project
 
     def createActions(self):
         """create all actions"""
@@ -198,13 +166,9 @@ class MainWindow(QMainWindow):
                                      statusTip="Reveal Project in Finder",
                                      triggered=self.openFolder)
 
-        self.exitAct = QAction("E&xit", self, shortcut=QKeySequence.Quit,
-                               statusTip="Exit the application",
-                               triggered=QApplication.instance().closeAllWindows)
-
         self.closeAct = QAction("Cl&ose", self,
                                 statusTip="Close the active window",
-                                triggered=self.mdiArea.closeActiveSubWindow)
+                                triggered=self.project_widget.close)
 
         self.outputsAct = QAction("Outputs", self,
                                   statusTip="Open the outputs panel",
@@ -213,19 +177,6 @@ class MainWindow(QMainWindow):
         self.scenarioAct = QAction("Scenario", self,
                                    statusTip="Open the scenario panel",
                                    triggered=self.openScenarioPanel)
-
-        self.closeAllAct = QAction("Close &All", self,
-                                   statusTip="Close all the windows",
-                                   triggered=self.mdiArea.closeAllSubWindows)
-
-        self.nextAct = QAction("Ne&xt", self, shortcut=QKeySequence.NextChild,
-                               statusTip="Move the focus to the next window",
-                               triggered=self.mdiArea.activateNextSubWindow)
-
-        self.previousAct = QAction("Pre&vious", self,
-                                   shortcut=QKeySequence.PreviousChild,
-                                   statusTip="Move the focus to the previous window",
-                                   triggered=self.mdiArea.activatePreviousSubWindow)
 
         self.separatorAct = QAction(self)
         self.separatorAct.setSeparator(True)
@@ -243,7 +194,6 @@ class MainWindow(QMainWindow):
         self.fileMenu.addAction(self.saveAsAct)
         self.fileMenu.addSeparator()
         self.fileMenu.addAction(self.openFolderAct)
-        self.fileMenu.addAction(self.exitAct)
 
         self.viewMenu = self.menuBar().addMenu("&View")
         self.viewMenu.addAction(self.outputsAct)
@@ -276,42 +226,29 @@ class MainWindow(QMainWindow):
         settings.setValue('pos', self.pos())
         settings.setValue('size', self.size())
 
-    def activeProjekt(self):
-        """return the active project object"""
-        activeSubWindow = self.mdiArea.activeSubWindow()
-        if activeSubWindow:
-            return activeSubWindow.widget()
-        else:
-            return None
 
     def findProjekt(self, fileName):
         """return the project"""
         canonicalFilePath = QFileInfo(fileName).canonicalFilePath()
 
-        for window in self.mdiArea.subWindowList():
+        for window in self.project_widget.subWindowList():
             if window.widget().currentFile() == canonicalFilePath:
                 return window
         return None
 
-    def setActiveSubWindow(self, window):
-        """set the active sub window"""
-        if window:
-            self.mdiArea.setActiveSubWindow(window)
-
     def openOutputsPanel(self):
         """switch to the outputs editor"""
         if self.child:
-            project = self.activeProjekt()
-            project.scenario_events_group.setVisible(False)
-            project.outputs_group.setVisible(True)
+            self.project.scenario_events_group.setVisible(False)
+            self.project.outputs_group.setVisible(True)
             self.scenarioAct.setVisible(True)
             self.outputsAct.setVisible(False)
 
     def openScenarioPanel(self):
-        """switch to the scenario editors"""
+        """
+        switch to the scenario editors
+        """
         if self.child:
-            project = self.activeProjekt()
-            project.outputs_group.setVisible(False)
-            project.scenario_events_group.setVisible(True)
+            self.project.scenario_events_group.setVisible(True)
             self.scenarioAct.setVisible(False)
             self.outputsAct.setVisible(True)

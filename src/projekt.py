@@ -61,8 +61,8 @@ class Projekt(QGroupBox, QModelIndex):
         if not self.project:
             print('ERROR 123 - pylekture cannot create a project')
             sys.exit(1)
-        # Create a new output
-        the_out = self.project.new_output('OSC')
+        # revamp
+        #the_out = self.project.new_output('OSC')
         # initialize selection (this might be done with models later)
         self.scenario_selected = None
         # the event in the scenario content
