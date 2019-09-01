@@ -2,16 +2,8 @@
 
 set -v
 
-case "$TRAVIS_OS_NAME" in
-  linux)
-    sudo apt-get update
-    sudo apt-get -y install python3-pyqt5
-  ;;
-    osx)
-    brew install PyQt5 --without-python --with-python3
-  ;;
+pip install PySide2
 
-esac
 cd src
 
 source ../scripts/split_repo_slug.sh

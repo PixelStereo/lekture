@@ -17,9 +17,9 @@ import projekt, window
 import sys
 import unittest
 
-from PyQt5.QtWidgets import QApplication
-from PyQt5 import Qt
-from PyQt5.Qt import QTest
+from PySide2.QtWidgets import QApplication
+from PySide2 import Qt
+from PySide2.Qt import QTest
 app = QApplication(sys.argv)
 
 app = window.MainWindow()

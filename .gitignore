@@ -5,3 +5,5 @@ dist
 doc/_build
 test.json
 deploy
+.DS_Store
+venv/*

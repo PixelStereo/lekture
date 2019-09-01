@@ -16,9 +16,9 @@ import pylekture
 
 from projekt import Projekt
 
-from PyQt5.QtGui import QKeySequence
-from PyQt5.QtCore import Qt, QSignalMapper, QPoint, QSize, QSettings, QFileInfo
-from PyQt5.QtWidgets import QMainWindow, QToolBar, QAction, QWidget, \
+from PySide2.QtGui import QKeySequence
+from PySide2.QtCore import Qt, QSignalMapper, QPoint, QSize, QSettings, QFileInfo
+from PySide2.QtWidgets import QMainWindow, QToolBar, QAction, QWidget, \
                             QApplication, QMessageBox, QFileDialog
 
 
@@ -137,9 +137,11 @@ class MainWindow(QMainWindow):
         self.windowMenu.addAction(self.separatorAct)
 
     def createProjekt(self):
-        """create a new project"""
+        """
+        create a new project
+        """
         project = Projekt()
-        self.project_widget(project)
+        self.project_widget.show()
         self.project = project
         return project
 

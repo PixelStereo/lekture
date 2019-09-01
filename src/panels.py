@@ -1,9 +1,9 @@
 #! /usr/bin/env python3,
 # -*- coding: utf-8 -*-
 
-from PyQt5.QtCore import Qt, QSignalMapper, pyqtSlot
-from PyQt5.QtWidgets import QLabel, QLineEdit, QSpinBox, QComboBox, QTableWidget, QVBoxLayout, QTableWidgetItem, QWidget
-from PyQt5.QtWidgets import QGroupBox, QHBoxLayout, QListWidget, QAbstractItemView, QPushButton, QGridLayout, QCheckBox
+from PySide2.QtCore import Qt, QSignalMapper, Slot
+from PySide2.QtWidgets import QLabel, QLineEdit, QSpinBox, QComboBox, QTableWidget, QVBoxLayout, QTableWidgetItem, QWidget
+from PySide2.QtWidgets import QGroupBox, QHBoxLayout, QListWidget, QAbstractItemView, QPushButton, QGridLayout, QCheckBox
 
 from pylekture import project
 #from pylekture.constants import protocols

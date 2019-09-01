@@ -13,8 +13,8 @@ from panels import create_panels
 
 import sys
 import subprocess
-from PyQt5.QtCore import Qt, QModelIndex, QFileInfo, QFile, QPoint, pyqtSlot
-from PyQt5.QtWidgets import QFileDialog, QListWidgetItem, QApplication, QMenu, \
+from PySide2.QtCore import Qt, QModelIndex, QFileInfo, QFile, QPoint, Slot
+from PySide2.QtWidgets import QFileDialog, QListWidgetItem, QApplication, QMenu, \
                             QMessageBox, QTableWidgetItem, QGroupBox, QGridLayout, \
                             QComboBox
 
@@ -53,6 +53,7 @@ class Projekt(QGroupBox, QModelIndex):
 
         self.setAttribute(Qt.WA_DeleteOnClose)
         self.isUntitled = True
+        self.curFile = None
         # I must change all 'document' class reference to 'project' class…
         # so I need to enhance project with modify flags and signals
         self.document = Document('unknown')
@@ -361,7 +362,7 @@ class Projekt(QGroupBox, QModelIndex):
                     widg.setFlags(Qt.ItemIsEnabled|Qt.ItemIsEditable|Qt.ItemIsSelectable)
                     widget_table.setItem(index, header.index(column), widg)
 
-    #@pyqtSlot(QComboBox)
+    #@Slot(QComboBox)
     def output_changed(self, menu):
         """
         output has changed from events_list table or scenario_list table

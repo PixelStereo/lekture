@@ -4,9 +4,9 @@
 import sys
 import math
 
-from PyQt5.QtWidgets import QWidget, QApplication
-from PyQt5.QtGui import QPainter, QPen, QBrush
-from PyQt5.QtCore import Qt
+from PySide2.QtWidgets import QWidget, QApplication
+from PySide2.QtGui import QPainter, QPen, QBrush
+from PySide2.QtCore import Qt
 
 
 def binomial(i, n):

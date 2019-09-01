@@ -1,4 +1,4 @@
-from PyQt5.QtCore import QPropertyAnimation, QEasingCurve
+from PySide2.QtCore import QPropertyAnimation, QEasingCurve
 
 
 animation = QPropertyAnimation()
