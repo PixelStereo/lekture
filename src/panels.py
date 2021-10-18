@@ -1,9 +1,9 @@
 #! /usr/bin/env python3,
 # -*- coding: utf-8 -*-
 
-from PySide2.QtCore import Qt, QSignalMapper, Slot
-from PySide2.QtWidgets import QLabel, QLineEdit, QSpinBox, QComboBox, QTableWidget, QVBoxLayout, QTableWidgetItem, QWidget
-from PySide2.QtWidgets import QGroupBox, QHBoxLayout, QListWidget, QAbstractItemView, QPushButton, QGridLayout, QCheckBox
+from PySide§.QtCore import Qt, QSignalMapper, Slot
+from PySide6.QtWidgets import QLabel, QLineEdit, QSpinBox, QComboBox, QTableWidget, QVBoxLayout, QTableWidgetItem, QWidget
+from PySide6.QtWidgets import QGroupBox, QHBoxLayout, QListWidget, QAbstractItemView, QPushButton, QGridLayout, QCheckBox
 
 from pylekture import project
 #from pylekture.constants import protocols
@@ -152,7 +152,7 @@ def createScenarioListGroupBox(self):
     ScenarioListGroupBox = QGroupBox("Scenario List")
     self.scenario_list = EventTable()
     self.scenario_list.ttype = "scenario"
-    self.scenario_list.signalMapper.mapped[QWidget].connect(self.output_changed)
+    self.scenario_list.signalMapper.mappedObject.connect(self.output_changed)
     self.scenario_list.setSelectionMode(QAbstractItemView.SingleSelection)
     header_list = ['name', 'wait','duration','post_wait', 'loop', 'output']
     self.scenario_list_header = header_list
