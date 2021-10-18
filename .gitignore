@@ -7,3 +7,4 @@ test.json
 deploy
 .DS_Store
 venv/*
+env/*
