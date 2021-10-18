@@ -16,9 +16,10 @@ import pylekture
 
 from projekt import Projekt
 
-from PySide2.QtGui import QKeySequence
-from PySide2.QtCore import Qt, QSignalMapper, QPoint, QSize, QSettings, QFileInfo
-from PySide2.QtWidgets import QMainWindow, QToolBar, QAction, QWidget, \
+from PySide6.QtGui import QKeySequence
+from PySide6.QtGui import QAction
+from PySide6.QtCore import Qt, QSignalMapper, QPoint, QSize, QSettings, QFileInfo
+from PySide6.QtWidgets import QMainWindow, QToolBar, QWidget, \
                             QApplication, QMessageBox, QFileDialog
 
 
