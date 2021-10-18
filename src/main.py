@@ -7,9 +7,9 @@ main script
 
 import sys
 from window import MainWindow
-from PySide2.QtCore import QFileInfo
-from PySide2.QtGui import QIcon
-from PySide2.QtWidgets import QApplication
+from PySide6.QtCore import QFileInfo
+from PySide6.QtGui import QIcon
+from PySide6.QtWidgets import QApplication
 
 
 try:
@@ -22,7 +22,7 @@ except Exception as error:
 if __name__ == "__main__":
     app = QApplication(sys.argv)
     try:
-        #app.setStyleSheet(qdarkstyle.load_stylesheet_PySide2())
+        #app.setStyleSheet(qdarkstyle.load_stylesheet_PySide6())
         pass
     except Exception as error:
         print('failed ' + str(error))
