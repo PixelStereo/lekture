@@ -13,8 +13,8 @@ from panels import create_panels
 
 import sys
 import subprocess
-from PySide2.QtCore import Qt, QModelIndex, QFileInfo, QFile, QPoint, Slot
-from PySide2.QtWidgets import QFileDialog, QListWidgetItem, QApplication, QMenu, \
+from PySide6.QtCore import Qt, QModelIndex, QFileInfo, QFile, QPoint, Slot
+from PySide6.QtWidgets import QFileDialog, QListWidgetItem, QApplication, QMenu, \
                             QMessageBox, QTableWidgetItem, QGroupBox, QGridLayout, \
                             QComboBox
 
