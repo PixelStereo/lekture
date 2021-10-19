@@ -1,7 +1,7 @@
 #! /usr/bin/env python3,
 # -*- coding: utf-8 -*-
 
-from PySide§.QtCore import Qt, QSignalMapper, Slot
+from PySide6.QtCore import Qt, QSignalMapper, Slot
 from PySide6.QtWidgets import QLabel, QLineEdit, QSpinBox, QComboBox, QTableWidget, QVBoxLayout, QTableWidgetItem, QWidget
 from PySide6.QtWidgets import QGroupBox, QHBoxLayout, QListWidget, QAbstractItemView, QPushButton, QGridLayout, QCheckBox
 
